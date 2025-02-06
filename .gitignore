@@ -1,7 +1,7 @@
 # This .gitignore file should be placed at the root of your Unity project directory
-#
-# Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
-#
+# First part from https://github.com/github/gitignore/blob/master/Unity.gitignore
+# Parkerhill additions at the end
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -14,8 +14,8 @@
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
 
-# Recordings can get excessive in size
-/[Rr]ecordings/
+# Asset meta data should only be ignored when the corresponding asset is also ignored
+!/[Aa]ssets/**/*.meta
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
@@ -59,8 +59,6 @@ sysinfo.txt
 *.apk
 *.aab
 *.unitypackage
-*.unitypackage.meta
-*.app
 
 # Crashlytics generated file
 crashlytics-build.properties
@@ -71,3 +69,76 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+
+# =========================
+# PARKERHILL ADDITIONS
+# =========================
+
+# Unity app files
+.GameStatistics
+.PlayerSettings
+
+# parkerhill unity project folder conventions
+/AssetBundles/
+
+
+# =========================
+# OSX
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+
+# =========================
+# Windows
+# =========================
+
+# Windows image file caches
+Thumbs.db
+Thumbs.db.meta
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Visual Studio stuff
+.vs/
+.idea/
+.gradle/
+
+PackageBackups/
+
+# UWP builds
+/UWP/*
