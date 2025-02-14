@@ -13,6 +13,8 @@ Orbital mechanics are an often misunderstood aspect of spaceflight, but one whic
 	- Microsoft Visual Studio Community 2022
 	- Autodesk Maya 2025
 	- Adobe Photoshop 26
+	- Panic Nova (text editor)
+	- GitHub Desktop
 - Development Hardware
 	- Windows PC with Intel Core i7-11700 & NVIDIA GTX 1080 Ti
 	- Apple MacBook Air (M3, 2024)
