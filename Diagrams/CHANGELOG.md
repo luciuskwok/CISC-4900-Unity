@@ -4,6 +4,9 @@ This file documents the changes to the Diagrams slide deck, which is kept on Goo
 
 ## Unreleased
 
+- Added GitHub Projects and GitHub Repo slides.
+- Updated data sources.
+
 ## 2025-02-16
 
 - Added Nova, GitHub, and Google suite to software tools list.
