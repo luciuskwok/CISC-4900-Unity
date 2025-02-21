@@ -43,7 +43,7 @@ public class CameraController : MonoBehaviour
 			Vector3 direction = (cameraPosition - targetPosition).normalized; 
 
 			// Change the distance based on scroll wheel movement
-			distance = Mathf.Pow(10, Mathf.Log10(distance) + delta * 0.2f);
+			distance = Mathf.Pow(10.0f, Mathf.Log10(distance) - delta * 0.2f);
 
 			// Clamp the values to min and max
 			float distanceMin = viewTarget.transform.localScale.x;
@@ -53,6 +53,8 @@ public class CameraController : MonoBehaviour
 			// Set new camera position
 			transform.position = targetPosition + direction * distance;
 		}
+
+		// Debug.Log("Dolly: " + delta);
 	}
 
 	void Update()
@@ -73,7 +75,7 @@ public class CameraController : MonoBehaviour
 		if (scroll != 0.0f)
 		{
 			// Shift key slows the movement
-			if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+			if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
 			{
 				scroll = scroll / 10.0f;
 			}
