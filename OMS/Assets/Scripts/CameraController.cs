@@ -23,14 +23,36 @@ public class CameraController : MonoBehaviour
 		{
 			Vector3 targetPosition = viewTarget.transform.position;
 			Vector3 cameraPosition = transform.position;
-			Vector3 viewVector = targetPosition - cameraPosition;
-			float distance = Vector3.Magnitude(viewVector);
-			//Vector3 eulerAngles = viewVector.eulerAngles;
+			float distance = Vector3.Distance(targetPosition, cameraPosition);
+			Vector3 direction = (cameraPosition - targetPosition).normalized;
+
+			float latDeg = Mathf.Acos(direction.y) * Mathf.Rad2Deg;
+			float lonDeg = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+
+			latDeg += deltaY;
+			lonDeg += deltaX;
+
+			// Clamp lat values to min and max
+			latDeg = (latDeg > 89.9f) ? 89.9f : latDeg;
+			latDeg = (latDeg < -89.9f) ? 89.9f : latDeg;
+
+			// Convert to radians
+			float latRad = latDeg * Mathf.Deg2Rad;
+			float lonRad = lonDeg * Mathf.Deg2Rad;
+
+			direction.y = Mathf.Sin(latRad);
+			direction.x = -Mathf.Cos(latRad) * Mathf.Sin(lonRad);
+			direction.z = Mathf.Cos(latRad) * Mathf.Cos(lonRad);
+
+			// Set new camera position
+			transform.position = targetPosition + direction * distance;
+
+			// Rotate camera to face target
+
+
+			Debug.Log("Lat: " + latDeg + " Lon: " + lonDeg);
 
 		}
-		//float moveZ = Mathf.Cos(transform.eulerAngles.y * Mathf.PI / 180.0f) * inZ - Mathf.Sin(transform.eulerAngles.y * Mathf.PI / 180.0f) * inX;
-		//float moveX = Mathf.Sin(transform.eulerAngles.y * Mathf.PI / 180.0f) * inZ + Mathf.Cos(transform.eulerAngles.y * Mathf.PI / 180.0f) * inX;
-		//transform.position += new Vector3(moveX, 0, moveZ);
 	}
 
 	private void DollyInCamera(float delta)
