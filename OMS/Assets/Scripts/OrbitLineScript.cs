@@ -27,8 +27,18 @@ public class OrbitLineScript : MonoBehaviour
 	{
 		// Change the line width based on the distance from the camera to the closest point on the line.
 		LineRenderer lineRenderer = GetComponent<LineRenderer>();
+		float min = float.MaxValue;
 
+		var points = new Vector3[lineRenderer.positionCount];
+		int count = lineRenderer.GetPositions(points);
+		Vector3 cameraPosition = Camera.main.transform.position;
 
-		//Vector3.Distance()
+		for (int i = 0; i < count; i++)
+		{
+			Vector3 pt = points[i];
+			float distance = Vector3.Distance(pt, cameraPosition);
+			min = (min <= distance) ? min : distance;
+		}
+		lineRenderer.startWidth = min / 1000.0f;
 	}
 }
