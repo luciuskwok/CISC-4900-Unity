@@ -17,6 +17,22 @@ public class CameraController : MonoBehaviour
 		
 	}
 
+	private void PrintLatLon()
+	{
+		Vector3 targetPosition = viewTarget.transform.position;
+		Vector3 cameraPosition = transform.position;
+		float distance = Vector3.Distance(targetPosition, cameraPosition);
+		Vector3 direction = (cameraPosition - targetPosition).normalized;
+
+		float latDeg = Mathf.Asin(direction.y) * Mathf.Rad2Deg;
+		float lonDeg = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
+
+		// Normalize latDeg to range from -180 to +180 degrees
+		if (latDeg > 180.0f) latDeg -= 360.0f;
+
+		Debug.Log("Lat: " + latDeg + " Lon: " + lonDeg);
+	}
+
 	private void PanTiltCamera(float deltaX, float deltaY)
 	{
 		if (viewTarget)
@@ -26,8 +42,13 @@ public class CameraController : MonoBehaviour
 			float distance = Vector3.Distance(targetPosition, cameraPosition);
 			Vector3 direction = (cameraPosition - targetPosition).normalized;
 
-			float latDeg = Mathf.Acos(direction.y) * Mathf.Rad2Deg;
-			float lonDeg = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+			float latDeg = Mathf.Asin(direction.y) * Mathf.Rad2Deg;
+			float lonDeg = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
+
+			// Normalize latDeg to range from -180 to +180 degrees
+			if (latDeg > 180.0f) latDeg -= 360.0f;
+
+			Debug.Log("Lat:" + latDeg + " Lon:" + lonDeg + " X:" + cameraPosition.x + " Y:" + cameraPosition.y + " Z:" + cameraPosition.z);
 
 			latDeg += deltaY;
 			lonDeg += deltaX;
@@ -41,8 +62,8 @@ public class CameraController : MonoBehaviour
 			float lonRad = lonDeg * Mathf.Deg2Rad;
 
 			direction.y = Mathf.Sin(latRad);
-			direction.x = -Mathf.Cos(latRad) * Mathf.Sin(lonRad);
-			direction.z = Mathf.Cos(latRad) * Mathf.Cos(lonRad);
+			direction.z = Mathf.Cos(latRad) * Mathf.Sin(lonRad);
+			direction.x = Mathf.Cos(latRad) * Mathf.Cos(lonRad);
 
 			// Set new camera position
 			transform.position = targetPosition + direction * distance;
@@ -50,7 +71,6 @@ public class CameraController : MonoBehaviour
 			// Rotate camera to face target
 
 
-			Debug.Log("Lat: " + latDeg + " Lon: " + lonDeg);
 
 		}
 	}
@@ -85,10 +105,14 @@ public class CameraController : MonoBehaviour
 		if (Input.GetMouseButtonDown(0))
 		{
 			lastMousePosition = Input.mousePosition;
+			PrintLatLon();
 		} else if (Input.GetMouseButton(0))
 		{
 			Vector3 delta = Input.mousePosition - lastMousePosition;
-			PanTiltCamera(delta.x, delta.y);
+			if (delta.x != 0.0f || delta.y != 0.0f)
+			{
+				PanTiltCamera(delta.x, delta.y);
+			}
 			lastMousePosition = Input.mousePosition;
 		}
 
@@ -102,6 +126,26 @@ public class CameraController : MonoBehaviour
 				scroll = scroll / 10.0f;
 			}
 			DollyInCamera(scroll);
+		}
+
+		// Keyboard
+		float movement = 5.0f;
+		if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) 
+			movement = 0.5f;
+		if (Input.GetKeyDown(KeyCode.UpArrow))
+		{
+			PanTiltCamera(0.0f, movement);
+		} else if (Input.GetKeyDown(KeyCode.DownArrow))
+		{
+			PanTiltCamera(0.0f, -movement);
+		}
+		else if (Input.GetKeyDown(KeyCode.LeftArrow))
+		{
+			PanTiltCamera(-movement, 0.0f);
+		}
+		else if (Input.GetKeyDown(KeyCode.RightArrow))
+		{
+			PanTiltCamera(movement, 0.0f);
 		}
 	}
 }
