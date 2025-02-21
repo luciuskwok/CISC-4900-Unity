@@ -17,22 +17,6 @@ public class CameraController : MonoBehaviour
 		
 	}
 
-	private void PrintLatLon()
-	{
-		Vector3 targetPosition = viewTarget.transform.position;
-		Vector3 cameraPosition = transform.position;
-		float distance = Vector3.Distance(targetPosition, cameraPosition);
-		Vector3 direction = (cameraPosition - targetPosition).normalized;
-
-		float latDeg = Mathf.Asin(direction.y) * Mathf.Rad2Deg;
-		float lonDeg = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
-
-		// Normalize latDeg to range from -180 to +180 degrees
-		if (latDeg > 180.0f) latDeg -= 360.0f;
-
-		Debug.Log("Lat: " + latDeg + " Lon: " + lonDeg);
-	}
-
 	private void PanTiltCamera(float deltaX, float deltaY)
 	{
 		if (viewTarget)
@@ -48,14 +32,14 @@ public class CameraController : MonoBehaviour
 			// Normalize latDeg to range from -180 to +180 degrees
 			if (latDeg > 180.0f) latDeg -= 360.0f;
 
-			Debug.Log("Lat:" + latDeg + " Lon:" + lonDeg + " X:" + cameraPosition.x + " Y:" + cameraPosition.y + " Z:" + cameraPosition.z);
-
 			latDeg += deltaY;
 			lonDeg += deltaX;
 
+			// Debug.Log("Lat:" + latDeg + " Lon:" + lonDeg + " X:" + cameraPosition.x + " Y:" + cameraPosition.y + " Z:" + cameraPosition.z);
+
 			// Clamp lat values to min and max
 			latDeg = (latDeg > 89.9f) ? 89.9f : latDeg;
-			latDeg = (latDeg < -89.9f) ? 89.9f : latDeg;
+			latDeg = (latDeg < -89.9f) ? -89.9f : latDeg;
 
 			// Convert to radians
 			float latRad = latDeg * Mathf.Deg2Rad;
@@ -69,9 +53,7 @@ public class CameraController : MonoBehaviour
 			transform.position = targetPosition + direction * distance;
 
 			// Rotate camera to face target
-
-
-
+			transform.LookAt(viewTarget.transform);
 		}
 	}
 
@@ -101,17 +83,21 @@ public class CameraController : MonoBehaviour
 
 	void Update()
 	{
+		// Shift key
+		bool isShifted = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+		float speed = isShifted ? 0.1f : 1.0f;
+
 		// Mouse movement
 		if (Input.GetMouseButtonDown(0))
 		{
 			lastMousePosition = Input.mousePosition;
-			PrintLatLon();
 		} else if (Input.GetMouseButton(0))
 		{
 			Vector3 delta = Input.mousePosition - lastMousePosition;
 			if (delta.x != 0.0f || delta.y != 0.0f)
 			{
-				PanTiltCamera(delta.x, delta.y);
+				speed = speed * 0.5f; // Slow down pan and tilt
+				PanTiltCamera(delta.x * speed, delta.y * speed);
 			}
 			lastMousePosition = Input.mousePosition;
 		}
@@ -120,30 +106,23 @@ public class CameraController : MonoBehaviour
 		float scroll = Input.GetAxis("Mouse ScrollWheel");
 		if (scroll != 0.0f)
 		{
-			// Shift key slows the movement
-			if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-			{
-				scroll = scroll / 10.0f;
-			}
-			DollyInCamera(scroll);
+			DollyInCamera(scroll * speed);
 		}
 
 		// Keyboard
-		float movement = 5.0f;
-		if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) 
-			movement = 0.5f;
-		if (Input.GetKeyDown(KeyCode.UpArrow))
+		float movement = Time.deltaTime * 30.0f * speed; // About 0.5 degrees per second
+		if (Input.GetKey(KeyCode.UpArrow))
 		{
 			PanTiltCamera(0.0f, movement);
-		} else if (Input.GetKeyDown(KeyCode.DownArrow))
+		} else if (Input.GetKey(KeyCode.DownArrow))
 		{
 			PanTiltCamera(0.0f, -movement);
 		}
-		else if (Input.GetKeyDown(KeyCode.LeftArrow))
+		else if (Input.GetKey(KeyCode.LeftArrow))
 		{
 			PanTiltCamera(-movement, 0.0f);
 		}
-		else if (Input.GetKeyDown(KeyCode.RightArrow))
+		else if (Input.GetKey(KeyCode.RightArrow))
 		{
 			PanTiltCamera(movement, 0.0f);
 		}
