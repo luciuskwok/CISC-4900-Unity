@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-	public float panSpeed = 20.0f;
-	public float scrollSpeed = 20.0f;
-	public float minY = 5.0f;
-	public float maxY = 30.0f;
+
+	public GameObject viewTarget;
+
+	public float distanceMax = 88000.0f;	// * 10^6 km
+	public float panSpeed = 20.0f;			// degrees per second
+	public float scrollSpeed = 20.0f;		// distance per scroll wheel unit depends on distance from object
 
 	private Vector3 lastMousePosition;
  
@@ -14,11 +17,42 @@ public class CameraController : MonoBehaviour
 		
 	}
 
-	private void MoveCamera(float inX, float inZ)
+	private void PanTiltCamera(float deltaX, float deltaY)
 	{
-		float moveZ = Mathf.Cos(transform.eulerAngles.y * Mathf.PI / 180.0f) * inZ - Mathf.Sin(transform.eulerAngles.y * Mathf.PI / 180.0f) * inX;
-		float moveX = Mathf.Sin(transform.eulerAngles.y * Mathf.PI / 180.0f) * inZ + Mathf.Cos(transform.eulerAngles.y * Mathf.PI / 180.0f) * inX;
-		transform.position += new Vector3(moveX, 0, moveZ);
+		if (viewTarget)
+		{
+			Vector3 targetPosition = viewTarget.transform.position;
+			Vector3 cameraPosition = transform.position;
+			Vector3 viewVector = targetPosition - cameraPosition;
+			float distance = Vector3.Magnitude(viewVector);
+			//Vector3 eulerAngles = viewVector.eulerAngles;
+
+		}
+		//float moveZ = Mathf.Cos(transform.eulerAngles.y * Mathf.PI / 180.0f) * inZ - Mathf.Sin(transform.eulerAngles.y * Mathf.PI / 180.0f) * inX;
+		//float moveX = Mathf.Sin(transform.eulerAngles.y * Mathf.PI / 180.0f) * inZ + Mathf.Cos(transform.eulerAngles.y * Mathf.PI / 180.0f) * inX;
+		//transform.position += new Vector3(moveX, 0, moveZ);
+	}
+
+	private void DollyInCamera(float delta)
+	{
+		if (viewTarget)
+		{
+			Vector3 targetPosition = viewTarget.transform.position;
+			Vector3 cameraPosition = transform.position;
+			float distance = Vector3.Distance(targetPosition, cameraPosition);
+			Vector3 direction = (cameraPosition - targetPosition).normalized; 
+
+			// Change the distance based on scroll wheel movement
+			distance = Mathf.Pow(10, Mathf.Log10(distance) + delta * 0.2f);
+
+			// Clamp the values to min and max
+			float distanceMin = viewTarget.transform.localScale.x;
+			distance = (distance < distanceMin) ? distanceMin : distance;
+			distance = (distance > distanceMax) ? distanceMax : distance;
+
+			// Set new camera position
+			transform.position = targetPosition + direction * distance;
+		}
 	}
 
 	void Update()
@@ -30,15 +64,20 @@ public class CameraController : MonoBehaviour
 		} else if (Input.GetMouseButton(0))
 		{
 			Vector3 delta = Input.mousePosition - lastMousePosition;
-			MoveCamera(delta.x, delta.y);
+			PanTiltCamera(delta.x, delta.y);
 			lastMousePosition = Input.mousePosition;
 		}
 
 		// Scroll wheel
-		Vector3 pos = transform.position;
 		float scroll = Input.GetAxis("Mouse ScrollWheel");
-		pos.y -= scroll * scrollSpeed * Time.deltaTime * 300.0f;
-		pos.y = Mathf.Clamp(pos.y, minY, maxY);
-		transform.position = pos;
+		if (scroll != 0.0f)
+		{
+			// Shift key slows the movement
+			if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+			{
+				scroll = scroll / 10.0f;
+			}
+			DollyInCamera(scroll);
+		}
 	}
 }
