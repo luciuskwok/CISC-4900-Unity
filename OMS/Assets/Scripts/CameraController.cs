@@ -5,6 +5,8 @@ using System;
 
 public class CameraController : MonoBehaviour
 {
+	public GameObject targetsGroup;
+
 	public float distanceMax = 88000.0f;	// * 10^6 km
 	public float panSpeed = 20.0f;			// degrees per second
 	public float scrollSpeed = 20.0f;		// distance per scroll wheel unit depends on distance from object
@@ -15,18 +17,54 @@ public class CameraController : MonoBehaviour
  
 	void Start()
 	{
-		targets = GameObject.FindGameObjectsWithTag("Targetable");
-		if (targets.Length == 0)
+		//targets = GameObject.FindGameObjectsWithTag("Targetable");
+		Transform parent = targetsGroup.transform;
+		int count = parent.childCount;
+		targets = new GameObject[count];
+		for (int i = 0; i < count; i++)
 		{
-			Debug.Log("No GameObjects with tag 'Targetable' found.");
+			targets[i] = parent.GetChild(i).gameObject;
+		}
+
+		if (count == 0)
+		{
+			Debug.Log("No children found in targetsGroup.");
+		} else
+		{
+			// Point camera at target
+			SetTargetAtIndex(0);
 		}
 	}
 
 	private GameObject CurrentViewTarget()
 	{
-		if (targets.Length == 0) return null;
-		if (targetIndex < 0 || targetIndex >= targets.Length) return null;
+		if (targetIndex < 0 || targetIndex >= targets.Length) { Debug.Log("targetIndex is out of range of targets[] array!"); return null; }
 		return targets[targetIndex];
+	}
+
+	private void SetTargetAtIndex(int index)
+	{
+		if (index < 0 || index >= targets.Length) { Debug.Log("Target index is out of range of targets[] array!"); return; }
+
+		// Save old target so that distance and direction stay the same when switching targets
+		GameObject oldTarget = CurrentViewTarget();
+		targetIndex = index;
+		GameObject newTarget = CurrentViewTarget();
+
+		Vector3 cameraPosition = transform.position;
+		Vector3 relativePosition = cameraPosition - oldTarget.transform.position;
+
+		// Check for minimum distance
+		float minDistance = newTarget.transform.localScale.x * 2.0f;
+		float distance = Vector3.Magnitude(relativePosition);
+		if (distance < minDistance) distance = minDistance;
+
+		// Set new camera position
+		Vector3 direction = relativePosition.normalized;
+		transform.position = newTarget.transform.position + direction * distance;
+
+		// Rotate camera to face target
+		transform.LookAt(newTarget.transform);
 	}
 
 	private void PanTiltCamera(float deltaX, float deltaY)
@@ -96,6 +134,15 @@ public class CameraController : MonoBehaviour
 		// Debug.Log("Dolly: " + delta);
 	}
 
+	void SwitchTarget(int offset)
+	{
+		// Move through target array by offset, with wrap around
+		int index = targetIndex + offset;
+		while (index < 0) index += targets.Length;
+		while (index >= targets.Length) index -= targets.Length;
+		SetTargetAtIndex(index);
+	}
+
 	void Update()
 	{
 		// Shift key
@@ -125,6 +172,7 @@ public class CameraController : MonoBehaviour
 		}
 
 		// Keyboard
+		// -- Arrow Keys: pan & tilt camera
 		float movement = Time.deltaTime * 30.0f * speed; // About 0.5 degrees per second
 		if (Input.GetKey(KeyCode.UpArrow))
 		{
@@ -140,6 +188,24 @@ public class CameraController : MonoBehaviour
 		else if (Input.GetKey(KeyCode.RightArrow))
 		{
 			PanTiltCamera(movement, 0.0f);
+		}
+		// -- Plus ('=' or '+') / Minus ('-' or '_'): dolly in/out
+		else if (Input.GetKey(KeyCode.Minus))
+		{
+			DollyInCamera(-movement);
+		} else if (Input.GetKey(KeyCode.Equals))
+		{
+			DollyInCamera(movement);
+		}
+
+		// -- Square brackets: switch target
+		if (Input.GetKeyDown(KeyCode.LeftBracket))
+		{
+			SwitchTarget(-1);
+		}
+		else if (Input.GetKeyDown(KeyCode.RightBracket))
+		{
+			SwitchTarget(1);
 		}
 	}
 }
