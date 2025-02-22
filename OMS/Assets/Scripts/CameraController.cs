@@ -1,24 +1,38 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
+using System;
 
 public class CameraController : MonoBehaviour
 {
-
-	public GameObject viewTarget;
-
 	public float distanceMax = 88000.0f;	// * 10^6 km
 	public float panSpeed = 20.0f;			// degrees per second
 	public float scrollSpeed = 20.0f;		// distance per scroll wheel unit depends on distance from object
 
 	private Vector3 lastMousePosition;
+	private GameObject[] targets;
+	private int targetIndex = 0;
  
 	void Start()
 	{
-		
+		targets = GameObject.FindGameObjectsWithTag("Targetable");
+		if (targets.Length == 0)
+		{
+			Debug.Log("No GameObjects with tag 'Targetable' found.");
+		}
+	}
+
+	private GameObject CurrentViewTarget()
+	{
+		if (targets.Length == 0) return null;
+		if (targetIndex < 0 || targetIndex >= targets.Length) return null;
+		return targets[targetIndex];
 	}
 
 	private void PanTiltCamera(float deltaX, float deltaY)
 	{
+		GameObject viewTarget = CurrentViewTarget();
+
 		if (viewTarget)
 		{
 			Vector3 targetPosition = viewTarget.transform.position;
@@ -59,6 +73,7 @@ public class CameraController : MonoBehaviour
 
 	private void DollyInCamera(float delta)
 	{
+		GameObject viewTarget = CurrentViewTarget();
 		if (viewTarget)
 		{
 			Vector3 targetPosition = viewTarget.transform.position;
