@@ -192,10 +192,10 @@ public class CameraController : MonoBehaviour
 		// -- Plus ('=' or '+') / Minus ('-' or '_'): dolly in/out
 		else if (Input.GetKey(KeyCode.Minus))
 		{
-			DollyInCamera(-movement);
+			DollyInCamera(-movement * 0.2f);
 		} else if (Input.GetKey(KeyCode.Equals))
 		{
-			DollyInCamera(movement);
+			DollyInCamera(movement * 0.2f);
 		}
 
 		// -- Square brackets: switch target
