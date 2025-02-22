@@ -96,8 +96,8 @@ public class CameraController : MonoBehaviour
 			Vector3 delta = Input.mousePosition - lastMousePosition;
 			if (delta.x != 0.0f || delta.y != 0.0f)
 			{
-				speed = speed * 0.5f; // Slow down pan and tilt
-				PanTiltCamera(delta.x * speed, delta.y * speed);
+				speed = speed * 0.1f; // Slow down pan and tilt
+				PanTiltCamera(-delta.x * speed, -delta.y * speed);
 			}
 			lastMousePosition = Input.mousePosition;
 		}
