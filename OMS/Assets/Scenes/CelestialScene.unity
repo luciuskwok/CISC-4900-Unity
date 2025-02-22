@@ -401,7 +401,7 @@ MonoBehaviour:
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
-  m_Antialiasing: 0
+  m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
@@ -433,6 +433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d450834eec14f14b9a36625a697cdb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetsGroup: {fileID: 1638473173}
   distanceMax: 88000
   panSpeed: 20
   scrollSpeed: 20
@@ -1798,6 +1799,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1984801556}
     m_Modifications:
+    - target: {fileID: 655597778652834723, guid: 26fd75953b9f80f4797db8002cac7e6b, type: 3}
+      propertyPath: m_UseWorldSpace
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 655597778652834723, guid: 26fd75953b9f80f4797db8002cac7e6b, type: 3}
+      propertyPath: m_Parameters.colorGradient.m_Mode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 655597778652834723, guid: 26fd75953b9f80f4797db8002cac7e6b, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].value
       value: 1
