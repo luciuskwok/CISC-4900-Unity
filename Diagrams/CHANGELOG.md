@@ -2,10 +2,11 @@
 
 This file documents the changes to the Diagrams slide deck, which is kept on Google Slides. Versions will be tracked by the date that a PDF of the slides was created.
 
-## Unreleased
+## 2025-02-22
 
 - Added GitHub Projects and GitHub Repo slides.
 - Updated data sources.
+- Added Keplerian Orbital Elements diagram.
 
 ## 2025-02-16
 
