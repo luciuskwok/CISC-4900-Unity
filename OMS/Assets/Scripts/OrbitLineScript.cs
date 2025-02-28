@@ -5,9 +5,12 @@ using System.Collections;
 public class OrbitLineScript : MonoBehaviour
 {
 	//public LineRenderer lineRenderer;
+	Camera mainCamera;
 
 	void Start()
 	{
+		mainCamera = Camera.main;
+
 		// Create an ellipse
 		LineRenderer lineRenderer = GetComponent<LineRenderer>();
 		int count = 64;
@@ -31,7 +34,7 @@ public class OrbitLineScript : MonoBehaviour
 
 		var points = new Vector3[lineRenderer.positionCount];
 		int count = lineRenderer.GetPositions(points);
-		Vector3 cameraPosition = Camera.main.transform.position;
+		Vector3 cameraPosition = mainCamera.transform.position;
 
 		for (int i = 0; i < count; i++)
 		{
