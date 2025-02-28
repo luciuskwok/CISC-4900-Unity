@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 6835996878796016924}
   - component: {fileID: 6130406878474823964}
   m_Layer: 0
-  m_Name: Body Label Group
+  m_Name: Body Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
