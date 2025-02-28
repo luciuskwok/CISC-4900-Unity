@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
 	public TMP_Text latLabel;
 	public TMP_Text longLabel;
 	public TMP_Text distanceLabel;
+	public TMP_Text clockLabel;
 
 
 
@@ -214,5 +215,31 @@ public class CameraController : MonoBehaviour
 		{
 			SwitchTarget(1);
 		}
+
+		// UI: Text
+		clockLabel.text = "UT: " + DateTime.Now.ToString();
+		GameObject viewTarget = CurrentViewTarget();
+		if (viewTarget != null)
+		{
+			Vector3 targetPosition = viewTarget.transform.position;
+			Vector3 cameraPosition = transform.position;
+			float distance = Vector3.Distance(targetPosition, cameraPosition);
+			Vector3 direction = (cameraPosition - targetPosition).normalized;
+
+			float latDeg = Mathf.Asin(direction.y) * Mathf.Rad2Deg;
+			float lonDeg = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
+			targetLabel.text = "Target: " + viewTarget.name;
+			latLabel.text = "Lat: " + latDeg.ToString("F2") + "°";
+			longLabel.text = "Long: " + lonDeg.ToString("F2") + "°";
+			distanceLabel.text = "Distance: " + distance.ToString("F3") + "e6 km";
+		} else
+		{
+			targetLabel.text = "Target: None";
+			latLabel.text = "";
+			longLabel.text = "";
+			distanceLabel.text = "";
+		}
+
+
 	}
 }
