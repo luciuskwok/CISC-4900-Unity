@@ -25,7 +25,7 @@ public class BodyLabelScript : MonoBehaviour
 		// Adjust scale so billboard always appears the same size in camera
 		Vector3 cameraPosition = mainCamera.transform.position;
 		float distance = Vector3.Distance(transform.position, cameraPosition);
-		float s = distance / 8.0f;
+		float s = distance / 125.0f;
 		Vector3 scale = transform.localScale;
 		scale.Set(s, s, s);
 		transform.localScale = scale;
