@@ -2,7 +2,10 @@
 
 public class BodyLabelScript : MonoBehaviour
 {
-	Camera mainCamera;
+	public GameObject bodyIcon;
+	public GameObject textLabel;
+
+	private Camera mainCamera;
 	//Renderer renderer;
 
 	void Start()
