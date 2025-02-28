@@ -1,11 +1,18 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
+using TMPro;
 using System.Collections;
 using System;
 
 public class CameraController : MonoBehaviour
 {
 	public GameObject targetsGroup;
+	public TMP_Text targetLabel;
+	public TMP_Text latLabel;
+	public TMP_Text longLabel;
+	public TMP_Text distanceLabel;
+
+
 
 	public float distanceMax = 88000.0f;	// * 10^6 km
 	public float panSpeed = 20.0f;			// degrees per second

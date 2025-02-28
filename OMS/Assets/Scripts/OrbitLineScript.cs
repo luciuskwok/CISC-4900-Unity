@@ -39,6 +39,13 @@ public class OrbitLineScript : MonoBehaviour
 			float distance = Vector3.Distance(pt, cameraPosition);
 			min = (min <= distance) ? min : distance;
 		}
-		lineRenderer.startWidth = min / 1000.0f;
+		lineRenderer.startWidth = min / 8000.0f;
+		lineRenderer.endWidth = lineRenderer.startWidth;
+
+		if (min < 0.1f)
+		{
+			Debug.Log("Distance:" + min + ", line width:" + lineRenderer.startWidth);
+
+		}
 	}
 }
