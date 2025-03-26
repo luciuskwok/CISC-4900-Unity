@@ -15,7 +15,8 @@ public class CameraController : MonoBehaviour
 
 
 
-	public float distanceMax = 88000.0f;	// * 10^6 km
+	public float distanceMax = 88000.0f;    // * 10^6 km
+	public float distanceMin = 1.0f;        // * 10^6 km
 	public float panSpeed = 20.0f;			// degrees per second
 	public float scrollSpeed = 20.0f;		// distance per scroll wheel unit depends on distance from object
 
@@ -62,10 +63,17 @@ public class CameraController : MonoBehaviour
 		Vector3 cameraPosition = transform.position;
 		Vector3 relativePosition = cameraPosition - oldTarget.transform.position;
 
-		// Check for minimum distance
-		float minDistance = newTarget.transform.localScale.x * 2.0f;
+		// Check for minimum distance using the 2nd child, which should represent the actual celesital body
+		Transform targetTransform = newTarget.transform;
+		if (targetTransform.childCount >= 2)
+		{
+			targetTransform = targetTransform.GetChild(1);
+		}
+
+		distanceMin = targetTransform.localScale.x * 1.5f;
 		float distance = Vector3.Magnitude(relativePosition);
-		if (distance < minDistance) distance = minDistance;
+		if (distance < distanceMin) distance = distanceMin;
+		Debug.Log("distanceMin: " + distanceMin);
 
 		// Set new camera position
 		Vector3 direction = relativePosition.normalized;
@@ -131,7 +139,6 @@ public class CameraController : MonoBehaviour
 			distance = Mathf.Pow(10.0f, Mathf.Log10(distance) - delta * 0.2f);
 
 			// Clamp the values to min and max
-			float distanceMin = viewTarget.transform.localScale.x;
 			distance = (distance < distanceMin) ? distanceMin : distance;
 			distance = (distance > distanceMax) ? distanceMax : distance;
 
