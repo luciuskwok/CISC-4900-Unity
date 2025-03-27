@@ -2,9 +2,9 @@
 
 This file documents the changes to the Diagrams slide deck, which is kept on Google Slides. Versions will be tracked by the date that a PDF of the slides was created.
 
-## Unreleased
+## 2025-03-26
 
-- Added Unity Creative Core Pathway diagram slide.
+- Major reorganization and updating of slides, for the purpose of creating a narrative through the slide deck, and to update the content with what I've learned so far and to incorporate other content I have created related to the project.
 
 ## 2025-02-22
 
