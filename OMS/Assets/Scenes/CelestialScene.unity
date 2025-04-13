@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: c2f65140676fb124eb1e04e23637fe38, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: d51a2253cd79945d08fbe9589d8cb631, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -745,6 +745,7 @@ MonoBehaviour:
   distanceLabel: {fileID: 207080508}
   clockLabel: {fileID: 1171394758}
   distanceMax: 88000
+  distanceMin: 1
   panSpeed: 20
   scrollSpeed: 20
 --- !u!4 &348660940 stripped
