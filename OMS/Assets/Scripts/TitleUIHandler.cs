@@ -20,15 +20,7 @@ public class TitleUIHandler : MonoBehaviour
 		
 	}
 
-	// Go to the Solar System scene
-	public void GoToSolarSystemScene()
-	{
-		SceneManager.LoadScene(1);
-	}
-
-
-	// Go to the Orbit scene
-	public void GoToOrbitScene()
+	public void GoToOpeningVideoScene()
 	{
 		SceneManager.LoadScene(2);
 	}
