@@ -5,7 +5,8 @@ using System.Collections;
 public class OrbitLineScript : MonoBehaviour
 {
 	//public LineRenderer lineRenderer;
-	Camera mainCamera;
+	private Camera mainCamera;
+	private float lineFactor = 500.0f;
 
 	void Start()
 	{
@@ -42,7 +43,7 @@ public class OrbitLineScript : MonoBehaviour
 			float distance = Vector3.Distance(pt, cameraPosition);
 			min = (min <= distance) ? min : distance;
 		}
-		lineRenderer.startWidth = min / 1000.0f;
+		lineRenderer.startWidth = min / lineFactor;
 		lineRenderer.endWidth = lineRenderer.startWidth;
 
 		if (min < 0.1f)
