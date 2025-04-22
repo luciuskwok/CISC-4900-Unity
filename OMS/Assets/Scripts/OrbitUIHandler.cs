@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class OrbitUIHandler : MonoBehaviour
 {
-	public void GoToTitleScene() {
-		SceneManager.LoadScene(0);
+	public void HandleExitButton() {
+		SceneManager.LoadScene(1); // Chapter Select
 	}
 }

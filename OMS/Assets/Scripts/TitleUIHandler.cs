@@ -15,11 +15,6 @@ using UnityEditor;
 public class TitleUIHandler : MonoBehaviour
 {
 
-	void Start()
-	{
-		
-	}
-
 	public void GoToOpeningVideoScene()
 	{
 		SceneManager.LoadScene(2);
