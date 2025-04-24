@@ -763,7 +763,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 16.00003, y: -56}
+  m_AnchoredPosition: {x: 16, y: -56}
   m_SizeDelta: {x: 128, y: 72}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &930946622
@@ -877,6 +877,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1394266524}
   - component: {fileID: 1394266523}
+  - component: {fileID: 1394266525}
   m_Layer: 0
   m_Name: Line Green
   m_TagString: Untagged
@@ -930,10 +931,10 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: -5, y: -5, z: 0}
-  - {x: 5, y: -5, z: 0}
-  - {x: 5, y: 5, z: 0}
-  - {x: -5, y: 5, z: 0}
+  - {x: -5, y: 0, z: -5}
+  - {x: 5, y: 0, z: -5}
+  - {x: 5, y: 0, z: 5}
+  - {x: -5, y: 0, z: 5}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -1001,13 +1002,28 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1394266522}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 6, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 0.5, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1394266525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1394266522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b17a34be01417c48856a768a2d0ae5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  semiMajorAxis: 8.378
+  eccentricity: 0.25
+  longitudeOfPeriapsis: 15
 --- !u!1 &1396500638
 GameObject:
   m_ObjectHideFlags: 0
@@ -1018,6 +1034,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1396500640}
   - component: {fileID: 1396500639}
+  - component: {fileID: 1396500641}
   m_Layer: 5
   m_Name: Line Red
   m_TagString: Untagged
@@ -1071,10 +1088,10 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: -1, y: -1, z: 0}
-  - {x: 1, y: -1, z: 0}
-  - {x: 1, y: 1, z: 0}
-  - {x: -1, y: 1, z: 0}
+  - {x: -7, y: 0, z: -7}
+  - {x: 7, y: 0, z: -7}
+  - {x: 7, y: 0, z: 7}
+  - {x: -7, y: 0, z: 7}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -1142,13 +1159,28 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1396500638}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6.9730005, y: 6.9730005, z: 6.9730005}
+  m_LocalScale: {x: 0.99999994, y: 1, z: 0.99999994}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1396500641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1396500638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b17a34be01417c48856a768a2d0ae5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  semiMajorAxis: 6.779
+  eccentricity: 0
+  longitudeOfPeriapsis: 0
 --- !u!1 &1519427311
 GameObject:
   m_ObjectHideFlags: 0
