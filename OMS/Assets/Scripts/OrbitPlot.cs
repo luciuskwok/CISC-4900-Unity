@@ -30,17 +30,16 @@ public class OrbitPlot : MonoBehaviour
 		var points = new Vector3[count];
 
 		// First, calculate the olar form of ellipse relative to focus, then rotate it so its periapsis is at the specified longitude, and finally convert to cartesian coordinates.
-		// Pre-calculate the semi-latus rectum (l)
-		float semiLactusRectum = semiMajorAxis * (1.0f + eccentricity * eccentricity);
 		// Pre-convert the longitude of periapsis from degrees to radians
 		float longOfPeriapsisRadians = Mathf.Deg2Rad * longitudeOfPeriapsis;
 		for (int i = 0; i < count; i++) {
-			// Calculate the orbit from -180 to 100 degrees
+			// Theta is the true anomaly of the point.
+			// Calculate the orbit from -180 to 100 degrees.
 			float theta = ((float)i / (float)count * 360.0f - 180.0f) * Mathf.Deg2Rad;
 			// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
-			float r = semiLactusRectum / ( 1.0f - eccentricity * Mathf.Cos(theta));
+			float r = radiusWithTrueAnomaly(theta);
 			// Rotate by the longitudde of periapsis plus 180 degrees so that the zero longitude is at the positive x axis.
-			float a = theta + longOfPeriapsisRadians + Mathf.PI;
+			float a = theta + longOfPeriapsisRadians;
 			// Convert from polar to cartesian coordinates.
 			float x = Mathf.Cos(a) * r;
 			float z = Mathf.Sin(a) * r;
@@ -48,6 +47,14 @@ public class OrbitPlot : MonoBehaviour
 		}
 
 		return points;
+	}
+
+	float radiusWithTrueAnomaly(float theta) {
+		// Given a value for the true anomaly (theta), calculate the radius of the polar coordinate point on the orbit.
+		float semiLactusRectum = semiMajorAxis * (1.0f + eccentricity * eccentricity);
+
+		// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
+		return semiLactusRectum / ( 1.0f + eccentricity * Mathf.Cos(theta));
 	}
 
 	void Update()
