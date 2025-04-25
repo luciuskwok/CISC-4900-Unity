@@ -5,9 +5,9 @@ using System;
 
 public class OrbitPlot : MonoBehaviour
 {
-	public float semiMajorAxis;
-	public float eccentricity; // 0 = circle; 1 = parabola
-	public float longitudeOfPeriapsis; // in degrees
+	public double semiMajorAxis;
+	public double eccentricity; // 0 = circle; 1 = parabola
+	public double longitudeOfPeriapsis; // in degrees
 	public Color color;
 
 	// Note: the coordinate system that is conventionally used for orbital mechanics has the ecliptic on the x-y plane, and positive z is towards the North Pole Star. The positive x axis is the direction of the Sun as seen from the Earth at the (spring) vernal equinox. This means that the Earth is at longitude 0 at the autumnal equinox, and at 180 at the spring equinox.
@@ -17,6 +17,8 @@ public class OrbitPlot : MonoBehaviour
 	private LineRenderer lineRenderer;
 	private int pointCount = 90;
 	private double gradientAnimationTime = 4.0f; // seconds
+	private float maxAlpha = 1.0f;
+	private float minAlpha = 0.05f;
 
 	void Start()
 	{
@@ -42,30 +44,30 @@ public class OrbitPlot : MonoBehaviour
 
 		// First, calculate the olar form of ellipse relative to focus, then rotate it so its periapsis is at the specified longitude, and finally convert to cartesian coordinates.
 		// Pre-convert the longitude of periapsis from degrees to radians
-		float longOfPeriapsisRadians = Mathf.Deg2Rad * longitudeOfPeriapsis;
+		double longOfPeriapsisRadians = longitudeOfPeriapsis / 180.0 * Math.PI;
 		for (int i = 0; i < count; i++) {
 			// Theta is the true anomaly of the point.
 			// Calculate the orbit from -180 to 100 degrees.
-			float theta = ((float)i / (float)count * 360.0f - 180.0f) * Mathf.Deg2Rad;
+			double theta = ((double)i / (double)count * 360.0 - 180.0)  / 180.0 * Math.PI;
 			// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
-			float r = radiusWithTrueAnomaly(theta);
+			double r = radiusWithTrueAnomaly(theta);
 			// Rotate by the longitudde of periapsis, which is locade at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
-			float a = theta + longOfPeriapsisRadians;
+			double a = theta + longOfPeriapsisRadians;
 			// Convert from polar to cartesian coordinates.
-			float x = Mathf.Cos(a) * r;
-			float z = Mathf.Sin(a) * r;
-			points[i] = new Vector3(x, 0, z);
+			double x = Math.Cos(a) * r;
+			double z = Math.Sin(a) * r;
+			points[i] = new Vector3((float)x, 0, (float)z);
 		}
 
 		return points;
 	}
 
-	float radiusWithTrueAnomaly(float theta) {
+	double radiusWithTrueAnomaly(double theta) {
 		// Given a value for the true anomaly (theta), calculate the radius of the polar coordinate point on the orbit.
-		float semiLactusRectum = semiMajorAxis * (1.0f + eccentricity * eccentricity);
+		double semiLactusRectum = semiMajorAxis * (1.0 + eccentricity * eccentricity);
 
 		// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
-		return semiLactusRectum / ( 1.0f + eccentricity * Mathf.Cos(theta));
+		return semiLactusRectum / ( 1.0 + eccentricity * Math.Cos(theta));
 	}
 
 	float trueAnomayWithEccentricAnomaly(float e) {
@@ -81,8 +83,8 @@ public class OrbitPlot : MonoBehaviour
 		float countf = (float)(pointCount + 1);
 		float x1 = (float)step / countf;
 		float x2 = (float)(step + 1) / countf;
-		float a1 = 1.0f;
-		float a2 = 0.25f;
+		float a1 = maxAlpha;
+		float a2 = minAlpha;
 		float a0 = a2 + (a1 - a2) * (1.0f - x1);
 		float a3 = a2 + (a1 - a2) * (1.0f - x2);
 

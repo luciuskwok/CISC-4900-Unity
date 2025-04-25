@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -15,15 +16,17 @@ public class OrbitUIHandler : MonoBehaviour
 	public TMP_Text statisticsText;
 	public GameObject playerOrbitLine;
 
-	private float playerSemiMajorAxis = 6.973f;
-	private float playerEccentricity = 0.0f;
-	private float playerLongOfPeriapsis = 0.0f;
+	private double playerSemiMajorAxis = 6.973;
+	private double playerEccentricity = 0.0;
+	private double playerLongOfPeriapsis = 0.0;
+
+	private double earthGM = 3.986004418e14; // in m^3/s^2
 
 
 	void Start()
 	{
-		eccentricitySlider.SetValueWithoutNotify(playerEccentricity);
-		longitudeSlider.SetValueWithoutNotify(playerLongOfPeriapsis);
+		eccentricitySlider.SetValueWithoutNotify((float)playerEccentricity);
+		longitudeSlider.SetValueWithoutNotify((float)playerLongOfPeriapsis);
 		UpdateText();
 		UpdatePlayerOrbitLine();
 	}
@@ -39,21 +42,24 @@ public class OrbitUIHandler : MonoBehaviour
 
 	public void eccentricityDidChange(float value) {
 		playerEccentricity = value;
-		eccentricityReadout.SetText(value.ToString("F3"));
 		UpdateText();
 		UpdatePlayerOrbitLine();
 	}
 
 	public void longitudeDidChange(float value) {
 		playerLongOfPeriapsis = value;
-		longitudeReadout.SetText(value.ToString("F0")+"°");
 		UpdateText();
 		UpdatePlayerOrbitLine();
 	}
 
 	void UpdateText() {
-		statisticsText.text = "Semi-Major Axis: " + (playerSemiMajorAxis * 1000.0f).ToString("F0") + "\n" +
-			"Orbital Period: ???";
+		eccentricityReadout.SetText(playerEccentricity.ToString("F3"));
+		longitudeReadout.SetText(playerLongOfPeriapsis.ToString("F0")+"°");
+
+		// Stats
+		double op = orbitalPeriod(playerSemiMajorAxis);
+		statisticsText.text = "Semi-Major Axis: " + (playerSemiMajorAxis * 1000.0).ToString("F0") + " km\n" +
+			"Orbital Period: " + (op / 60.0).ToString("F0") + " min.";
 	}
 
 	void UpdatePlayerOrbitLine() {
@@ -62,6 +68,12 @@ public class OrbitUIHandler : MonoBehaviour
 		x.eccentricity = playerEccentricity;
 		x.longitudeOfPeriapsis = playerLongOfPeriapsis;
 		x.UpdatePoints();
+	}
+
+	double orbitalPeriod(double semiMajorAxis) {
+		// Convert to meters from Unity units (1,000,000 m = 1 Unity unit)
+		double r = semiMajorAxis * 1.0e6; 
+		return 2.0 * Math.PI * Math.Sqrt(r *r * r / earthGM);
 	}
 
 
