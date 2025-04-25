@@ -5,7 +5,7 @@ using System;
 
 public class OrbitPlot : MonoBehaviour
 {
-	public double semiMajorAxis;
+	public double semiMajorAxis; // in km
 	public double eccentricity; // 0 = circle; 1 = parabola
 	public double longitudeOfPeriapsis; // in degrees
 	public Color color;
@@ -53,9 +53,9 @@ public class OrbitPlot : MonoBehaviour
 			double r = radiusWithTrueAnomaly(theta);
 			// Rotate by the longitudde of periapsis, which is locade at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
 			double a = theta + longOfPeriapsisRadians;
-			// Convert from polar to cartesian coordinates.
-			double x = Math.Cos(a) * r;
-			double z = Math.Sin(a) * r;
+			// Convert from polar to cartesian coordinates & from km to Unity Units
+			double x = Math.Cos(a) * r * OrbitUIHandler.KmToUnityUnit;
+			double z = Math.Sin(a) * r * OrbitUIHandler.KmToUnityUnit;
 			points[i] = new Vector3((float)x, 0, (float)z);
 		}
 

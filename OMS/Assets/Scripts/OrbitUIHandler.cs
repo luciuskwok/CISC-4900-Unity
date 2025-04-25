@@ -16,11 +16,14 @@ public class OrbitUIHandler : MonoBehaviour
 	public TMP_Text statisticsText;
 	public GameObject playerOrbitLine;
 
-	private double playerSemiMajorAxis = 6.973;
+	public static double UnityUnitToKm = 1.0e3; //  1 Unity Unit = 1,000 km
+	public static double KmToUnityUnit = 1.0 / UnityUnitToKm;
+	private double playerSemiMajorAxis = 6973.0; // 10^3 km
 	private double playerEccentricity = 0.0;
-	private double playerLongOfPeriapsis = 0.0;
+	private double playerLongOfPeriapsis = 0.0; // degrees
 
 	private double earthGM = 3.986004418e14; // in m^3/s^2
+	private double earthRadius = 6378.0; // km
 
 
 	void Start()
@@ -58,7 +61,7 @@ public class OrbitUIHandler : MonoBehaviour
 
 		// Stats
 		double op = orbitalPeriod(playerSemiMajorAxis);
-		statisticsText.text = "Semi-Major Axis: " + (playerSemiMajorAxis * 1000.0).ToString("F0") + " km\n" +
+		statisticsText.text = "Semi-Major Axis: " + (playerSemiMajorAxis).ToString("#,##0") + " km\n" +
 			"Orbital Period: " + (op / 60.0).ToString("F0") + " min.";
 	}
 
@@ -71,8 +74,8 @@ public class OrbitUIHandler : MonoBehaviour
 	}
 
 	double orbitalPeriod(double semiMajorAxis) {
-		// Convert to meters from Unity units (1,000,000 m = 1 Unity unit)
-		double r = semiMajorAxis * 1.0e6; 
+		// Convert to meters from km
+		double r = semiMajorAxis * 1.0e3; 
 		return 2.0 * Math.PI * Math.Sqrt(r *r * r / earthGM);
 	}
 

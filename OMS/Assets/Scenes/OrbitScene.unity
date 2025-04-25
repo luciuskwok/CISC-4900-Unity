@@ -632,7 +632,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -1354,7 +1354,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -1532,9 +1532,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'GM: 3.53x10^12
-
-    Radius: 6,378 km'
+  m_text: "GM: 3.986\xD710\xB9\u2074 m\xB3/s\xB2\nRadius: 6,378 km"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2227,7 +2225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b17a34be01417c48856a768a2d0ae5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  semiMajorAxis: 8.378
+  semiMajorAxis: 7000
   eccentricity: 0.25
   longitudeOfPeriapsis: 180
   color: {r: 0, g: 1, b: 0.25464916, a: 0}
@@ -2385,7 +2383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b17a34be01417c48856a768a2d0ae5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  semiMajorAxis: 8.378
+  semiMajorAxis: 7000
   eccentricity: 0.125
   longitudeOfPeriapsis: 180
   color: {r: 1, g: 0, b: 0, a: 0}
