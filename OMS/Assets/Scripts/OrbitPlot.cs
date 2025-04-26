@@ -8,21 +8,22 @@ public class OrbitPlot : MonoBehaviour
 	public double semiMajorAxis; // in km
 	public double eccentricity; // 0 = circle; 1 = parabola
 	public double longitudeOfPeriapsis; // in degrees
+
 	public Color color;
 
 	// Note: the coordinate system that is conventionally used for orbital mechanics has the ecliptic on the x-y plane, and positive z is towards the North Pole Star. The positive x axis is the direction of the Sun as seen from the Earth at the (spring) vernal equinox. This means that the Earth is at longitude 0 at the autumnal equinox, and at 180 at the spring equinox.
 	// Unity uses the convention that the x-z plane is horizontal, and positive y points up. So the y and z axes are swapped. 
 	// As for the x axis, that can be arbitrarily chosen as long as it is consistent throughout the solar system for this project. 
 
-	private LineRenderer lineRenderer;
-	private int pointCount = 90;
+	private int pointCount = 180;
 	private double gradientAnimationTime = 4.0f; // seconds
 	private float maxAlpha = 1.0f;
 	private float minAlpha = 0.05f;
 
+	private static double gravitationalConstant = 6.67430e-20; // (km^3)/(kg*s^2)
+
 	void Start()
 	{
-		lineRenderer = GetComponent<LineRenderer>();
 		UpdatePoints();
 	}
 
@@ -34,6 +35,7 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	public void UpdatePoints() {
+		var lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.positionCount = pointCount;
 		var points = GetOrbitPoints(pointCount);
 		lineRenderer.SetPositions(points);
@@ -50,7 +52,7 @@ public class OrbitPlot : MonoBehaviour
 			// Calculate the orbit from -180 to 100 degrees.
 			double theta = ((double)i / (double)count * 360.0 - 180.0)  / 180.0 * Math.PI;
 			// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
-			double r = radiusWithTrueAnomaly(theta);
+			double r = RadiusWithTrueAnomaly(theta);
 			// Rotate by the longitudde of periapsis, which is locade at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
 			double a = theta + longOfPeriapsisRadians;
 			// Convert from polar to cartesian coordinates & from km to Unity Units
@@ -62,7 +64,7 @@ public class OrbitPlot : MonoBehaviour
 		return points;
 	}
 
-	double radiusWithTrueAnomaly(double theta) {
+	double RadiusWithTrueAnomaly(double theta) {
 		// Given a value for the true anomaly (theta), calculate the radius of the polar coordinate point on the orbit.
 		double semiLactusRectum = semiMajorAxis * (1.0 + eccentricity * eccentricity);
 
@@ -70,14 +72,13 @@ public class OrbitPlot : MonoBehaviour
 		return semiLactusRectum / ( 1.0 + eccentricity * Math.Cos(theta));
 	}
 
-	float trueAnomayWithEccentricAnomaly(float e) {
+	float TrueAnomayWithEccentricAnomaly(float e) {
 		
 		return 0;
 	}
 
 	void UpdateColors(int step) {
 		// Given step as the index of a point, create a gradient.
-		Gradient gradient = new Gradient();
 
 		// Calculate the locations and alpha values for a fade
 		float countf = (float)(pointCount + 1);
@@ -93,7 +94,7 @@ public class OrbitPlot : MonoBehaviour
 			a3 = a2;
 		}
 
-
+		var gradient = new Gradient();
 		gradient.SetKeys(
 			// Use the same color for entire line
 			new GradientColorKey[] { 
@@ -108,6 +109,19 @@ public class OrbitPlot : MonoBehaviour
 			}
 		);
 
+		var lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.colorGradient = gradient;
 	}
+
+	public double SemiMinorAxis() {
+		return semiMajorAxis * Math.Sqrt(1.0 - eccentricity * eccentricity);
+	}
+
+	public static double OrbitalPeriod(double semiMajorAxis, double parentBodyMass) {
+		double gm = gravitationalConstant * parentBodyMass;
+		double a = semiMajorAxis; 
+		return 2.0 * Math.PI * Math.Sqrt(a * a * a / gm);
+	}
+
+
 }

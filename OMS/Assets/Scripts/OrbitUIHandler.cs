@@ -22,9 +22,9 @@ public class OrbitUIHandler : MonoBehaviour
 	private double playerEccentricity = 0.0;
 	private double playerLongOfPeriapsis = 0.0; // degrees
 
-	private double earthGM = 3.986004418e14; // in m^3/s^2
+	// private double earthGM = 3.986004418e5; // in km^3/s^2
 	private double earthRadius = 6378.0; // km
-
+	private double earthMass = 5.9722e24; // kg
 
 	void Start()
 	{
@@ -43,13 +43,13 @@ public class OrbitUIHandler : MonoBehaviour
 		SceneManager.LoadScene(1); // Chapter Select
 	}
 
-	public void eccentricityDidChange(float value) {
+	public void EccentricityDidChange(float value) {
 		playerEccentricity = value;
 		UpdateText();
 		UpdatePlayerOrbitLine();
 	}
 
-	public void longitudeDidChange(float value) {
+	public void LongitudeDidChange(float value) {
 		playerLongOfPeriapsis = value;
 		UpdateText();
 		UpdatePlayerOrbitLine();
@@ -60,9 +60,9 @@ public class OrbitUIHandler : MonoBehaviour
 		longitudeReadout.SetText(playerLongOfPeriapsis.ToString("F0")+"°");
 
 		// Stats
-		double op = orbitalPeriod(playerSemiMajorAxis);
+		double op = OrbitPlot.OrbitalPeriod(playerSemiMajorAxis, earthMass);
 		statisticsText.text = "Semi-Major Axis: " + (playerSemiMajorAxis).ToString("#,##0") + " km\n" +
-			"Orbital Period: " + (op / 60.0).ToString("F0") + " min.";
+			"Orbital Period: " + (op / 60.0).ToString("F2") + " min.";
 	}
 
 	void UpdatePlayerOrbitLine() {
@@ -72,12 +72,5 @@ public class OrbitUIHandler : MonoBehaviour
 		x.longitudeOfPeriapsis = playerLongOfPeriapsis;
 		x.UpdatePoints();
 	}
-
-	double orbitalPeriod(double semiMajorAxis) {
-		// Convert to meters from km
-		double r = semiMajorAxis * 1.0e3; 
-		return 2.0 * Math.PI * Math.Sqrt(r *r * r / earthGM);
-	}
-
 
 }

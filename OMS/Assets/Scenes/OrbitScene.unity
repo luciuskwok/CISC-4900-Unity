@@ -1179,7 +1179,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 437447186}
         m_TargetAssemblyTypeName: OrbitUIHandler, Assembly-CSharp
-        m_MethodName: eccentricityDidChange
+        m_MethodName: EccentricityDidChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2845,7 +2845,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 437447186}
         m_TargetAssemblyTypeName: OrbitUIHandler, Assembly-CSharp
-        m_MethodName: longitudeDidChange
+        m_MethodName: LongitudeDidChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3053,7 +3053,7 @@ Transform:
   m_GameObject: {fileID: 1605080068}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 100, z: 0}
+  m_LocalPosition: {x: 0, y: 200, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3493,9 +3493,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 1605080071}
   - {fileID: 1519427313}
-  - {fileID: 1550071776}
-  - {fileID: 518156338}
-  - {fileID: 437447187}
   - {fileID: 1703442798}
   - {fileID: 1396500640}
   - {fileID: 1394266524}
+  - {fileID: 1550071776}
+  - {fileID: 437447187}
+  - {fileID: 518156338}
