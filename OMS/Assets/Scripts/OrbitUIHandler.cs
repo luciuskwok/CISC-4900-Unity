@@ -64,9 +64,15 @@ public class OrbitUIHandler : MonoBehaviour
 		longitudeReadout.SetText(playerLongOfPeriapsis.ToString("F0")+"°");
 
 		// Stats
-		double op = OrbitPlot.OrbitalPeriod(playerSemiMajorAxis, earthMass);
+		double orbitalPeriod = OrbitPlot.OrbitalPeriod(playerSemiMajorAxis, earthMass);
+		double f = playerSemiMajorAxis * playerEccentricity;
+		double apoapsis = playerSemiMajorAxis + f - EarthRadius;
+		double periapsis = playerSemiMajorAxis - f - EarthRadius;
+
 		statisticsText.text = "Semi-Major Axis: " + (playerSemiMajorAxis).ToString("#,##0") + " km\n" +
-			"Orbital Period: " + (op / 60.0).ToString("F2") + " min.";
+			"Orbital Period: " + (orbitalPeriod / 60.0).ToString("F2") + " min.\n" +
+			"Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
+			"Periapsis: " + periapsis.ToString("#,##0") + " km\n";
 	}
 
 	void UpdatePlayerOrbitLine() {

@@ -95,7 +95,7 @@ public class OrbitPlot : MonoBehaviour
 			double x = a * Math.Cos(theta) - f;
 			double y = b * Math.Sin(theta);
 			// Rotate the ellipse point
-			double x1 = x * Math.Cos(rot) + y * Math.Sin(rot);
+			double x1 = x * Math.Cos(rot) - y * Math.Sin(rot);
 			double y1 = x * Math.Sin(rot) + y * Math.Cos(rot);
 			// Add point
 			points[i] = new Vector3((float)(x1 * scale), 0, (float)(y1 * scale));
