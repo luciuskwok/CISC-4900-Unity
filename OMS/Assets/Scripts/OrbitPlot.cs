@@ -57,7 +57,7 @@ public class OrbitPlot : MonoBehaviour
 		for (int i = 0; i < count; i++) {
 			// Theta is the true anomaly of the point.
 			// Calculate the orbit from -180 to 100 degrees.
-			double theta = ((double)i / (double)count * 360.0 - 180.0)  / 180.0 * Math.PI;
+			double theta = ((double)i / count * 360.0 - 180.0)  / 180.0 * Math.PI;
 			// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
 			double r = RadiusWithTrueAnomaly(theta);
 			// Rotate by the longitudde of periapsis, which is located at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
@@ -86,11 +86,19 @@ public class OrbitPlot : MonoBehaviour
 
 		double a = semiMajorAxis;
 		double b = SemiMinorAxis();
+		double f = a * eccentricity; // Distance from center to focus, f = a * e
+		double scale = OrbitUIHandler.KmToUnityUnit;
+		double rot = longitudeOfPeriapsis / 180.0 * Math.PI; // convert to radians
 		for (int i = 0; i < count; i++) {
-			double theta = ((double)i / (double)count * 360.0 - 180.0)  / 180.0 * Math.PI;
-			double x = a * Math.Cos(theta) * OrbitUIHandler.KmToUnityUnit;
-			double z = b * Math.Sin(theta) * OrbitUIHandler.KmToUnityUnit;
-			points[i] = new Vector3((float)x, 0, (float)z);
+			double theta = (360.0 * i / count - 180.0)  / 180.0 * Math.PI;
+			// Plot a canonical ellipse with focus and center on the x-axis, centered on the right focus
+			double x = a * Math.Cos(theta) - f;
+			double y = b * Math.Sin(theta);
+			// Rotate the ellipse point
+			double x1 = x * Math.Cos(rot) + y * Math.Sin(rot);
+			double y1 = x * Math.Sin(rot) - y * Math.Cos(rot);
+			// Add point
+			points[i] = new Vector3((float)(x1 * scale), 0, (float)(y1 * scale));
 		}
 		return points;
 	}
