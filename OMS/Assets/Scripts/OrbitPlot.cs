@@ -11,6 +11,8 @@ public class OrbitPlot : MonoBehaviour
 
 	public Color color;
 
+	public int plottingMethod = 0;
+
 	// Note: the coordinate system that is conventionally used for orbital mechanics has the ecliptic on the x-y plane, and positive z is towards the North Pole Star. The positive x axis is the direction of the Sun as seen from the Earth at the (spring) vernal equinox. This means that the Earth is at longitude 0 at the autumnal equinox, and at 180 at the spring equinox.
 	// Unity uses the convention that the x-z plane is horizontal, and positive y points up. So the y and z axes are swapped. 
 	// As for the x axis, that can be arbitrarily chosen as long as it is consistent throughout the solar system for this project. 
@@ -37,14 +39,19 @@ public class OrbitPlot : MonoBehaviour
 	public void UpdatePoints() {
 		var lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.positionCount = pointCount;
-		var points = GetOrbitPoints(pointCount);
+		Vector3[] points;
+		if (plottingMethod == 0) {
+			points = EllipseWithPolarMethod(pointCount);
+		} else {
+			points = EllipseWithCartesianMethod(pointCount);
+		}
 		lineRenderer.SetPositions(points);
 	}
 
-	Vector3[] GetOrbitPoints(int count) {
+	Vector3[] EllipseWithPolarMethod(int count) {
 		var points = new Vector3[count];
 
-		// First, calculate the olar form of ellipse relative to focus, then rotate it so its periapsis is at the specified longitude, and finally convert to cartesian coordinates.
+		// First, calculate the polar form of ellipse relative to focus, then rotate it so its periapsis is at the specified longitude, and finally convert to cartesian coordinates.
 		// Pre-convert the longitude of periapsis from degrees to radians
 		double longOfPeriapsisRadians = longitudeOfPeriapsis / 180.0 * Math.PI;
 		for (int i = 0; i < count; i++) {
@@ -53,12 +60,14 @@ public class OrbitPlot : MonoBehaviour
 			double theta = ((double)i / (double)count * 360.0 - 180.0)  / 180.0 * Math.PI;
 			// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
 			double r = RadiusWithTrueAnomaly(theta);
-			// Rotate by the longitudde of periapsis, which is locade at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
-			double a = theta + longOfPeriapsisRadians;
-			// Convert from polar to cartesian coordinates & from km to Unity Units
-			double x = Math.Cos(a) * r * OrbitUIHandler.KmToUnityUnit;
-			double z = Math.Sin(a) * r * OrbitUIHandler.KmToUnityUnit;
-			points[i] = new Vector3((float)x, 0, (float)z);
+			// Rotate by the longitudde of periapsis, which is located at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
+			// Plot points with focus at center
+			double x = Math.Cos(theta + longOfPeriapsisRadians) * r;
+			double z = Math.Sin(theta + longOfPeriapsisRadians) * r;
+
+			// Convert from km to Unity Units
+			double scale = OrbitUIHandler.KmToUnityUnit;
+			points[i] = new Vector3((float)(x * scale), 0, (float)(z * scale));
 		}
 
 		return points;
@@ -70,6 +79,20 @@ public class OrbitPlot : MonoBehaviour
 
 		// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
 		return semiLactusRectum / ( 1.0 + eccentricity * Math.Cos(theta));
+	}
+
+	Vector3[] EllipseWithCartesianMethod(int count) {
+		var points = new Vector3[count];
+
+		double a = semiMajorAxis;
+		double b = SemiMinorAxis();
+		for (int i = 0; i < count; i++) {
+			double theta = ((double)i / (double)count * 360.0 - 180.0)  / 180.0 * Math.PI;
+			double x = a * Math.Cos(theta) * OrbitUIHandler.KmToUnityUnit;
+			double z = b * Math.Sin(theta) * OrbitUIHandler.KmToUnityUnit;
+			points[i] = new Vector3((float)x, 0, (float)z);
+		}
+		return points;
 	}
 
 	float TrueAnomayWithEccentricAnomaly(float e) {

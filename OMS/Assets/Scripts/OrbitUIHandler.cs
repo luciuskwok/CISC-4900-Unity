@@ -15,15 +15,19 @@ public class OrbitUIHandler : MonoBehaviour
 
 	public TMP_Text statisticsText;
 	public GameObject playerOrbitLine;
+	public GameObject targetOrbitLine;
 
+
+	public static double EarthRadius = 6378.0; // km
 	public static double UnityUnitToKm = 1.0e3; //  1 Unity Unit = 1,000 km
 	public static double KmToUnityUnit = 1.0 / UnityUnitToKm;
-	private double playerSemiMajorAxis = 6973.0; // 10^3 km
+
+
+	private double playerSemiMajorAxis = EarthRadius + 1000; // km
 	private double playerEccentricity = 0.0;
 	private double playerLongOfPeriapsis = 0.0; // degrees
 
 	// private double earthGM = 3.986004418e5; // in km^3/s^2
-	private double earthRadius = 6378.0; // km
 	private double earthMass = 5.9722e24; // kg
 
 	void Start()
@@ -66,11 +70,18 @@ public class OrbitUIHandler : MonoBehaviour
 	}
 
 	void UpdatePlayerOrbitLine() {
-		var x = playerOrbitLine.GetComponent<OrbitPlot>();
-		x.semiMajorAxis = playerSemiMajorAxis;
-		x.eccentricity = playerEccentricity;
-		x.longitudeOfPeriapsis = playerLongOfPeriapsis;
-		x.UpdatePoints();
+		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
+		playerOrbit.semiMajorAxis = playerSemiMajorAxis;
+		playerOrbit.eccentricity = playerEccentricity;
+		playerOrbit.longitudeOfPeriapsis = playerLongOfPeriapsis;
+		playerOrbit.UpdatePoints();
+
+		// For testing, also change the target
+		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
+		targetOrbit.semiMajorAxis = playerSemiMajorAxis;
+		targetOrbit.eccentricity = playerEccentricity;
+		targetOrbit.longitudeOfPeriapsis = playerLongOfPeriapsis;
+		targetOrbit.UpdatePoints();
 	}
 
 }
