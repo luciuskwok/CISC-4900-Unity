@@ -75,7 +75,7 @@ public class OrbitPlot : MonoBehaviour
 
 	double RadiusWithTrueAnomaly(double theta) {
 		// Given a value for the true anomaly (theta), calculate the radius of the polar coordinate point on the orbit.
-		double semiLactusRectum = semiMajorAxis * (1.0 + eccentricity * eccentricity);
+		double semiLactusRectum = semiMajorAxis * (1.0 - eccentricity * eccentricity);
 
 		// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
 		return semiLactusRectum / ( 1.0 + eccentricity * Math.Cos(theta));
@@ -96,7 +96,7 @@ public class OrbitPlot : MonoBehaviour
 			double y = b * Math.Sin(theta);
 			// Rotate the ellipse point
 			double x1 = x * Math.Cos(rot) + y * Math.Sin(rot);
-			double y1 = x * Math.Sin(rot) - y * Math.Cos(rot);
+			double y1 = x * Math.Sin(rot) + y * Math.Cos(rot);
 			// Add point
 			points[i] = new Vector3((float)(x1 * scale), 0, (float)(y1 * scale));
 		}
