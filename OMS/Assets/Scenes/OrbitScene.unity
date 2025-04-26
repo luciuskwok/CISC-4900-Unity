@@ -1541,7 +1541,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Radius: 6,378 km\nMass: 5.972\xD710\xB3\u2074 kg\nGM: 3.986\xD710\u2075
+  m_text: "Radius: 6,378 km\nMass: 5.972\xD710\xB2\u2074 kg\nGM: 3.986\xD710\u2075
     km\xB3/s\xB2"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2490,13 +2490,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1519427311}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.14399649, y: 0.6922897, z: -0.14399649, w: 0.6922897}
   m_LocalPosition: {x: 5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 23.5, y: 90, z: 0}
 --- !u!114 &1519427314
 MonoBehaviour:
   m_ObjectHideFlags: 0
