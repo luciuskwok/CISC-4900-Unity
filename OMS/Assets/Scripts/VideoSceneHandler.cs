@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using System.Collections;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -14,6 +16,12 @@ public class VideoSceneHandler : MonoBehaviour
 	void Start()
 	{
 		videoPlayer.loopPointReached += EndReached;
+		StartCoroutine(PlayVideo());
+	}
+
+	IEnumerator PlayVideo() {
+		yield return new WaitForSeconds(0.25f);
+		videoPlayer.Play();
 	}
 
 	private void EndReached(VideoPlayer vp) {
