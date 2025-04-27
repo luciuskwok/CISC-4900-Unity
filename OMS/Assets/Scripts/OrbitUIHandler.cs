@@ -20,7 +20,7 @@ public class OrbitUIHandler : MonoBehaviour
 
 	// Player parameters
 	private double playerSemiMajorAxis = EarthRadius + 1000; // km
-	private double playerEccentricity = 0.0;
+	private double playerEccentricity = 0.8;
 	private double playerLongOfPeriapsis = 180.0; // degrees
 	private double progradeDeltaV = 0.0; // m/s
 
@@ -59,19 +59,23 @@ public class OrbitUIHandler : MonoBehaviour
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 
 		// Update maneuver node
-		UpdateManeuverNodePosition();
+		SetManeuverNodeAtEccentricAnomaly(0);
 	}
 
 	void Update()
 	{
-		
+		// Test: move maneuver node around orbit
+		const double orbitalPeriod = 4.0; // seconds
+		double meanAnomaly = Time.timeSinceLevelLoadAsDouble / orbitalPeriod % 1.0 * 2.0 * Math.PI;
+		double eccAnomaly = OrbitPlot.EccentricAnomalyFromMeanAnomaly(meanAnomaly, playerEccentricity);
+		SetManeuverNodeAtEccentricAnomaly(eccAnomaly);
 	}
 
-	void UpdateManeuverNodePosition() {
+	void SetManeuverNodeAtEccentricAnomaly(double eccentricAnomaly) {
 		// Move Maneuver Node UI element to aligh with view
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
 		// Set the manuever node at periapse
-		Vector3 periapse = playerOrbit.PositionAtEccentricAnomaly(0);
+		Vector3 periapse = playerOrbit.PositionAtEccentricAnomaly(eccentricAnomaly);
 		// Convert to 2d 
 		Vector3 point = mainCamera.WorldToViewportPoint(periapse);
 		// Scale to canvas size
@@ -82,7 +86,7 @@ public class OrbitUIHandler : MonoBehaviour
 		RectTransform nodeRT = maneuverNode.GetComponent<RectTransform>();
 		nodeRT.anchoredPosition = point;
 
-		Debug.Log("Node: x = " + point.x + ", y = " + point.y);
+		//Debug.Log("Node: x = " + point.x + ", y = " + point.y);
 	}
 
 	public void HandleMenuButton() {
