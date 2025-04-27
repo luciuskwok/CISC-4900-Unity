@@ -7,96 +7,83 @@ using UnityEngine.UI;
 
 public class OrbitUIHandler : MonoBehaviour
 {
-	public Slider eccentricitySlider;
-	public TMP_Text eccentricityReadout;
-
-	public Slider longitudeSlider;
-	public TMP_Text longitudeReadout;
-
-	public TMP_Text statisticsText;
+	// UI
+	public Slider progradeSlider;
+	public TMP_Text progradeReadout;
+	public TMP_Text playerStatsText;
 	public GameObject playerOrbitLine;
+	public TMP_Text targetStatsText;
 	public GameObject targetOrbitLine;
 
-
-	public static double EarthRadius = 6378.0; // km
-	public static double UnityUnitToKm = 1.0e3; //  1 Unity Unit = 1,000 km
-	public static double KmToUnityUnit = 1.0 / UnityUnitToKm;
-
-
+	// Player parameters
 	private double playerSemiMajorAxis = EarthRadius + 1000; // km
 	private double playerEccentricity = 0.0;
-	private double playerLongOfPeriapsis = 0.0; // degrees
+	private double playerLongOfPeriapsis = 180.0; // degrees
+	private double progradeDeltaV = 0.0; // m/s
 
 	// private double earthGM = 3.986004418e5; // in km^3/s^2
-	private double earthMass = 5.9722e24; // kg
+
+	// Constants
+	public const double EarthRadius = 6378.0; // km
+	public const double EarthMass = 5.9722e24; // kg
+	public const double UnityUnitToKm = 1.0e3; //  1 Unity Unit = 1,000 km
+	public const double KmToUnityUnit = 1.0 / UnityUnitToKm;
 
 	void Start()
 	{
-		eccentricitySlider.SetValueWithoutNotify((float)playerEccentricity);
-		longitudeSlider.SetValueWithoutNotify((float)playerLongOfPeriapsis);
-		UpdateText();
-		UpdatePlayerOrbitLine();
+		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
+		UpdateOrbit();
 
 		// Set up the target orbit
 		double targetPeriaps = 1000.0 + EarthRadius; // km
 		double targetApoaps = 4000.0 + EarthRadius; // km
 		double targetSMA = (targetPeriaps + targetApoaps) / 2.0;
+		double targetEccen = 1.0 - (targetPeriaps / targetSMA);
 
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
 		targetOrbit.semiMajorAxis = targetSMA;
-		targetOrbit.eccentricity = 1.0 - (targetPeriaps / targetSMA);
+		targetOrbit.eccentricity = targetEccen;
 		targetOrbit.longitudeOfPeriapsis = 180.0;
 		targetOrbit.UpdatePoints();
 
-
-
-		/* 	
-			pe = sma - f
-			pe = sma - sma * e
-			pe/sma = 1 - e
-			e = 1 - pe/sma
-		*/
+		// Target Stats Text
+		double f = targetSMA * targetEccen;
+		double apoapsis = targetSMA + f - EarthRadius;
+		double periapsis = targetSMA - f - EarthRadius;
+		double period = OrbitPlot.OrbitalPeriod(targetSMA, EarthMass);
+		targetStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
+			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
+			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 	}
 
-	public void HandleExitButton() {
+	public void HandleMenuButton() {
 		SceneManager.LoadScene(1); // Chapter Select
 	}
 
-	public void EccentricityDidChange(float value) {
-		playerEccentricity = value;
-		UpdateText();
-		UpdatePlayerOrbitLine();
+	public void ProgradeDidChange(float value) {
+		progradeDeltaV = value;
+		UpdateOrbit();
 	}
 
-	public void LongitudeDidChange(float value) {
-		playerLongOfPeriapsis = value;
-		UpdateText();
-		UpdatePlayerOrbitLine();
-	}
-
-	void UpdateText() {
-		eccentricityReadout.SetText(playerEccentricity.ToString("F3"));
-		longitudeReadout.SetText(playerLongOfPeriapsis.ToString("F0")+"°");
-
-		// Stats
-		double orbitalPeriod = OrbitPlot.OrbitalPeriod(playerSemiMajorAxis, earthMass);
-		double f = playerSemiMajorAxis * playerEccentricity;
-		double apoapsis = playerSemiMajorAxis + f - EarthRadius;
-		double periapsis = playerSemiMajorAxis - f - EarthRadius;
-
-		statisticsText.text = "Semi-Major Axis: " + (playerSemiMajorAxis).ToString("#,##0") + " km\n" +
-			"Orbital Period: " + (orbitalPeriod / 60.0).ToString("F2") + " min.\n" +
-			"Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
-			"Periapsis: " + periapsis.ToString("#,##0") + " km\n";
-	}
-
-	void UpdatePlayerOrbitLine() {
+	void UpdateOrbit() {
+		// Recalculate orbital parameters
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
 		playerOrbit.semiMajorAxis = playerSemiMajorAxis;
 		playerOrbit.eccentricity = playerEccentricity;
 		playerOrbit.longitudeOfPeriapsis = playerLongOfPeriapsis;
 		playerOrbit.UpdatePoints();
 
+		// Maneuver Controls
+		progradeReadout.SetText(progradeDeltaV.ToString("F1"));
+
+		// Player Stats
+		double f = playerSemiMajorAxis * playerEccentricity;
+		double apoapsis = playerSemiMajorAxis + f - EarthRadius;
+		double periapsis = playerSemiMajorAxis - f - EarthRadius;
+		double period = OrbitPlot.OrbitalPeriod(playerSemiMajorAxis, EarthMass);
+		playerStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
+			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
+			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 	}
 
 	// Utilities
@@ -118,6 +105,7 @@ public class OrbitUIHandler : MonoBehaviour
 		} else {
 			s += t.ToString("F2");
 		}
+		s += "s";
 		return s;
 	}
 
