@@ -14,6 +14,9 @@ public class OrbitUIHandler : MonoBehaviour
 	public GameObject playerOrbitLine;
 	public TMP_Text targetStatsText;
 	public GameObject targetOrbitLine;
+	public GameObject maneuverNode;
+	public Camera mainCamera;
+	public Canvas canvas;
 
 	// Player parameters
 	private double playerSemiMajorAxis = EarthRadius + 1000; // km
@@ -54,6 +57,32 @@ public class OrbitUIHandler : MonoBehaviour
 		targetStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
+
+		// Update maneuver node
+		UpdateManeuverNodePosition();
+	}
+
+	void Update()
+	{
+		
+	}
+
+	void UpdateManeuverNodePosition() {
+		// Move Maneuver Node UI element to aligh with view
+		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
+		// Set the manuever node at periapse
+		Vector3 periapse = playerOrbit.PositionAtEccentricAnomaly(0);
+		// Convert to 2d 
+		Vector3 point = mainCamera.WorldToViewportPoint(periapse);
+		// Scale to canvas size
+		RectTransform canvasRT = canvas.GetComponent<RectTransform>();
+		point.x *= canvasRT.rect.width;
+		point.y *= canvasRT.rect.height;
+		// Move maneuver node in UI
+		RectTransform nodeRT = maneuverNode.GetComponent<RectTransform>();
+		nodeRT.anchoredPosition = point;
+
+		Debug.Log("Node: x = " + point.x + ", y = " + point.y);
 	}
 
 	public void HandleMenuButton() {
@@ -74,7 +103,7 @@ public class OrbitUIHandler : MonoBehaviour
 		playerOrbit.UpdatePoints();
 
 		// Maneuver Controls
-		progradeReadout.SetText(progradeDeltaV.ToString("F1"));
+		progradeReadout.SetText(progradeDeltaV.ToString("F1") + " m/s");
 
 		// Player Stats
 		double f = playerSemiMajorAxis * playerEccentricity;

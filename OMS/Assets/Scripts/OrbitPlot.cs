@@ -80,18 +80,19 @@ public class OrbitPlot : MonoBehaviour
 		double a = semiMajorAxis;
 		double b = SemiMinorAxis();
 		double f = a * eccentricity; // Distance from center to focus, f = a * e
-		double scale = OrbitUIHandler.KmToUnityUnit;
 		double rot = longitudeOfPeriapsis / 180.0 * Math.PI; // convert to radians
+		Vector2d point = new Vector2d();
+		Vector2d scale = new Vector2d(OrbitUIHandler.KmToUnityUnit, OrbitUIHandler.KmToUnityUnit);
 		for (int i = 0; i < count; i++) {
 			double theta = (360.0 * i / count - 180.0)  / 180.0 * Math.PI;
 			// Plot a canonical ellipse with focus and center on the x-axis, centered on the right focus
-			double x = a * Math.Cos(theta) - f;
-			double y = b * Math.Sin(theta);
-			// Rotate the ellipse point
-			double x1 = x * Math.Cos(rot) - y * Math.Sin(rot);
-			double y1 = x * Math.Sin(rot) + y * Math.Cos(rot);
+			point.x = a * Math.Cos(theta) - f;
+			point.y = b * Math.Sin(theta);
+			// Rotate and scale the ellipse point
+			point.Rotate(rot);
+			point.Scale(scale);
 			// Add point
-			points[i] = new Vector3((float)(x1 * scale), 0, (float)(y1 * scale));
+			points[i] = new Vector3((float)point.x, 0, (float)point.y);
 		}
 		return points;
 	}
@@ -134,6 +135,25 @@ public class OrbitPlot : MonoBehaviour
 
 	public double SemiMinorAxis() {
 		return semiMajorAxis * Math.Sqrt(1.0 - eccentricity * eccentricity);
+	}
+
+	public Vector3 PositionAtEccentricAnomaly(double eccentricAnomaly) {
+		// Gets the xyz coordinates on the orbit line given the eccentric anomaly as the angle from the periapsis.
+		// To get the position as a function of time, conver the time to a mean anomaly, then convert that into the eccentric anomaly.
+		double a = semiMajorAxis;
+		double b = SemiMinorAxis();
+		double f = a * eccentricity; // Distance from center to focus, f = a * e
+		double rot = longitudeOfPeriapsis / 180.0 * Math.PI; // convert to radians
+		Vector2d scale = new Vector2d(OrbitUIHandler.KmToUnityUnit, OrbitUIHandler.KmToUnityUnit);
+
+		Vector2d point = new Vector2d();
+		point.x = a * Math.Cos(eccentricAnomaly) - f;
+		point.y = b * Math.Sin(eccentricAnomaly);
+		// Rotate and scale the ellipse point
+		point.Rotate(rot);
+		point.Scale(scale);
+
+		return new Vector3((float)point.x, 0, (float)point.y);
 	}
 
 	// Utility functions
