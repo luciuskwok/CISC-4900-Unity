@@ -20,17 +20,20 @@ public class OrbitUIHandler : MonoBehaviour
 
 	// Player parameters
 	private double playerSemiMajorAxis = EarthRadius + 1000; // km
-	private double playerEccentricity = 0.8;
-	private double playerLongOfPeriapsis = 180.0; // degrees
+	private double playerEccentricity = 0.0;
+	private double playerPeriapsisLongitude = 180.0 * Kepler.Deg2Rad;
+
+	// Maneuver node parameters
 	private double progradeDeltaV = 0.0; // m/s
+	private double nodeMeanAnomaly = 0.0; // radians
 
 	// private double earthGM = 3.986004418e5; // in km^3/s^2
 
 	// Constants
 	public const double EarthRadius = 6378.0; // km
 	public const double EarthMass = 5.9722e24; // kg
-	public const double UnityUnitToKm = 1.0e3; //  1 Unity Unit = 1,000 km
-	public const double KmToUnityUnit = 1.0 / UnityUnitToKm;
+//	public const double UnityUnitToKm = 1.0e3; //  1 Unity Unit = 1,000 km
+//	public const double KmToUnityUnit = 1.0 / UnityUnitToKm;
 
 	void Start()
 	{
@@ -46,38 +49,43 @@ public class OrbitUIHandler : MonoBehaviour
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
 		targetOrbit.semiMajorAxis = targetSMA;
 		targetOrbit.eccentricity = targetEccen;
-		targetOrbit.longitudeOfPeriapsis = 180.0;
+		targetOrbit.periapsisLongitude = playerPeriapsisLongitude;
 		targetOrbit.UpdatePoints();
 
 		// Target Stats Text
 		double f = targetSMA * targetEccen;
 		double apoapsis = targetSMA + f - EarthRadius;
 		double periapsis = targetSMA - f - EarthRadius;
-		double period = OrbitPlot.OrbitalPeriod(targetSMA, EarthMass);
+		double period = Kepler.OrbitalPeriod(targetSMA, EarthMass);
 		targetStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 
 		// Update maneuver node
-		SetManeuverNodeAtEccentricAnomaly(0);
+		SetManeuverNodeAtEccentricAnomaly(nodeMeanAnomaly);
 	}
 
 	void Update()
 	{
-		// Test: move maneuver node around orbit
-		const double orbitalPeriod = 4.0; // seconds
-		double meanAnomaly = Time.timeSinceLevelLoadAsDouble / orbitalPeriod % 1.0 * 2.0 * Math.PI;
-		double eccAnomaly = OrbitPlot.EccentricAnomalyFromMeanAnomaly(meanAnomaly, playerEccentricity);
-		SetManeuverNodeAtEccentricAnomaly(eccAnomaly);
+		AnimateManeuverNode();
+	}
+
+	void AnimateManeuverNode() {
+		const double nodeAnimationTime = 4.0;
+		double x = Time.timeSinceLevelLoadAsDouble / nodeAnimationTime % 1.0f;
+		double meanAnomaly = x * Kepler.PI_2;
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMeanAnomaly(meanAnomaly, playerEccentricity);
+		SetManeuverNodeAtEccentricAnomaly(eccentricAnomaly);
 	}
 
 	void SetManeuverNodeAtEccentricAnomaly(double eccentricAnomaly) {
 		// Move Maneuver Node UI element to aligh with view
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		// Set the manuever node at periapse
-		Vector3 periapse = playerOrbit.PositionAtEccentricAnomaly(eccentricAnomaly);
+		// Get the local coordinates of the node and convert to world coordinates
+		Vector3 position = playerOrbit.LocalPositionAtEccentricAnomaly(eccentricAnomaly);
+		position = playerOrbitLine.transform.TransformPoint(position);
 		// Convert to 2d 
-		Vector3 point = mainCamera.WorldToViewportPoint(periapse);
+		Vector3 point = mainCamera.WorldToViewportPoint(position);
 		// Scale to canvas size
 		RectTransform canvasRT = canvas.GetComponent<RectTransform>();
 		point.x *= canvasRT.rect.width;
@@ -103,7 +111,7 @@ public class OrbitUIHandler : MonoBehaviour
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
 		playerOrbit.semiMajorAxis = playerSemiMajorAxis;
 		playerOrbit.eccentricity = playerEccentricity;
-		playerOrbit.longitudeOfPeriapsis = playerLongOfPeriapsis;
+		playerOrbit.periapsisLongitude = playerPeriapsisLongitude;
 		playerOrbit.UpdatePoints();
 
 		// Maneuver Controls
@@ -113,7 +121,7 @@ public class OrbitUIHandler : MonoBehaviour
 		double f = playerSemiMajorAxis * playerEccentricity;
 		double apoapsis = playerSemiMajorAxis + f - EarthRadius;
 		double periapsis = playerSemiMajorAxis - f - EarthRadius;
-		double period = OrbitPlot.OrbitalPeriod(playerSemiMajorAxis, EarthMass);
+		double period = Kepler.OrbitalPeriod(playerSemiMajorAxis, EarthMass);
 		playerStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
