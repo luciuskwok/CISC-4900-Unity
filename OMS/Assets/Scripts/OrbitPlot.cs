@@ -54,12 +54,13 @@ public class OrbitPlot : MonoBehaviour
 		// First, calculate the polar form of ellipse relative to focus, then rotate it so its periapsis is at the specified longitude, and finally convert to cartesian coordinates.
 		// Pre-convert the longitude of periapsis from degrees to radians
 		double longOfPeriapsisRadians = longitudeOfPeriapsis / 180.0 * Math.PI;
+		double semiLactusRectum = semiMajorAxis * (1.0 - eccentricity * eccentricity);
 		for (int i = 0; i < count; i++) {
 			// Theta is the true anomaly of the point.
 			// Calculate the orbit from -180 to 100 degrees.
 			double theta = ((double)i / count * 360.0 - 180.0)  / 180.0 * Math.PI;
 			// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
-			double r = RadiusWithTrueAnomaly(theta);
+			double r = semiLactusRectum / ( 1.0 + eccentricity * Math.Cos(theta));
 			// Rotate by the longitudde of periapsis, which is located at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
 			// Plot points with focus at center
 			double x = Math.Cos(theta + longOfPeriapsisRadians) * r;
@@ -71,14 +72,6 @@ public class OrbitPlot : MonoBehaviour
 		}
 
 		return points;
-	}
-
-	double RadiusWithTrueAnomaly(double theta) {
-		// Given a value for the true anomaly (theta), calculate the radius of the polar coordinate point on the orbit.
-		double semiLactusRectum = semiMajorAxis * (1.0 - eccentricity * eccentricity);
-
-		// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
-		return semiLactusRectum / ( 1.0 + eccentricity * Math.Cos(theta));
 	}
 
 	Vector3[] EllipseWithCartesianMethod(int count) {
@@ -101,11 +94,6 @@ public class OrbitPlot : MonoBehaviour
 			points[i] = new Vector3((float)(x1 * scale), 0, (float)(y1 * scale));
 		}
 		return points;
-	}
-
-	float TrueAnomayWithEccentricAnomaly(float e) {
-		
-		return 0;
 	}
 
 	void UpdateColors(int step) {
@@ -146,6 +134,39 @@ public class OrbitPlot : MonoBehaviour
 
 	public double SemiMinorAxis() {
 		return semiMajorAxis * Math.Sqrt(1.0 - eccentricity * eccentricity);
+	}
+
+	// Utility functions
+
+	public static double MeanAnomalyFromEccentricAnomaly(double eccentricAnomaly, double eccentricity) {
+		// Adapted from code in https://github.com/Karth42/SimpleKeplerOrbits
+		// This handles all the cases of eccentricity
+		if (eccentricity < 1.0) {
+			return eccentricAnomaly - eccentricity * Math.Sin(eccentricAnomaly);
+		} else if (eccentricity > 1.0) {
+			return Math.Sinh(eccentricAnomaly) * eccentricity - eccentricAnomaly;
+		} else {
+			var t = Math.Tan(eccentricAnomaly * 0.5);
+			return (t + t * t * t / 3d) * 0.5d;
+		}	
+	}
+
+	public static double EccentricAnomalyFromMeanAnomaly(double meanAnomaly, double eccentricity) {
+		// Adapted from code in https://github.com/Karth42/SimpleKeplerOrbits
+		// Converts mean anomaly to eccentric anomaly using Kepler Solver.
+		// This is only valid for elliptical orbits. For hyperbolic orbits, see the original code.
+		// Iterations count range from 2 to 6 when eccentricity is in range from 0 to 1.
+		int    iterations = (int)(Math.Ceiling((eccentricity + 0.7d) * 1.25d)) << 1;
+		double m          = meanAnomaly;
+		double esinE, ecosE, deltaE, n;
+		for (int i = 0; i < iterations; i++) {
+			esinE  =  eccentricity * Math.Sin(m);
+			ecosE  =  eccentricity * Math.Cos(m);
+			deltaE =  m - esinE - meanAnomaly;
+			n      =  1.0 - ecosE;
+			m      += -5d * deltaE / (n + Math.Sign(n) * Math.Sqrt(Math.Abs(16d * n * n - 20d * deltaE * esinE)));
+		}
+		return m;
 	}
 
 	public static double OrbitalPeriod(double semiMajorAxis, double parentBodyMass) {

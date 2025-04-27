@@ -36,11 +36,26 @@ public class OrbitUIHandler : MonoBehaviour
 		longitudeSlider.SetValueWithoutNotify((float)playerLongOfPeriapsis);
 		UpdateText();
 		UpdatePlayerOrbitLine();
-	}
 
-	void Update()
-	{
-		
+		// Set up the target orbit
+		double targetPeriaps = 1000.0 + EarthRadius; // km
+		double targetApoaps = 4000.0 + EarthRadius; // km
+		double targetSMA = (targetPeriaps + targetApoaps) / 2.0;
+
+		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
+		targetOrbit.semiMajorAxis = targetSMA;
+		targetOrbit.eccentricity = 1.0 - (targetPeriaps / targetSMA);
+		targetOrbit.longitudeOfPeriapsis = 180.0;
+		targetOrbit.UpdatePoints();
+
+
+
+		/* 	
+			pe = sma - f
+			pe = sma - sma * e
+			pe/sma = 1 - e
+			e = 1 - pe/sma
+		*/
 	}
 
 	public void HandleExitButton() {
@@ -82,12 +97,28 @@ public class OrbitUIHandler : MonoBehaviour
 		playerOrbit.longitudeOfPeriapsis = playerLongOfPeriapsis;
 		playerOrbit.UpdatePoints();
 
-		// For testing, also change the target
-		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		targetOrbit.semiMajorAxis = playerSemiMajorAxis;
-		targetOrbit.eccentricity = playerEccentricity;
-		targetOrbit.longitudeOfPeriapsis = playerLongOfPeriapsis;
-		targetOrbit.UpdatePoints();
+	}
+
+	// Utilities
+
+	public static String FormattedTime(double timeAsSeconds) {
+		String s = "";
+		double t = timeAsSeconds;
+		if (timeAsSeconds >= 3600.0) {
+			s += Math.Floor(t/3600.0).ToString("F0") + "h";
+			t -= Math.Floor(t/3600.0) * 3600.0;
+		}
+		if (timeAsSeconds >= 60.0) {
+			s += Math.Floor(t/60.0).ToString("F0") + "m";
+			t -= Math.Floor(t/60.0) * 60.0;
+
+		}
+		if (timeAsSeconds >= 60.0) {
+			s += Math.Floor(t).ToString("F0");
+		} else {
+			s += t.ToString("F2");
+		}
+		return s;
 	}
 
 }

@@ -2145,13 +2145,13 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: -5, y: 0, z: -5}
-  - {x: 5, y: 0, z: -5}
-  - {x: 5, y: 0, z: 5}
-  - {x: -5, y: 0, z: 5}
+  - {x: -6.5, y: 0, z: -6.5}
+  - {x: 6.5, y: 0, z: -6.5}
+  - {x: 6.5, y: 0, z: 6.5}
+  - {x: -6.5, y: 0, z: 6.5}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.2
+    widthMultiplier: 0.1
     widthCurve:
       serializedVersion: 2
       m_Curve:
