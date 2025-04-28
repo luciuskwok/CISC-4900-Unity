@@ -44,27 +44,8 @@ public struct Vector2d {
 		return new Vector2d(a.x / b, a.y / b);
 	}
 
-	public double magnitude {
-		get { return Vector2d.Magnitude(this); }
-	}
-
-	public double sqrMagnitude {
-		get { return Vector2d.SqrMagnitude(this); }
-	}
-
 	public Vector2d normalized {
 		get { return Vector2d.Normalize(this); }
-	}
-
-	public static double Dot(Vector2d a, Vector2d b) {
-		return a.x * b.x + a.y * b.y;
-	}
-	public static double Magnitude(Vector2d a) {
-		return Math.Sqrt(a.x * a.x + a.y * a.y);
-	}
-
-	public static double SqrMagnitude(Vector2d a) {
-		return a.x * a.x + a.y * a.y;
 	}
 
 	public static Vector2d Normalize(Vector2d a) {
@@ -75,6 +56,26 @@ public struct Vector2d {
 			return Vector2d.zero;
 		}
 	}
+	public double magnitude {
+		get { return Vector2d.Magnitude(this); }
+	}
+
+	public static double Magnitude(Vector2d a) {
+		return Math.Sqrt(a.x * a.x + a.y * a.y);
+	}
+
+	public double sqrMagnitude {
+		get { return Vector2d.SqrMagnitude(this); }
+	}
+
+	public static double SqrMagnitude(Vector2d a) {
+		return a.x * a.x + a.y * a.y;
+	}
+
+	public static double Dot(Vector2d a, Vector2d b) {
+		return a.x * b.x + a.y * b.y;
+	}
+
 
 	public void Rotate(double angle) {
 		double x1 = this.x * Math.Cos(angle) - this.y * Math.Sin(angle);

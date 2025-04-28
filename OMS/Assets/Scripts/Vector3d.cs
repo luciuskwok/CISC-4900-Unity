@@ -28,18 +28,6 @@ public struct Vector3d {
 	public Vector3 vector3 {
 		get { return new Vector3((float)this.x, (float)this.y, (float)this.z); }
 	}
-
-	public Vector3d normalized {
-		get { return Vector3d.Normalize(this); }
-	}
-
-	public double magnitude {
-		get { return Math.Sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
-	}
-
-	public double sqrMagnitude {
-		get { return this.x * this.x + this.y * this.y + this.z * this.z; }
-	}
 	
 	public static Vector3d operator +(Vector3d a, Vector3d b) {
 		return new Vector3d(a.x + b.x, a.y + b.y, a.z + b.z);
@@ -77,22 +65,11 @@ public struct Vector3d {
 		return this.x.GetHashCode() ^ this.y.GetHashCode() << 2 ^ this.z.GetHashCode() >> 2;
 	}
 
-
 	public override bool Equals(object other) {
-		if (!(other is Vector3d))
-		{
-			return false;
-		}
+		if (!(other is Vector3d)) return false;
 
-		Vector3d vector3d = (Vector3d)other;
-		if (this.x.Equals(vector3d.x) && this.y.Equals(vector3d.y))
-		{
-			return this.z.Equals(vector3d.z);
-		}
-		else
-		{
-			return false;
-		}
+		Vector3d a = (Vector3d)other;
+		return this.x == a.x && this.y == a.y && this.z == a.z;
 	}
 
 	public override string ToString() {
@@ -102,29 +79,31 @@ public struct Vector3d {
 	public string ToString(string format) {
 		return "(" + this.x.ToString(format) + "; " + this.y.ToString(format) + "; " + this.z.ToString(format) + ")";
 	}
+
+	public Vector3d normalized {
+		get { return Vector3d.Normalize(this); }
+	}
 	
 	public static Vector3d Normalize(Vector3d value) {
-		double num = Vector3d.Magnitude(value);
-		if (num > EPSILON)
-		{
-			return value / num;
-		}
-		else
-		{
-			return Vector3d.zero;
-		}
+		double mag = Vector3d.Magnitude(value);
+		if (mag <= EPSILON) return Vector3d.zero;
+		return value / mag;
 	}
 
-	public void Normalize() {
-		double num = Vector3d.Magnitude(this);
-		if (num > EPSILON)
-		{
-			this = this / num;
-		}
-		else
-		{
-			this = Vector3d.zero;
-		}
+	public double magnitude {
+		get { return Vector3d.Magnitude(this); }
+	}
+
+	public static double Magnitude(Vector3d a) {
+		return Math.Sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+	}
+
+	public double sqrMagnitude {
+		get { return Vector3d.SqrMagnitude(this); }
+	}
+
+	public static double SqrMagnitude(Vector3d a) {
+		return a.x * a.x + a.y * a.y + a.z * a.z;
 	}
 
 	public static Vector3d Cross(Vector3d a, Vector3d b) {
@@ -136,21 +115,13 @@ public struct Vector3d {
 	}
 
 	public static double Distance(Vector3d a, Vector3d b) {
-		Vector3d vector3d = new Vector3d(a.x - b.x, a.y - b.y, a.z - b.z);
-		return Math.Sqrt(vector3d.x * vector3d.x + vector3d.y * vector3d.y + vector3d.z * vector3d.z);
+		Vector3d d = a - b;
+		return Math.Sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
 	}
 
 	public static double Angle(Vector3d from, Vector3d to) {
 		double dot = Dot(from.normalized, to.normalized);
 		return Math.Acos(dot < -1.0 ? -1.0 : (dot > 1.0 ? 1.0 : dot)) * 57.29578d;
-	}
-
-	public static double Magnitude(Vector3d a) {
-		return Math.Sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
-	}
-
-	public static double SqrMagnitude(Vector3d a) {
-		return a.x * a.x + a.y * a.y + a.z * a.z;
 	}
 
 

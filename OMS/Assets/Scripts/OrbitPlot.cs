@@ -163,7 +163,7 @@ public class OrbitPlot : MonoBehaviour
 		if (focalParameter <= 0.0) return Vector2d.zero;
 		
 		double sqrtMGdivP = Math.Sqrt(attractorMass * Kepler.G / focalParameter);
-		double vX = sqrtMGdivP * Math.Sin(trueAnomaly);
+		double vX = -sqrtMGdivP * Math.Sin(trueAnomaly);
 		double vY = sqrtMGdivP * (eccentricity + Math.Cos(trueAnomaly));
 		return new Vector2d(vX, vY);
 	}
@@ -185,8 +185,8 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	public void SetOrbitWithPositionVelocity(Vector2d position, Vector2d velocity) {
-		Vector3d pos3d = new Vector3d(position.x, 0, position.y);
-		Vector3d vel3d = new Vector3d(velocity.x, 0, velocity.y);
+		Vector3d pos3d = new Vector3d(position.x, position.y, 0);
+		Vector3d vel3d = new Vector3d(velocity.x, velocity.y, 0);
 		SetOrbitWithPositionVelocity3D(pos3d, vel3d);
 	}
 
@@ -199,6 +199,7 @@ public class OrbitPlot : MonoBehaviour
 		if (orbitNormal.sqrMagnitude < 0.99) {
 			orbitNormal = Vector3d.Cross(position, EclipticUp).normalized;
 			eccVector = new Vector3d();
+			Debug.Log("Invalid orbit normal.");
 		} else {
 			eccVector = Vector3d.Cross(velocity, angularMomentumVector) / MG - position / attractorDistance;
 		}
@@ -209,13 +210,15 @@ public class OrbitPlot : MonoBehaviour
 		Vector3d semiMinorAxisBasis = Vector3d.Cross(angularMomentumVector, -eccVector).normalized;
 		if (semiMinorAxisBasis.sqrMagnitude < 0.99) {
 			semiMinorAxisBasis = Vector3d.Cross(orbitNormal, position).normalized;
+			Debug.Log("Invalid semiMinorAxisBasis.");
 		}
 
 		Vector3d semiMajorAxisBasis = Vector3d.Cross(orbitNormal, semiMinorAxisBasis).normalized;
-		if (eccentricity < 1.0)
-		{
+		if (eccentricity < 1.0) {
 			double compression = 1.0 - eccentricity * eccentricity;
 			semiMajorAxis = focalParameter / compression;
+		} else {
+			Debug.Log("Eccetricity >= 1.0 not yet implemented.");
 		}
 
 	}
