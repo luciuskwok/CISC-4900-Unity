@@ -8,6 +8,7 @@ public class OrbitPlot : MonoBehaviour
 	public double semiMajorAxis; // km
 	public double eccentricity; // 0 = circle; 1 = parabola
 	public double periapsisLongitude; // radians
+	public double attractorMass; // kg
 
 	public Color color;
 
@@ -134,8 +135,20 @@ public class OrbitPlot : MonoBehaviour
 		return semiMajorAxis * Math.Sqrt(1.0 - eccentricity * eccentricity);
 	}
 
-	public double velocityAtTrueAnomaly(double trueAnomaly) {
+	public double OrbitalPeriod() {
+		return Kepler.OrbitalPeriod(semiMajorAxis, attractorMass);
+	}
+
+	public Vector2d VelocityAtTrueAnomaly(double trueAnomaly) {
+		double compression = eccentricity < 1.0 ? (1.0 - eccentricity * eccentricity) : (eccentricity * eccentricity - 1.0);
+		double focalParameter = semiMajorAxis * compression;
+
+		if (focalParameter <= 0.0) return Vector2d.zero;
 		
+		double sqrtMGdivP = Math.Sqrt(attractorMass * Kepler.G / focalParameter);
+		double vX = sqrtMGdivP * (eccentricity + Math.Cos(trueAnomaly));
+		double vY = sqrtMGdivP * Math.Sin(trueAnomaly);
+		return new Vector2d(vX, vY);
 	}
 
 	public Vector3 LocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
@@ -143,10 +156,10 @@ public class OrbitPlot : MonoBehaviour
 		// To get the position as a function of time, conver the time to a mean anomaly, then convert that into the eccentric anomaly.
 		double a = semiMajorAxis;
 		double b = SemiMinorAxis();
-		double f = a * eccentricity; // Distance from center to focus, f = a * e
+		double c = a * eccentricity; // Linear eccentricity, or distance from center to focus, c = a * e
 
 		Vector2d point = new Vector2d();
-		point.x = a * Math.Cos(eccentricAnomaly) - f;
+		point.x = a * Math.Cos(eccentricAnomaly) - c;
 		point.y = b * Math.Sin(eccentricAnomaly);
 		// Rotate for the longitude of periapsis
 		point.Rotate(periapsisLongitude);

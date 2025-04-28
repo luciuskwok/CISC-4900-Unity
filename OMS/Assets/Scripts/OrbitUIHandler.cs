@@ -47,6 +47,7 @@ public class OrbitUIHandler : MonoBehaviour
 		playerOrbit.semiMajorAxis = playerSemiMajorAxis;
 		playerOrbit.eccentricity = playerEccentricity;
 		playerOrbit.periapsisLongitude = playerPeriapsisLongitude;
+		playerOrbit.attractorMass = EarthMass;
 		playerOrbit.UpdatePoints();
 
 		// Set up the target orbit
@@ -59,13 +60,14 @@ public class OrbitUIHandler : MonoBehaviour
 		targetOrbit.semiMajorAxis = targetSMA;
 		targetOrbit.eccentricity = targetEccen;
 		targetOrbit.periapsisLongitude = playerPeriapsisLongitude;
+		targetOrbit.attractorMass = EarthMass;
 		targetOrbit.UpdatePoints();
 
 		// Target Stats Text
 		double f = targetSMA * targetEccen;
 		double apoapsis = targetSMA + f - EarthRadius;
 		double periapsis = targetSMA - f - EarthRadius;
-		double period = Kepler.OrbitalPeriod(targetSMA, EarthMass);
+		double period = targetOrbit.OrbitalPeriod();
 		targetStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
@@ -126,6 +128,7 @@ public class OrbitUIHandler : MonoBehaviour
 		planOrbit.semiMajorAxis = planSMA;
 		planOrbit.eccentricity = planEccen;
 		planOrbit.periapsisLongitude = playerPeriapsisLongitude + nodeMeanAnomaly;
+		planOrbit.attractorMass = EarthMass;
 		planOrbit.UpdatePoints();
 
 		// Maneuver Controls
@@ -134,7 +137,7 @@ public class OrbitUIHandler : MonoBehaviour
 		// Maneuver Stats
 		double apoapsis = planApoaps - EarthRadius;
 		double periapsis = planApoaps - EarthRadius;
-		double period = Kepler.OrbitalPeriod(planSMA, EarthMass);
+		double period = planOrbit.OrbitalPeriod();
 		playerStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
