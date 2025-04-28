@@ -82,7 +82,7 @@ public class OrbitUIHandler : MonoBehaviour
 		const double nodeAnimationTime = 4.0;
 		double x = Time.timeSinceLevelLoadAsDouble / nodeAnimationTime % 1.0f;
 		double meanAnomaly = x * Kepler.PI_2;
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMeanAnomaly(meanAnomaly, playerEccentricity);
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, playerEccentricity);
 		SetManeuverNodeAtEccentricAnomaly(eccentricAnomaly);
 	}
 

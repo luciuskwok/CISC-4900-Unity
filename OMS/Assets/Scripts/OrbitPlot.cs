@@ -32,7 +32,7 @@ public class OrbitPlot : MonoBehaviour
 	{
 		double x = Time.timeSinceLevelLoadAsDouble / gradientAnimationTime % 1.0f;
 		double meanAnomaly = x * Kepler.PI_2;
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMeanAnomaly(meanAnomaly, eccentricity);
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, eccentricity);
 		UpdateColors(eccentricAnomaly);
 	}
 
@@ -132,6 +132,10 @@ public class OrbitPlot : MonoBehaviour
 
 	public double SemiMinorAxis() {
 		return semiMajorAxis * Math.Sqrt(1.0 - eccentricity * eccentricity);
+	}
+
+	public double velocityAtTrueAnomaly(double trueAnomaly) {
+		
 	}
 
 	public Vector3 LocalPositionAtEccentricAnomaly(double eccentricAnomaly) {

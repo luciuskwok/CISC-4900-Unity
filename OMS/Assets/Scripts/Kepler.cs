@@ -11,7 +11,54 @@ public static class Kepler {
 	public const double Rad2Deg = 57.295779513082d;
 	public const double G = 6.67430e-20; // (km^3)/(kg*s^2) Gravitational Constant
 
-	public static double MeanAnomalyFromEccentricAnomaly(double eccentricAnomaly, double eccentricity) {
+	// Regular Acosh, but without exception when out of possible range.
+	public static double Acosh(double x) {
+		if (x < 1.0) return 0;
+		return Math.Log(x + Math.Sqrt(x * x - 1.0));
+	}
+
+	public static double TrueAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
+		if (eccentricity < 1.0) {
+			double cosE  = Math.Cos(eccentricAnomaly);
+			double tAnom = Math.Acos((cosE - eccentricity) / (1d - eccentricity * cosE));
+			if (eccentricAnomaly > PI) tAnom = PI_2 - tAnom;
+			return tAnom;
+		} else if (eccentricity > 1.0) {
+			double tAnom = Math.Atan2(
+				Math.Sqrt(eccentricity * eccentricity - 1d) * Math.Sinh(eccentricAnomaly),
+				eccentricity - Math.Cosh(eccentricAnomaly)
+			);
+			return tAnom;
+		} else {
+			return eccentricAnomaly;
+		}
+	}
+
+	public static double EccentricAnomalyFromTrue(double trueAnomaly, double eccentricity) {
+		if (double.IsNaN(eccentricity) || double.IsInfinity(eccentricity)) return trueAnomaly;
+
+		trueAnomaly %= PI_2;
+		if (eccentricity < 1.0) {
+			if (trueAnomaly < 0) trueAnomaly += PI_2;
+
+			double cosT2   = Math.Cos(trueAnomaly);
+			double eccAnom = Math.Acos((eccentricity + cosT2) / (1d + eccentricity * cosT2));
+			if (trueAnomaly > PI) eccAnom = PI_2 - eccAnom;
+
+			return eccAnom;
+		} else if (eccentricity > 1.0) {
+			double cosT    = Math.Cos(trueAnomaly);
+			double eccAnom = Acosh((eccentricity + cosT) / (1d + eccentricity * cosT)) * Math.Sign(trueAnomaly);
+			return eccAnom;
+		} else {
+			// For parabolic trajectories
+			// there is no Eccentric anomaly defined,
+			// because 'True anomaly' to 'Time' relation can be resolved analytically.
+			return trueAnomaly;
+		}
+	}
+
+	public static double MeanAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
 		// This handles all the cases of eccentricity
 		if (eccentricity < 1.0) {
 			return eccentricAnomaly - eccentricity * Math.Sin(eccentricAnomaly);
@@ -23,7 +70,7 @@ public static class Kepler {
 		}	
 	}
 
-	public static double EccentricAnomalyFromMeanAnomaly(double meanAnomaly, double eccentricity) {
+	public static double EccentricAnomalyFromMean(double meanAnomaly, double eccentricity) {
 		if (eccentricity < 1.0) {
 			return Mean2EccentricAnomalyElliptical(meanAnomaly, eccentricity);
 		} else if (eccentricity > 1.0) {
@@ -72,6 +119,6 @@ public static class Kepler {
 		// Returns the orbital period in seconds.
 		double gm = G * mass;
 		double a = semiMajorAxis; 
-		return 2.0 * Math.PI * Math.Sqrt(a * a * a / gm);
+		return 2.0 * PI * Math.Sqrt(a * a * a / gm);
 	}
 }

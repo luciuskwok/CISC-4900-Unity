@@ -16,6 +16,10 @@ public struct Vector3d {
 		get { return Math.Sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
 	}
 
+	public double sqrMagnitude {
+		get { return this.x * this.x + this.y * this.y + this.z * this.z; }
+	}
+
 	public static Vector3d zero {
 		get { return new Vector3d(0d, 0d, 0d); }
 	}
