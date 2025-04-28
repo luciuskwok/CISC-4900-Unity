@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -12,15 +13,18 @@ public class OrbitUIHandler : MonoBehaviour
 	public TMP_Text progradeReadout;
 	public TMP_Text playerStatsText;
 	public TMP_Text targetStatsText;
-	public TMP_Text shipStatsText;
+	public TMP_Text infoText;
 	
 	// Orbit lines
 	public GameObject playerOrbitLine;
 	public GameObject plannedOrbitLine;
 	public GameObject targetOrbitLine;
-	public GameObject maneuverNode;
 
-	// Other UI
+	// Other UI elements
+	public GameObject maneuverNode;
+	public GameObject goButton;
+
+	// Other objects
 	public Camera mainCamera;
 	public Canvas canvas;
 
@@ -32,9 +36,10 @@ public class OrbitUIHandler : MonoBehaviour
 
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.0; // m/s
-	private double nodeMeanAnomaly = 30.0 * Kepler.Deg2Rad; // radians
+	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
 
-	// private double earthGM = 3.986004418e5; // in km^3/s^2
+	// Target orbit parameters
+	private double targetApoapsis = EarthRadius + 4000.0;
 
 	// Constants
 	public const double EarthRadius = 6378.0; // km
@@ -53,8 +58,7 @@ public class OrbitUIHandler : MonoBehaviour
 
 		// Set up the target orbit
 		double targetPeriaps = playerAltitude + EarthRadius; // km
-		double targetApoaps = 4000.0 + EarthRadius; // km
-		double targetSMA = (targetPeriaps + targetApoaps) / 2.0;
+		double targetSMA = (targetPeriaps + targetApoapsis) / 2.0;
 		double targetEccen = 1.0 - (targetPeriaps / targetSMA);
 
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
@@ -83,10 +87,13 @@ public class OrbitUIHandler : MonoBehaviour
 		// Update maneuver node & planned orbit
 		PositionManeuverNodeWithMeanAnomaly(nodeMeanAnomaly, playerOrbitLine);
 		UpdatePlannedOrbit();
+
+		// Set the info text
+		SetInfoText(false);
 	}
 
 	void Update() {
-		AnimateManeuverNode();
+		//AnimateManeuverNode();
 	}
 
 	void AnimateManeuverNode() {
@@ -151,19 +158,30 @@ public class OrbitUIHandler : MonoBehaviour
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Maneuver Stats
-		double apoAlt = planOrbit.ApoapsisFromFocus() - EarthRadius;
+		double planApo = planOrbit.ApoapsisFromFocus();
+		double apoAlt = planApo - EarthRadius;
 		double periAlt = planOrbit.PeriapsisFromFocus() - EarthRadius;
 		double period = planOrbit.OrbitalPeriod();
 		playerStatsText.text = "Apoapsis: " + apoAlt.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periAlt.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 
-		// Use Ship stats text box for debugging info
-		shipStatsText.text = "New velocity: " + newVelocity.magnitude.ToString("F3") + " km/s\n" +
-			"vel.X: " + newVelocity.x.ToString("F3") + " km/s\n" + 
-			"vel.Y: " + newVelocity.y.ToString("F3") + " km/s\n" + 
-			"pos.x: " + nodePosition.x.ToString("F3") + " km\n" + 
-			"pos.y: " + nodePosition.y.ToString("F3") + " km\n";
+		// Check if planned orbit is within tolerances and enable Go button
+		if (Math.Abs(targetApoapsis - planApo) < targetApoapsis * 0.02) {
+			goButton.SetActive(true);
+			SetInfoText(true);
+		} else {
+			goButton.SetActive(false);
+			SetInfoText(false);
+		}
+	}
+
+	void SetInfoText(bool success) {
+		if (!success) {
+			infoText.text = "Welcome! Your first task is to adjust this maneuver node to match the target orbit. Use the slider below to adjust the planned change in velocity for this maneuver.";
+		} else {
+			infoText.text = "Great job! Now click on the Go button to execute the maneuver by firing your engines.";
+		}
 	}
 
 	// Utilities
