@@ -18,6 +18,8 @@ public class OrbitPlot : MonoBehaviour
 	// Unity uses the convention that the x-z plane is horizontal, and positive y points up. So the y and z axes are swapped. 
 	// As for the x axis, that can be arbitrarily chosen as long as it is consistent throughout the solar system for this project. 
 
+	public static readonly Vector3d EclipticUp = new Vector3d(0, 1, 0);
+
 	private int pointCount = 180;
 	private double gradientAnimationTime = 4.0f; // seconds
 	private float maxAlpha = 1.0f;
@@ -139,6 +141,16 @@ public class OrbitPlot : MonoBehaviour
 		return Kepler.OrbitalPeriod(semiMajorAxis, attractorMass);
 	}
 
+	public double PeriapsisFromFocus() {
+		double c = semiMajorAxis * eccentricity;
+		return semiMajorAxis - c;
+	}
+
+	public double ApoapsisFromFocus() {
+		double c = semiMajorAxis * eccentricity;
+		return semiMajorAxis + c;
+	}
+
 	public Vector2d VelocityAtEccentricAnomaly(double eccentricAnomlay) {
 		double trueAnomaly = Kepler.TrueAnomalyFromEccentric(eccentricAnomlay, eccentricity);
 		return VelocityAtTrueAnomaly(trueAnomaly);
@@ -156,7 +168,7 @@ public class OrbitPlot : MonoBehaviour
 		return new Vector2d(vX, vY);
 	}
 
-	public Vector3 LocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
+	public Vector2d LocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
 		// Gets the xyz coordinates on the orbit line given the eccentric anomaly as the angle from the periapsis.
 		// To get the position as a function of time, conver the time to a mean anomaly, then convert that into the eccentric anomaly.
 		double a = semiMajorAxis;
@@ -169,7 +181,43 @@ public class OrbitPlot : MonoBehaviour
 		// Rotate for the longitude of periapsis
 		point.Rotate(periapsisLongitude);
 
-		return new Vector3((float)point.x, 0.0f, (float)point.y);
+		return new Vector2d(point.x, point.y);
+	}
+
+	public void SetOrbitWithPositionVelocity(Vector2d position, Vector2d velocity) {
+		Vector3d pos3d = new Vector3d(position.x, 0, position.y);
+		Vector3d vel3d = new Vector3d(velocity.x, 0, velocity.y);
+		SetOrbitWithPositionVelocity3D(pos3d, vel3d);
+	}
+
+	public void SetOrbitWithPositionVelocity3D(Vector3d position, Vector3d velocity) {
+		double MG = attractorMass * Kepler.G;
+		double attractorDistance = position.magnitude;
+		Vector3d angularMomentumVector = Vector3d.Cross(position, velocity);
+		Vector3d orbitNormal = angularMomentumVector.normalized;
+		Vector3d eccVector;
+		if (orbitNormal.sqrMagnitude < 0.99) {
+			orbitNormal = Vector3d.Cross(position, EclipticUp).normalized;
+			eccVector = new Vector3d();
+		} else {
+			eccVector = Vector3d.Cross(velocity, angularMomentumVector) / MG - position / attractorDistance;
+		}
+
+		double focalParameter = angularMomentumVector.sqrMagnitude / MG;
+		eccentricity = eccVector.magnitude;
+
+		Vector3d semiMinorAxisBasis = Vector3d.Cross(angularMomentumVector, -eccVector).normalized;
+		if (semiMinorAxisBasis.sqrMagnitude < 0.99) {
+			semiMinorAxisBasis = Vector3d.Cross(orbitNormal, position).normalized;
+		}
+
+		Vector3d semiMajorAxisBasis = Vector3d.Cross(orbitNormal, semiMinorAxisBasis).normalized;
+		if (eccentricity < 1.0)
+		{
+			double compression = 1.0 - eccentricity * eccentricity;
+			semiMajorAxis = focalParameter / compression;
+		}
+
 	}
 
 }

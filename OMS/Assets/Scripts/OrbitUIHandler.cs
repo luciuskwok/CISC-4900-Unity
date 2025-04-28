@@ -32,7 +32,7 @@ public class OrbitUIHandler : MonoBehaviour
 
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.0; // m/s
-	private double nodeMeanAnomaly = 0.0; // radians
+	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
 
 	// private double earthGM = 3.986004418e5; // in km^3/s^2
 
@@ -42,7 +42,6 @@ public class OrbitUIHandler : MonoBehaviour
 
 	void Start() {
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
-		UpdateOrbit();
 
 		// Set up the current player orbit
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
@@ -67,19 +66,27 @@ public class OrbitUIHandler : MonoBehaviour
 
 		// Target Stats Text
 		double f = targetSMA * targetEccen;
-		double apoapsis = targetSMA + f - EarthRadius;
-		double periapsis = targetSMA - f - EarthRadius;
+		double apoAlt = targetOrbit.ApoapsisFromFocus() - EarthRadius;
+		double periAlt = targetOrbit.PeriapsisFromFocus() - EarthRadius;
 		double period = targetOrbit.OrbitalPeriod();
-		targetStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
-			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
+		targetStatsText.text = "Apoapsis: " + apoAlt.ToString("#,##0") + " km\n" +
+			"Periapsis: " + periAlt.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 
-		// Update maneuver node
+		// Set initial planned orbit parameters
+		OrbitPlot planOrbit = plannedOrbitLine.GetComponent<OrbitPlot>();
+		planOrbit.semiMajorAxis = playerSemiMajorAxis;
+		planOrbit.eccentricity = playerEccentricity;
+		planOrbit.periapsisLongitude = playerPeriapsisLongitude;
+		planOrbit.attractorMass = EarthMass;
+
+		// Update maneuver node & planned orbit
 		SetManeuverNodeAtEccentricAnomaly(nodeMeanAnomaly, playerOrbitLine);
+		UpdatePlannedOrbit();
 	}
 
 	void Update() {
-		AnimateManeuverNode();
+		//AnimateManeuverNode();
 	}
 
 	void AnimateManeuverNode() {
@@ -110,10 +117,10 @@ public class OrbitUIHandler : MonoBehaviour
 		// Move Maneuver Node UI element to aligh with view
 		OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
 		// Get the local coordinates of the node and convert to world coordinates
-		Vector3 position = plot.LocalPositionAtEccentricAnomaly(eccentricAnomaly);
-		position = orbit.transform.TransformPoint(position);
+		Vector2d localPos = plot.LocalPositionAtEccentricAnomaly(eccentricAnomaly);
+		Vector3 worldPos = orbit.transform.TransformPoint(new Vector3((float)localPos.x, 0, (float)localPos.y));
 		// Convert to 2d 
-		Vector3 point = mainCamera.WorldToViewportPoint(position);
+		Vector3 point = mainCamera.WorldToViewportPoint(worldPos);
 		// Scale to canvas size
 		RectTransform canvasRT = canvas.GetComponent<RectTransform>();
 		point.x *= canvasRT.rect.width;
@@ -130,45 +137,43 @@ public class OrbitUIHandler : MonoBehaviour
 	}
 
 	public void ProgradeDidChange(float value) {
-		progradeDeltaV = value;
-		UpdateOrbit();
+		progradeDeltaV = value / 1000.0; // Convert value from m/s to km/s
+		UpdatePlannedOrbit();
 	}
 
-	void UpdateOrbit() {
+	void UpdatePlannedOrbit() {
 		// Calculate the orbital parameters resulting from maneuver
-		// Get original velocity
+		// Get original velocity and position at maneuver node
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(nodeMeanAnomaly, playerEccentricity);
-		Vector2d originalVelocity = playerOrbit.VelocityAtEccentricAnomaly(eccentricAnomaly);
+		double nodeEccentricAnomaly = Kepler.EccentricAnomalyFromMean(nodeMeanAnomaly, playerEccentricity);
+		Vector2d originalVelocity = playerOrbit.VelocityAtEccentricAnomaly(nodeEccentricAnomaly);
 		// Add prograde delta-V
 		Vector2d progradeDirection = originalVelocity.normalized;
 		Vector2d deltaVelocity = progradeDirection * progradeDeltaV;
 		// Calculate the new orbit based on the new velocity vector
 		Vector2d newVelocity = originalVelocity + deltaVelocity;
-
-		double planPeriaps = playerAltitude + EarthRadius; // km
-		double planApoaps = playerAltitude + EarthRadius + progradeDeltaV * 10.0; // km
-		double planSMA = (planPeriaps + planApoaps) / 2.0;
-		double planEccen = 1.0 - (planPeriaps / planSMA);
+		Vector2d nodePosition = playerOrbit.LocalPositionAtEccentricAnomaly(nodeEccentricAnomaly);
 
 		// Update the planned orbit parameters
 		OrbitPlot planOrbit = plannedOrbitLine.GetComponent<OrbitPlot>();
-		planOrbit.semiMajorAxis = planSMA;
-		planOrbit.eccentricity = planEccen;
-		planOrbit.periapsisLongitude = playerPeriapsisLongitude + nodeMeanAnomaly;
-		planOrbit.attractorMass = EarthMass;
+		planOrbit.SetOrbitWithPositionVelocity(nodePosition, newVelocity);
 		planOrbit.UpdatePoints();
 
 		// Maneuver Controls
-		progradeReadout.SetText(progradeDeltaV.ToString("F1") + " m/s");
+		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Maneuver Stats
-		double apoapsis = planApoaps - EarthRadius;
-		double periapsis = planApoaps - EarthRadius;
+		double apoAlt = planOrbit.ApoapsisFromFocus() - EarthRadius;
+		double periAlt = planOrbit.PeriapsisFromFocus() - EarthRadius;
 		double period = planOrbit.OrbitalPeriod();
-		playerStatsText.text = "Apoapsis: " + apoapsis.ToString("#,##0") + " km\n" +
-			"Periapsis: " + periapsis.ToString("#,##0") + " km\n" +
+		playerStatsText.text = "Apoapsis: " + apoAlt.ToString("#,##0") + " km\n" +
+			"Periapsis: " + periAlt.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
+
+		// Use Ship stats text box for debugging info
+		shipStatsText.text = "v: " + newVelocity.magnitude.ToString("F3") + " km/s\n" +
+			"vX: " + newVelocity.x.ToString("F3") + " km/s\n" + 
+			"vY: " + newVelocity.y.ToString("F3") + " km/s\n";
 	}
 
 	// Utilities

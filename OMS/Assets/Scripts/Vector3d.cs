@@ -1,6 +1,8 @@
 using System;
+using UnityEngine;
 
 // Adapted from https://github.com/Karth42/SimpleKeplerOrbits
+
 
 public struct Vector3d {
 	public double x;
@@ -20,6 +22,11 @@ public struct Vector3d {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+
+	// convert to float-based Vector3
+	public Vector3 vector3 {
+		get { return new Vector3((float)this.x, (float)this.y, (float)this.z); }
 	}
 
 	public Vector3d normalized {
@@ -118,6 +125,10 @@ public struct Vector3d {
 		{
 			this = Vector3d.zero;
 		}
+	}
+
+	public static Vector3d Cross(Vector3d a, Vector3d b) {
+		return new Vector3d(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 	}
 
 	public static double Dot(Vector3d a, Vector3d b) {

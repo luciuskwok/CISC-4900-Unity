@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public struct Vector2d {
 	public double x;
@@ -16,6 +17,11 @@ public struct Vector2d {
 	public Vector2d(double x, double y) {
 		this.x = x;
 		this.y = y;
+	}
+
+	// Convert to float-based Vector2
+	public Vector2 vector2 {
+		get { return new Vector2((float)this.x, (float)this.y); }
 	}
 
 	public static Vector2d operator +(Vector2d a, Vector2d b) {
@@ -38,14 +44,36 @@ public struct Vector2d {
 		return new Vector2d(a.x / b, a.y / b);
 	}
 
-
-
 	public double magnitude {
 		get { return Vector2d.Magnitude(this); }
 	}
 
+	public double sqrMagnitude {
+		get { return Vector2d.SqrMagnitude(this); }
+	}
+
 	public Vector2d normalized {
 		get { return Vector2d.Normalize(this); }
+	}
+
+	public static double Dot(Vector2d a, Vector2d b) {
+		return a.x * b.x + a.y * b.y;
+	}
+	public static double Magnitude(Vector2d a) {
+		return Math.Sqrt(a.x * a.x + a.y * a.y);
+	}
+
+	public static double SqrMagnitude(Vector2d a) {
+		return a.x * a.x + a.y * a.y;
+	}
+
+	public static Vector2d Normalize(Vector2d a) {
+		double mag = Vector2d.Magnitude(a);
+		if (mag > EPSILON) {
+			return a / mag;
+		} else {
+			return Vector2d.zero;
+		}
 	}
 
 	public void Rotate(double angle) {
@@ -58,19 +86,6 @@ public struct Vector2d {
 	public void Scale(Vector2d scale) {
 		this.x *= scale.x;
 		this.y *= scale.y;
-	}
-
-	public static double Magnitude(Vector2d a) {
-		return Math.Sqrt(a.x * a.x + a.y * a.y);
-	}
-
-	public static Vector2d Normalize(Vector2d a) {
-		double mag = Vector2d.Magnitude(a);
-		if (mag > EPSILON) {
-			return a / mag;
-		} else {
-			return Vector2d.zero;
-		}
 	}
 
 }
