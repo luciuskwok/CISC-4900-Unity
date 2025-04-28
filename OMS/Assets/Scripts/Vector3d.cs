@@ -121,7 +121,7 @@ public struct Vector3d {
 
 	public static double Angle(Vector3d from, Vector3d to) {
 		double dot = Dot(from.normalized, to.normalized);
-		return Math.Acos(dot < -1.0 ? -1.0 : (dot > 1.0 ? 1.0 : dot)) * 57.29578d;
+		return Math.Acos(dot < -1.0 ? -1.0 : (dot > 1.0 ? 1.0 : dot));
 	}
 
 

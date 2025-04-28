@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting.Antlr3.Runtime;
 using System;
 
 public class OrbitPlot : MonoBehaviour
@@ -18,7 +17,6 @@ public class OrbitPlot : MonoBehaviour
 	// Unity uses the convention that the x-z plane is horizontal, and positive y points up. So the y and z axes are swapped. 
 	// As for the x axis, that can be arbitrarily chosen as long as it is consistent throughout the solar system for this project. 
 
-	public static readonly Vector3d EclipticUp = new Vector3d(0, 1, 0);
 
 	private int pointCount = 180;
 	private double gradientAnimationTime = 4.0f; // seconds
@@ -87,7 +85,7 @@ public class OrbitPlot : MonoBehaviour
 			point.x = a * Math.Cos(theta) - f;
 			point.y = b * Math.Sin(theta);
 			// Rotate and scale the ellipse point
-			point.Rotate(periapsisLongitude);
+			point = point.Rotated(periapsisLongitude);
 			// Add point
 			points[i] = new Vector3((float)point.x, 0, (float)point.y);
 		}
@@ -152,6 +150,9 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	public Vector2d VelocityAtEccentricAnomaly(double eccentricAnomlay) {
+		// Parameters:
+		//   eccentricAnomlay: angle from periapsis
+		// Returns the velocity vector in local coordinates
 		double trueAnomaly = Kepler.TrueAnomalyFromEccentric(eccentricAnomlay, eccentricity);
 		return VelocityAtTrueAnomaly(trueAnomaly);
 	}
@@ -165,7 +166,8 @@ public class OrbitPlot : MonoBehaviour
 		double sqrtMGdivP = Math.Sqrt(attractorMass * Kepler.G / focalParameter);
 		double vX = -sqrtMGdivP * Math.Sin(trueAnomaly);
 		double vY = sqrtMGdivP * (eccentricity + Math.Cos(trueAnomaly));
-		return new Vector2d(vX, vY);
+		Vector2d vec = new(vX, vY);
+		return vec.Rotated(periapsisLongitude);
 	}
 
 	public Vector2d LocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
@@ -179,25 +181,26 @@ public class OrbitPlot : MonoBehaviour
 		point.x = a * Math.Cos(eccentricAnomaly) - c;
 		point.y = b * Math.Sin(eccentricAnomaly);
 		// Rotate for the longitude of periapsis
-		point.Rotate(periapsisLongitude);
+		point = point.Rotated(periapsisLongitude);
 
 		return new Vector2d(point.x, point.y);
 	}
 
 	public void SetOrbitWithPositionVelocity(Vector2d position, Vector2d velocity) {
-		Vector3d pos3d = new Vector3d(position.x, position.y, 0);
-		Vector3d vel3d = new Vector3d(velocity.x, velocity.y, 0);
+		Vector3d pos3d = new(position.x, 0, position.y);
+		Vector3d vel3d = new(velocity.x, 0, velocity.y);
 		SetOrbitWithPositionVelocity3D(pos3d, vel3d);
 	}
 
 	public void SetOrbitWithPositionVelocity3D(Vector3d position, Vector3d velocity) {
+		// Code below is from SimpleKeplerOrbits
 		double MG = attractorMass * Kepler.G;
 		double attractorDistance = position.magnitude;
 		Vector3d angularMomentumVector = Vector3d.Cross(position, velocity);
 		Vector3d orbitNormal = angularMomentumVector.normalized;
 		Vector3d eccVector;
 		if (orbitNormal.sqrMagnitude < 0.99) {
-			orbitNormal = Vector3d.Cross(position, EclipticUp).normalized;
+			orbitNormal = Vector3d.Cross(position, Kepler.EclipticUp).normalized;
 			eccVector = new Vector3d();
 			Debug.Log("Invalid orbit normal.");
 		} else {
@@ -207,19 +210,31 @@ public class OrbitPlot : MonoBehaviour
 		double focalParameter = angularMomentumVector.sqrMagnitude / MG;
 		eccentricity = eccVector.magnitude;
 
-		Vector3d semiMinorAxisBasis = Vector3d.Cross(angularMomentumVector, -eccVector).normalized;
-		if (semiMinorAxisBasis.sqrMagnitude < 0.99) {
-			semiMinorAxisBasis = Vector3d.Cross(orbitNormal, position).normalized;
-			Debug.Log("Invalid semiMinorAxisBasis.");
+		Vector3d semiMinorAxisVector = Vector3d.Cross(angularMomentumVector, -eccVector).normalized;
+		if (semiMinorAxisVector.sqrMagnitude < 0.99) {
+			semiMinorAxisVector = Vector3d.Cross(orbitNormal, position).normalized;
+			//Debug.Log("Invalid semiMinorAxisBasis.");
 		}
 
-		Vector3d semiMajorAxisBasis = Vector3d.Cross(orbitNormal, semiMinorAxisBasis).normalized;
+		Vector3d semiMajorAxisVector = Vector3d.Cross(orbitNormal, semiMinorAxisVector).normalized;
+
 		if (eccentricity < 1.0) {
 			double compression = 1.0 - eccentricity * eccentricity;
 			semiMajorAxis = focalParameter / compression;
 		} else {
 			Debug.Log("Eccetricity >= 1.0 not yet implemented.");
 		}
+
+		// Calculate the longitude of periapsis from the SMA vector
+		if (eccentricity >= 0.0001) {
+			// Use 0.0001 as limit because at very small values of eccentricity, the below code produces a lot of jitter in the results.
+			periapsisLongitude = Math.Atan2(semiMajorAxisVector.z, semiMajorAxisVector.x);
+		} else {
+			periapsisLongitude = 0.0;
+		}
+
+		// TODO: calculate the true anomaly of the position
+		// This requires that the orbit plot keep track of the current position
 
 	}
 

@@ -76,17 +76,22 @@ public struct Vector2d {
 		return a.x * b.x + a.y * b.y;
 	}
 
-
-	public void Rotate(double angle) {
-		double x1 = this.x * Math.Cos(angle) - this.y * Math.Sin(angle);
-		double y1 = this.x * Math.Sin(angle) + this.y * Math.Cos(angle);
-		this.x = x1;
-		this.y = y1;
+	public Vector2d Rotated(double angle) {
+		return Vector2d.Rotate(this, angle);
 	}
 
-	public void Scale(Vector2d scale) {
-		this.x *= scale.x;
-		this.y *= scale.y;
+	public static Vector2d Rotate(Vector2d vec, double angle) {
+		double x1 = vec.x * Math.Cos(angle) - vec.y * Math.Sin(angle);
+		double y1 = vec.x * Math.Sin(angle) + vec.y * Math.Cos(angle);
+		return new Vector2d(x1, y1);
+	}
+
+	public Vector2d Scaled(Vector2d scale) {
+		return Vector2d.Scale(this, scale);
+	}
+
+	public static Vector2d Scale(Vector2d vec, Vector2d scale) {
+		return new Vector2d(vec.x * scale.x, vec.y * scale.y);
 	}
 
 }

@@ -11,6 +11,10 @@ public static class Kepler {
 	public const double Rad2Deg = 57.295779513082d;
 	public const double G = 6.67430e-20; // (km^3)/(kg*s^2) Gravitational Constant
 
+	public static readonly Vector3d EclipticNormal = new Vector3d(0, 0, 1); // positive z is the direction of north, towards the North Pole Star
+	public static readonly Vector3d EclipticUp = new Vector3d(0, 1, 0);
+	public static readonly Vector3d EclipticRight = new Vector3d(1, 0, 0);
+
 	// Regular Acosh, but without exception when out of possible range.
 	public static double Acosh(double x) {
 		if (x < 1.0) return 0;
