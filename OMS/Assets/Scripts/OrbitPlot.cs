@@ -139,6 +139,11 @@ public class OrbitPlot : MonoBehaviour
 		return Kepler.OrbitalPeriod(semiMajorAxis, attractorMass);
 	}
 
+	public Vector2d VelocityAtEccentricAnomaly(double eccentricAnomlay) {
+		double trueAnomaly = Kepler.TrueAnomalyFromEccentric(eccentricAnomlay, eccentricity);
+		return VelocityAtTrueAnomaly(trueAnomaly);
+	}
+
 	public Vector2d VelocityAtTrueAnomaly(double trueAnomaly) {
 		double compression = eccentricity < 1.0 ? (1.0 - eccentricity * eccentricity) : (eccentricity * eccentricity - 1.0);
 		double focalParameter = semiMajorAxis * compression;
@@ -146,8 +151,8 @@ public class OrbitPlot : MonoBehaviour
 		if (focalParameter <= 0.0) return Vector2d.zero;
 		
 		double sqrtMGdivP = Math.Sqrt(attractorMass * Kepler.G / focalParameter);
-		double vX = sqrtMGdivP * (eccentricity + Math.Cos(trueAnomaly));
-		double vY = sqrtMGdivP * Math.Sin(trueAnomaly);
+		double vX = sqrtMGdivP * Math.Sin(trueAnomaly);
+		double vY = sqrtMGdivP * (eccentricity + Math.Cos(trueAnomaly));
 		return new Vector2d(vX, vY);
 	}
 

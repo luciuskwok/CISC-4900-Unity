@@ -12,6 +12,7 @@ public class OrbitUIHandler : MonoBehaviour
 	public TMP_Text progradeReadout;
 	public TMP_Text playerStatsText;
 	public TMP_Text targetStatsText;
+	public TMP_Text shipStatsText;
 	
 	// Orbit lines
 	public GameObject playerOrbitLine;
@@ -73,27 +74,43 @@ public class OrbitUIHandler : MonoBehaviour
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 
 		// Update maneuver node
-		SetManeuverNodeAtEccentricAnomaly(nodeMeanAnomaly);
+		SetManeuverNodeAtEccentricAnomaly(nodeMeanAnomaly, playerOrbitLine);
 	}
 
 	void Update() {
-		
+		AnimateManeuverNode();
 	}
 
 	void AnimateManeuverNode() {
-		const double nodeAnimationTime = 4.0;
+		const double nodeAnimationTime = 30.0;
+
+		GameObject orbit = plannedOrbitLine;
+		OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
+
 		double x = Time.timeSinceLevelLoadAsDouble / nodeAnimationTime % 1.0f;
+		double eccentricity = plot.eccentricity;
+
 		double meanAnomaly = x * Kepler.PI_2;
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, playerEccentricity);
-		SetManeuverNodeAtEccentricAnomaly(eccentricAnomaly);
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, eccentricity);
+
+		SetManeuverNodeAtEccentricAnomaly(eccentricAnomaly, orbit);
+		Vector2d velocity = plot.VelocityAtEccentricAnomaly(eccentricAnomaly);
+
+		// Set Ship stats as if node was the ship
+		shipStatsText.text = "M: " + (meanAnomaly * 100).ToString("F0") + "%\n" +
+			"E: " + (eccentricAnomaly * Kepler.Rad2Deg).ToString("F0") + "°\n" +
+			"v: " + velocity.magnitude.ToString("F3") + " km/s\n" +
+			"vX: " + velocity.x.ToString("F3") + " km/s\n" + 
+			"vY: " + velocity.y.ToString("F3") + " km/s\n";
+		
 	}
 
-	void SetManeuverNodeAtEccentricAnomaly(double eccentricAnomaly) {
+	void SetManeuverNodeAtEccentricAnomaly(double eccentricAnomaly, GameObject orbit) {
 		// Move Maneuver Node UI element to aligh with view
-		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
+		OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
 		// Get the local coordinates of the node and convert to world coordinates
-		Vector3 position = playerOrbit.LocalPositionAtEccentricAnomaly(eccentricAnomaly);
-		position = playerOrbitLine.transform.TransformPoint(position);
+		Vector3 position = plot.LocalPositionAtEccentricAnomaly(eccentricAnomaly);
+		position = orbit.transform.TransformPoint(position);
 		// Convert to 2d 
 		Vector3 point = mainCamera.WorldToViewportPoint(position);
 		// Scale to canvas size
