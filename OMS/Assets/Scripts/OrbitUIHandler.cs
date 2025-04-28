@@ -32,7 +32,7 @@ public class OrbitUIHandler : MonoBehaviour
 
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.0; // m/s
-	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
+	private double nodeMeanAnomaly = 30.0 * Kepler.Deg2Rad; // radians
 
 	// private double earthGM = 3.986004418e5; // in km^3/s^2
 
@@ -81,41 +81,29 @@ public class OrbitUIHandler : MonoBehaviour
 		planOrbit.attractorMass = EarthMass;
 
 		// Update maneuver node & planned orbit
-		SetManeuverNodeAtEccentricAnomaly(nodeMeanAnomaly, playerOrbitLine);
+		PositionManeuverNodeWithMeanAnomaly(nodeMeanAnomaly, playerOrbitLine);
 		UpdatePlannedOrbit();
 	}
 
 	void Update() {
-		//AnimateManeuverNode();
+		AnimateManeuverNode();
 	}
 
 	void AnimateManeuverNode() {
 		const double nodeAnimationTime = 30.0;
-
-		GameObject orbit = plannedOrbitLine;
-		OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
-
 		double x = Time.timeSinceLevelLoadAsDouble / nodeAnimationTime % 1.0f;
-		double eccentricity = plot.eccentricity;
 
-		double meanAnomaly = x * Kepler.PI_2;
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, eccentricity);
-
-		SetManeuverNodeAtEccentricAnomaly(eccentricAnomaly, orbit);
-		Vector2d velocity = plot.VelocityAtEccentricAnomaly(eccentricAnomaly);
-
-		// Set Ship stats as if node was the ship
-		shipStatsText.text = "M: " + (meanAnomaly * 100).ToString("F0") + "%\n" +
-			"E: " + (eccentricAnomaly * Kepler.Rad2Deg).ToString("F0") + "°\n" +
-			"v: " + velocity.magnitude.ToString("F3") + " km/s\n" +
-			"vX: " + velocity.x.ToString("F3") + " km/s\n" + 
-			"vY: " + velocity.y.ToString("F3") + " km/s\n";
-		
+		// Rotate the maneuver node around for testing
+		nodeMeanAnomaly = x * Kepler.PI_2;
+		PositionManeuverNodeWithMeanAnomaly(nodeMeanAnomaly, playerOrbitLine);
+		UpdatePlannedOrbit();
 	}
 
-	void SetManeuverNodeAtEccentricAnomaly(double eccentricAnomaly, GameObject orbit) {
-		// Move Maneuver Node UI element to aligh with view
+	void PositionManeuverNodeWithMeanAnomaly(double meanAnomaly, GameObject orbit) {
+		// Move Maneuver Node UI element to specific point on orbit
 		OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
+
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, plot.eccentricity);
 		// Get the local coordinates of the node and convert to world coordinates
 		Vector2d localPos = plot.LocalPositionAtEccentricAnomaly(eccentricAnomaly);
 		Vector3 worldPos = orbit.transform.TransformPoint(new Vector3((float)localPos.x, 0, (float)localPos.y));
@@ -171,9 +159,11 @@ public class OrbitUIHandler : MonoBehaviour
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 
 		// Use Ship stats text box for debugging info
-		shipStatsText.text = "v: " + newVelocity.magnitude.ToString("F3") + " km/s\n" +
-			"vX: " + newVelocity.x.ToString("F3") + " km/s\n" + 
-			"vY: " + newVelocity.y.ToString("F3") + " km/s\n";
+		shipStatsText.text = "New velocity: " + newVelocity.magnitude.ToString("F3") + " km/s\n" +
+			"vel.X: " + newVelocity.x.ToString("F3") + " km/s\n" + 
+			"vel.Y: " + newVelocity.y.ToString("F3") + " km/s\n" + 
+			"pos.x: " + nodePosition.x.ToString("F3") + " km\n" + 
+			"pos.y: " + nodePosition.y.ToString("F3") + " km\n";
 	}
 
 	// Utilities
