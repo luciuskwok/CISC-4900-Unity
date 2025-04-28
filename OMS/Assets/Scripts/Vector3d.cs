@@ -8,18 +8,6 @@ public struct Vector3d {
 	public double z;
 	private const double EPSILON = 1.401298E-45;
 
-	public Vector3d normalized {
-		get { return Vector3d.Normalize(this); }
-	}
-
-	public double magnitude {
-		get { return Math.Sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
-	}
-
-	public double sqrMagnitude {
-		get { return this.x * this.x + this.y * this.y + this.z * this.z; }
-	}
-
 	public static Vector3d zero {
 		get { return new Vector3d(0d, 0d, 0d); }
 	}
@@ -34,6 +22,18 @@ public struct Vector3d {
 		this.z = z;
 	}
 
+	public Vector3d normalized {
+		get { return Vector3d.Normalize(this); }
+	}
+
+	public double magnitude {
+		get { return Math.Sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+	}
+
+	public double sqrMagnitude {
+		get { return this.x * this.x + this.y * this.y + this.z * this.z; }
+	}
+	
 	public static Vector3d operator +(Vector3d a, Vector3d b) {
 		return new Vector3d(a.x + b.x, a.y + b.y, a.z + b.z);
 	}

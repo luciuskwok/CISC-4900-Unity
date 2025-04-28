@@ -25,7 +25,8 @@ public class OrbitUIHandler : MonoBehaviour
 	public Canvas canvas;
 
 	// Player parameters
-	private double playerSemiMajorAxis = EarthRadius + 1000; // km
+	private const double playerAltitude = 420.0; // km above Earth's surface
+	private double playerSemiMajorAxis = EarthRadius + playerAltitude; // km
 	private double playerEccentricity = 0.0;
 	private double playerPeriapsisLongitude = 180.0 * Kepler.Deg2Rad;
 
@@ -52,7 +53,7 @@ public class OrbitUIHandler : MonoBehaviour
 		playerOrbit.UpdatePoints();
 
 		// Set up the target orbit
-		double targetPeriaps = 1000.0 + EarthRadius; // km
+		double targetPeriaps = playerAltitude + EarthRadius; // km
 		double targetApoaps = 4000.0 + EarthRadius; // km
 		double targetSMA = (targetPeriaps + targetApoaps) / 2.0;
 		double targetEccen = 1.0 - (targetPeriaps / targetSMA);
@@ -135,8 +136,18 @@ public class OrbitUIHandler : MonoBehaviour
 
 	void UpdateOrbit() {
 		// Calculate the orbital parameters resulting from maneuver
-		double planPeriaps = 1000.0 + EarthRadius; // km
-		double planApoaps = 1000.0 + EarthRadius + progradeDeltaV * 8.0; // km
+		// Get original velocity
+		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(nodeMeanAnomaly, playerEccentricity);
+		Vector2d originalVelocity = playerOrbit.VelocityAtEccentricAnomaly(eccentricAnomaly);
+		// Add prograde delta-V
+		Vector2d progradeDirection = originalVelocity.normalized;
+		Vector2d deltaVelocity = progradeDirection * progradeDeltaV;
+		// Calculate the new orbit based on the new velocity vector
+		Vector2d newVelocity = originalVelocity + deltaVelocity;
+
+		double planPeriaps = playerAltitude + EarthRadius; // km
+		double planApoaps = playerAltitude + EarthRadius + progradeDeltaV * 10.0; // km
 		double planSMA = (planPeriaps + planApoaps) / 2.0;
 		double planEccen = 1.0 - (planPeriaps / planSMA);
 
