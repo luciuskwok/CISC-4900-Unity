@@ -8,7 +8,10 @@ public class Orbit {
 	// Primary variables that define this class
 	private Vector3d m_SemiMajorAxisVec; // Vector from center of ellipse to periapse
 	private Vector3d m_SemiMinorAxisVec; // Vector from center of ellipse representing the semi-minor axis
+	
 	private double m_Eccentricity;
+	public double Eccentricity { get { return m_Eccentricity; } }
+
 	private double m_EccentricAnomaly; 
 
 	// Secondary variables that are derived from primary varibles
@@ -259,10 +262,6 @@ public class Orbit {
 
 	public Vector3d CenterPoint {
 		get { return -m_SemiMajorAxisVec * m_Eccentricity; }
-	}
-	
-	public double Eccentricity {
-		get { return m_Eccentricity; }
 	}
 
 	public double PeriapsisDistance {

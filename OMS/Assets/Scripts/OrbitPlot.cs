@@ -29,6 +29,16 @@ public class OrbitPlot : MonoBehaviour
 		UpdateLineRenderer();
 	}
 
+	public void SetOrbitByAltitudes(double periapsisAltitude, double apoapsisAltitude, double argOfPerifocus) 
+	{
+		double pe = periapsisAltitude + attractor.radius; // km
+		double ap = apoapsisAltitude + attractor.radius; // km
+		double a = (pe + ap) / 2.0;
+		double e = 1.0 - (pe / a);
+
+		SetOrbitalElements(e, a, 0, 0, argOfPerifocus, 0);
+	}
+
 	public void SetOrbitByThrow(Vector3d position, Vector3d velocity) 
 	{
 		m_Orbit = new Orbit(position, velocity, attractor);
@@ -115,5 +125,25 @@ public class OrbitPlot : MonoBehaviour
 		// To get the position as a function of time, conver the time to a mean anomaly, then convert that into the eccentric anomaly.
 		return m_Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
 	}
+
+	/// <summary>
+	/// Gets the eccentric anomaly given the mean anomaly.
+	/// </summary>
+	/// <param name="meanAnomaly">The mean anomaly as radians from periapsis.</param>
+	/// <returns>Eccentric anomaly as radians from periapsis.</returns>
+	public double GetEccentricAnomalyFromMean(double meanAnomaly) {
+		return Kepler.EccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
+	}
+
+	public override String ToString() {
+		double ap = Orbit.ApoapsisAltitude;
+		double pe = Orbit.PeriapsisAltitude;
+		double period = Orbit.OrbitalPeriod;
+		return "Apoapsis: " + ap.ToString("#,##0") + " km\n" +
+			"Periapsis: " + pe.ToString("#,##0") + " km\n" +
+			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
+	}
+
+
 
 }

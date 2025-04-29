@@ -28,49 +28,34 @@ public class OrbitUIHandler : MonoBehaviour
 	public Camera mainCamera;
 	public Canvas canvas;
 
-	// Player parameters
-	private const double playerAltitude = 420.0; // km above Earth's surface
-	private double playerSemiMajorAxis = EarthRadius + playerAltitude; // km
-	private double playerEccentricity = 0.0;
-	private double playerArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
-
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.0; // m/s
 	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
 
-	// Target orbit parameters
-	private double targetApoapsis = EarthRadius + 4000.0;
-
-	// Constants
-	public const double EarthRadius = 6378.0; // km
-	public const double EarthMass = 5.9722e24; // kg
-
 	void Start() {
+		// Constants
+		const double playerAltitude = 420.0; // km above Earth's surface
+		const double playerEcc = 0.0; // circular orbit
+		const double playerArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
+		double playerSMA = Attractor.Earth.radius + playerAltitude;
+		double targetApoapsisAlt = 4000.0; // km above surface
+
+		// Set prograde slider to initial value
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
 
 		// Set up the current player orbit
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
 		playerOrbit.attractor = Attractor.Earth;
-		playerOrbit.SetOrbitalElements(playerEccentricity, playerSemiMajorAxis, 0, 0, playerArgOfPerifocus, 0);
+		playerOrbit.SetOrbitalElements(playerEcc, playerSMA, 0, 0, playerArgOfPerifocus, 0);
 
 		// Set up the target orbit
-		double targetPeriaps = playerAltitude + Attractor.Earth.radius; // km
-		double targetSMA = (targetPeriaps + targetApoapsis) / 2.0;
-		double targetEccen = 1.0 - (targetPeriaps / targetSMA);
-
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
 		targetOrbit.attractor = Attractor.Earth;
-		targetOrbit.SetOrbitalElements(targetEccen, targetSMA, 0, 0, playerArgOfPerifocus, 0);
+		targetOrbit.SetOrbitByAltitudes(playerAltitude, targetApoapsisAlt, playerArgOfPerifocus);
 
 		// Target Stats Text
-		double f = targetSMA * targetEccen;
-		double apoAlt = targetOrbit.Orbit.ApoapsisAltitude;
-		double periAlt = targetOrbit.Orbit.PeriapsisAltitude;
-		double period = targetOrbit.Orbit.OrbitalPeriod;
-		targetStatsText.text = "Apoapsis: " + apoAlt.ToString("#,##0") + " km\n" +
-			"Periapsis: " + periAlt.ToString("#,##0") + " km\n" +
-			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
-
+		targetStatsText.text = targetOrbit.ToString();
+		
 		// Update maneuver node & planned orbit
 		PositionManeuverNodeWithMeanAnomaly(nodeMeanAnomaly, playerOrbitLine);
 		UpdatePlannedOrbit();
@@ -128,7 +113,7 @@ public class OrbitUIHandler : MonoBehaviour
 		// Calculate the orbital parameters resulting from maneuver
 		// Get original velocity and position at maneuver node
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		double nodeEccentricAnomaly = Kepler.EccentricAnomalyFromMean(nodeMeanAnomaly, playerEccentricity);
+		double nodeEccentricAnomaly = playerOrbit.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
 		Vector3d originalVelocity = playerOrbit.Orbit.GetVelocityAtEccentricAnomaly(nodeEccentricAnomaly);
 		// Add prograde delta-V
 		Vector3d progradeDirection = originalVelocity.normalized;
@@ -146,16 +131,15 @@ public class OrbitUIHandler : MonoBehaviour
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Maneuver Stats
-		double apoAlt = planOrbit.Orbit.ApoapsisAltitude;
-		double periAlt = planOrbit.Orbit.PeriapsisAltitude;
-		double period = planOrbit.Orbit.OrbitalPeriod;
-		playerStatsText.text = "Apoapsis: " + apoAlt.ToString("#,##0") + " km\n" +
-			"Periapsis: " + periAlt.ToString("#,##0") + " km\n" +
-			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
+		playerStatsText.text = planOrbit.ToString();
+
+		// Target orbit parameter
+		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
+		double targetApoapsis = targetOrbit.Orbit.ApoapsisDistance;
 
 		// Check if planned orbit is within tolerances and enable Go button
-		double planApo = planOrbit.Orbit.ApoapsisDistance;
-		if (Math.Abs(targetApoapsis - planApo) < targetApoapsis * 0.02) {
+		double planApoapsis = planOrbit.Orbit.ApoapsisDistance;
+		if (Math.Abs(targetApoapsis - planApoapsis) < targetApoapsis * 0.02) {
 			goButton.SetActive(true);
 			SetInfoText(true);
 		} else {
