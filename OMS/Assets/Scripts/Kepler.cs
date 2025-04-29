@@ -18,7 +18,7 @@ public static class Kepler {
 		return Math.Log(x + Math.Sqrt(x * x - 1.0));
 	}
 
-	public static double TrueAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
+	public static double GetTrueAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
 		if (eccentricity < 1.0) {
 			double cosE  = Math.Cos(eccentricAnomaly);
 			double tAnom = Math.Acos((cosE - eccentricity) / (1d - eccentricity * cosE));
@@ -35,7 +35,7 @@ public static class Kepler {
 		}
 	}
 
-	public static double EccentricAnomalyFromTrue(double trueAnomaly, double eccentricity) {
+	public static double GetEccentricAnomalyFromTrue(double trueAnomaly, double eccentricity) {
 		if (double.IsNaN(eccentricity) || double.IsInfinity(eccentricity)) return trueAnomaly;
 
 		trueAnomaly %= PI_2;
@@ -59,7 +59,7 @@ public static class Kepler {
 		}
 	}
 
-	public static double MeanAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
+	public static double GetMeanAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
 		// This handles all the cases of eccentricity
 		if (eccentricity < 1.0) {
 			return eccentricAnomaly - eccentricity * Math.Sin(eccentricAnomaly);
@@ -71,7 +71,7 @@ public static class Kepler {
 		}	
 	}
 
-	public static double EccentricAnomalyFromMean(double meanAnomaly, double eccentricity) {
+	public static double GetEccentricAnomalyFromMean(double meanAnomaly, double eccentricity) {
 		if (eccentricity < 1.0) {
 			return Mean2EccentricAnomalyElliptical(meanAnomaly, eccentricity);
 		} else if (eccentricity > 1.0) {

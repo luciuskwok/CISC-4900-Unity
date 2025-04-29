@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Mission1UIHandler : MonoBehaviour
+public class Mission2UIHandler : MonoBehaviour
 {
 	// Text UI
 	public Slider progradeSlider;
 	public TMP_Text progradeReadout;
-	public TMP_Text playerStatsText;
+	public Slider timingSlider;
+	public TMP_Text timingReadout;
+	public TMP_Text maneuverStatsText;
 	public TMP_Text targetStatsText;
 	public TMP_Text infoText;
 	
@@ -24,7 +26,8 @@ public class Mission1UIHandler : MonoBehaviour
 	public GameObject successPanel;
 
 	// Maneuver node parameters
-	private double progradeDeltaV = 0.0; // m/s
+	private double progradeDeltaV = 100.0; // m/s
+	private double timing = 0.0; // m/s
 	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
 
 	void Start() {
@@ -33,10 +36,14 @@ public class Mission1UIHandler : MonoBehaviour
 		const double playerEcc = 0.0; // circular orbit
 		const double playerArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
 		double playerSMA = Attractor.Earth.radius + playerAltitude;
-		double targetApoapsisAlt = 4000.0; // km above surface
+		const double targetAltitude = 4000.0; // km above surface
+		const double targetEcc = 0.0;
+		const double targetArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
+		double targetSMA = Attractor.Earth.radius + targetAltitude;
 
 		// Set prograde slider to initial value
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
+		timingSlider.SetValueWithoutNotify((float)timing);
 
 		// Set up the current player orbit
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
@@ -46,14 +53,14 @@ public class Mission1UIHandler : MonoBehaviour
 		// Set up the target orbit
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
 		targetOrbit.attractor = Attractor.Earth;
-		targetOrbit.SetOrbitByAltitudes(playerAltitude, targetApoapsisAlt, playerArgOfPerifocus);
+		targetOrbit.SetOrbitalElements(targetEcc, targetSMA, 0, 0, targetArgOfPerifocus, 0);
 
 		// Target Stats Text
 		targetStatsText.text = targetOrbit.ToString();
 		
 		// Update maneuver node & planned orbit
 		PositionManeuverNode();
-	
+
 		// Set the info text
 		SetInfoText(false);
 
@@ -63,16 +70,6 @@ public class Mission1UIHandler : MonoBehaviour
 	}
 
 	void Update() {
-		//AnimateManeuverNode();
-	}
-
-	void AnimateManeuverNode() {
-		const double nodeAnimationTime = 30.0;
-		double x = Time.timeSinceLevelLoadAsDouble / nodeAnimationTime % 1.0f;
-
-		// Rotate the maneuver node around for testing
-		nodeMeanAnomaly = x * Kepler.PI_2;
-		PositionManeuverNode();
 	}
 
 	void PositionManeuverNode() {
@@ -93,8 +90,9 @@ public class Mission1UIHandler : MonoBehaviour
 	public void HandleGoButton() {
 		// Show the "Success!" message
 		successPanel.SetActive(true);
-		// Disable the slider
+		// Disable the sliders
 		progradeSlider.enabled = false;
+		timingSlider.enabled = false;
 		// Hide the GO button
 		goButton.SetActive(false);
 	}
@@ -131,7 +129,7 @@ public class Mission1UIHandler : MonoBehaviour
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Maneuver Stats
-		playerStatsText.text = planOrbit.ToString();
+		maneuverStatsText.text = planOrbit.ToString();
 
 		// Target orbit parameter
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
@@ -150,7 +148,7 @@ public class Mission1UIHandler : MonoBehaviour
 
 	void SetInfoText(bool success) {
 		if (!success) {
-			infoText.text = "Welcome! Your first task is to adjust your orbit to match the target orbit. Use the slider below to adjust the delta-V, or the change in velocity, for this maneuver node, so that the orbits line up.";
+			infoText.text = "This task involves both changing your orbit and timing the maneuver to rendezvous with the target object. Use the sliders below to adjust the delta-V and the timing so that closest approach is small emough for a meeting.";
 		} else {
 			infoText.text = "Great job! Now click on the Go button to execute the maneuver by firing your engines.";
 		}

@@ -50,7 +50,7 @@ public class OrbitPlot : MonoBehaviour
 		if (animate) {
 			double x = Time.timeSinceLevelLoadAsDouble / gradientAnimationTime % 1.0f;
 			double meanAnomaly = x * Kepler.PI_2;
-			double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
+			double eccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
 			SetGradientByEccentricAnomaly(eccentricAnomaly);
 		}
 	}
@@ -118,14 +118,14 @@ public class OrbitPlot : MonoBehaviour
 	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis.</param>
 	/// <returns>Velocity vector.</returns>
 	public Vector3d GetVelocityAtEccentricAnomaly(double eccentricAnomlay) {
-		double trueAnomaly = Kepler.TrueAnomalyFromEccentric(eccentricAnomlay, m_Orbit.Eccentricity);
+		double trueAnomaly = Kepler.GetTrueAnomalyFromEccentric(eccentricAnomlay, m_Orbit.Eccentricity);
 		return m_Orbit.GetVelocityAtTrueAnomaly(trueAnomaly);
 	}
 
 	/// <summary>
 	/// Gets the position relative to the focus given the eccentric anomaly.
 	/// </summary>
-	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis.</param>
+	/// <param name="eccentricAnomaly">The eccentric anomaly as radians from periapsis.</param>
 	/// <returns>Position vector.</returns>
 	public Vector3d GetFocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
 		// To get the position as a function of time, conver the time to a mean anomaly, then convert that into the eccentric anomaly.
@@ -138,7 +138,18 @@ public class OrbitPlot : MonoBehaviour
 	/// <param name="meanAnomaly">The mean anomaly as radians from periapsis.</param>
 	/// <returns>Eccentric anomaly as radians from periapsis.</returns>
 	public double GetEccentricAnomalyFromMean(double meanAnomaly) {
-		return Kepler.EccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
+		return Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
+	}
+
+	/// <summary>
+	/// Gets the position on the orbit in terms of Unity's world space given the eccentric anomaly.
+	/// </summary>
+	/// <param name="eccentricAnomaly">The eccentric anomaly as radians from periapsis.</param>
+	/// <returns>World position vector.</returns>
+	public Vector3 GetWorldPositionAtEccentricAnomaly(double eccentricAnomaly) {
+		// Get the local coordinates of the node and convert to world coordinates
+		Vector3d localPos = Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
+		return gameObject.transform.TransformPoint(localPos.Vector3);
 	}
 
 	public override String ToString() {

@@ -68,7 +68,7 @@ public class Orbit {
 		m_SemiMajorAxisVec = periapseVec * semiMajorAxis;
 		m_SemiMinorAxisVec = Vector3d.Cross(periapseVec, orbitNormalVec) * semiMinorAxis;
 		m_Eccentricity = eccentricity;
-		m_EccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, eccentricity);
+		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, eccentricity);
 
 		// Set secondary variables
 		m_Position = GetFocalPositionAtEccentricAnomaly(m_EccentricAnomaly);
@@ -149,7 +149,7 @@ public class Orbit {
 		// Calculate the primary variables
 		m_SemiMajorAxisVec = major * majorDistance;
 		m_SemiMinorAxisVec = minor * minorDistance;
-		m_EccentricAnomaly = Kepler.EccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
+		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
 	}
 
 	/// <summary>
@@ -173,7 +173,7 @@ public class Orbit {
 			} else {
 				double maxAngle = Kepler.TrueAnomalyForDistance(maxDistance, m_Eccentricity, pe, pe);
 				for (int i = 0; i < pointsCount; i++){
-					double eccentricAnomaly = Kepler.EccentricAnomalyFromTrue(-maxAngle + i * 2d * maxAngle / (pointsCount - 1), m_Eccentricity);
+					double eccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(-maxAngle + i * 2d * maxAngle / (pointsCount - 1), m_Eccentricity);
 					result[i] = GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
 				}
 			}
@@ -181,7 +181,7 @@ public class Orbit {
 			double maxAngle = Kepler.TrueAnomalyForDistance(maxDistance, m_Eccentricity, this.SemiMajorAxis, pe);
 
 			for (int i = 0; i < pointsCount; i++) {
-				double eccentricAnomaly = Kepler.EccentricAnomalyFromTrue(-maxAngle + i * 2d * maxAngle / (pointsCount - 1), m_Eccentricity);
+				double eccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(-maxAngle + i * 2d * maxAngle / (pointsCount - 1), m_Eccentricity);
 				result[i] = GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
 			}
 		}
@@ -196,7 +196,7 @@ public class Orbit {
 	/// <returns>Velocity vector.</returns>
 	public Vector3d GetVelocityAtEccentricAnomaly(double eccentricAnomaly)
 	{
-		return GetVelocityAtTrueAnomaly(Kepler.TrueAnomalyFromEccentric(eccentricAnomaly, Eccentricity));
+		return GetVelocityAtTrueAnomaly(Kepler.GetTrueAnomalyFromEccentric(eccentricAnomaly, Eccentricity));
 	}
 
 	/// <summary>
