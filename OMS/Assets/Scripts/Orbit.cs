@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using UnityEngine;
 
 public class Orbit {
@@ -207,7 +208,9 @@ public class Orbit {
 		double sqrtMGdivP = Math.Sqrt(attractor.mass * Kepler.G / focalParameter);
 		double vX = -sqrtMGdivP * Math.Sin(trueAnomaly);
 		double vY = sqrtMGdivP * (m_Eccentricity + Math.Cos(trueAnomaly));
-		return -m_SemiMajorAxisVec * vX - m_SemiMinorAxisVec * vY;
+		Vector3d major = m_SemiMajorAxisVec.normalized;
+		Vector3d minor = m_SemiMinorAxisVec.normalized;
+		return -major * vX - minor * vY;
 	}
 
 	/// <summary>

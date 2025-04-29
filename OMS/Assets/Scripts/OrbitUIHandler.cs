@@ -79,7 +79,7 @@ public class OrbitUIHandler : MonoBehaviour
 	}
 
 	void Update() {
-		AnimateManeuverNode();
+		//AnimateManeuverNode();
 	}
 
 	void AnimateManeuverNode() {
