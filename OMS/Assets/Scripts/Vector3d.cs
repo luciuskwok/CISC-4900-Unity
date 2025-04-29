@@ -25,7 +25,7 @@ public struct Vector3d {
 	}
 
 	// convert to float-based Vector3
-	public Vector3 vector3 {
+	public Vector3 Vector3 {
 		get { return new Vector3((float)this.x, (float)this.y, (float)this.z); }
 	}
 	
@@ -106,8 +106,16 @@ public struct Vector3d {
 		return a.x * a.x + a.y * a.y + a.z * a.z;
 	}
 
+	public Vector3d Cross(Vector3d b) {
+		return Vector3d.Cross(this, b);
+	}
+
 	public static Vector3d Cross(Vector3d a, Vector3d b) {
 		return new Vector3d(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+	}
+
+	public double Dot(Vector3d b) {
+		return Vector3d.Dot(this, b);
 	}
 
 	public static double Dot(Vector3d a, Vector3d b) {

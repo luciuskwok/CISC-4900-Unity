@@ -4,19 +4,16 @@ using System;
 
 public class OrbitPlot : MonoBehaviour
 {
-	public double semiMajorAxis; // km
-	public double eccentricity; // 0 = circle; 1 = parabola
-	public double periapsisLongitude; // radians
-	public double attractorMass; // kg
-
 	public Color color;
-
-	public int plottingMethod = 0;
 
 	// Note: the coordinate system that is conventionally used for orbital mechanics has the ecliptic on the x-y plane, and positive z is towards the North Pole Star. The positive x axis is the direction of the Sun as seen from the Earth at the (spring) vernal equinox. This means that the Earth is at longitude 0 at the autumnal equinox, and at 180 at the spring equinox.
 	// Unity uses the convention that the x-z plane is horizontal, and positive y points up. So the y and z axes are swapped. 
 	// As for the x axis, that can be arbitrarily chosen as long as it is consistent throughout the solar system for this project. 
 
+	private Orbit m_Orbit;
+	public Orbit Orbit {
+		get { return m_Orbit; }
+	}
 
 	private int pointCount = 180;
 	private double gradientAnimationTime = 4.0f; // seconds
@@ -24,79 +21,43 @@ public class OrbitPlot : MonoBehaviour
 	private float minAlpha = 0.05f;
 
 
-	void Start()
+	public void SetOrbitalElements(double eccentricity, double semiMajorAxis, double meanAnomaly, double inclination, double argOfPerifocus, double ascendingNode, Attractor attractor) 
 	{
+		m_Orbit = new Orbit(eccentricity, semiMajorAxis, meanAnomaly, inclination, argOfPerifocus, ascendingNode, attractor);
 		UpdatePoints();
 	}
 
-	void Update()
+	public void SetOrbitByThrow(Vector3d position, Vector3d velocity, Attractor attractor) 
 	{
+		m_Orbit = new Orbit(position, velocity, attractor);
+		UpdatePoints();
+	}
+
+	void Update() {
 		double x = Time.timeSinceLevelLoadAsDouble / gradientAnimationTime % 1.0f;
 		double meanAnomaly = x * Kepler.PI_2;
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, eccentricity);
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
 		UpdateColors(eccentricAnomaly);
 	}
 
 	public void UpdatePoints() {
+		// Get points and convert from double to float
+		Vector3d[] pointsd = m_Orbit.GetOrbitPoints(pointCount, 1.0e6);
+		Vector3[] points = new Vector3[pointCount];
+		for (int i = 0; i < pointCount; i++) {
+			points[i] = pointsd[i].Vector3;
+		}
+
 		var lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.positionCount = pointCount;
-		Vector3[] points;
-		if (plottingMethod == 0) {
-			points = EllipseWithPolarMethod(pointCount);
-		} else {
-			points = EllipseWithCartesianMethod(pointCount);
-		}
 		lineRenderer.SetPositions(points);
-	}
-
-	Vector3[] EllipseWithPolarMethod(int count) {
-		var points = new Vector3[count];
-
-		// First, calculate the polar form of ellipse relative to focus, then rotate it so its periapsis is at the specified longitude, and finally convert to cartesian coordinates.
-		// Pre-convert the longitude of periapsis from degrees to radians
-		double semiLactusRectum = semiMajorAxis * (1.0 - eccentricity * eccentricity);
-		for (int i = 0; i < count; i++) {
-			// Theta is the true anomaly of the point.
-			// Calculate the orbit from -180 to 100 degrees.
-			double theta = (double)i / count * Kepler.PI_2 - Kepler.PI;
-			// This version of the equation has the reference direction theta = 0 pointing away from the center of the ellipse, so that the zero angle is at the periapsis of the orbit.
-			double r = semiLactusRectum / ( 1.0 + eccentricity * Math.Cos(theta));
-			// Rotate by the longitudde of periapsis, which is located at theta = 0, relative to the ecliptic coordinate system, where longitude = 0 is at the positive x axis.
-			// Plot points with focus at center
-			double x = Math.Cos(theta + periapsisLongitude) * r;
-			double z = Math.Sin(theta + periapsisLongitude) * r;
-
-			points[i] = new Vector3((float)x, 0, (float)z);
-		}
-
-		return points;
-	}
-
-	Vector3[] EllipseWithCartesianMethod(int count) {
-		var points = new Vector3[count];
-
-		double a = semiMajorAxis;
-		double b = SemiMinorAxis();
-		double f = a * eccentricity; // Distance from center to focus, f = a * e
-		Vector2d point = new Vector2d();
-		for (int i = 0; i < count; i++) {
-			double theta = (360.0 * i / count - 180.0) * Kepler.Deg2Rad;
-			// Plot a canonical ellipse with focus and center on the x-axis, centered on the right focus
-			point.x = a * Math.Cos(theta) - f;
-			point.y = b * Math.Sin(theta);
-			// Rotate and scale the ellipse point
-			point = point.Rotated(periapsisLongitude);
-			// Add point
-			points[i] = new Vector3((float)point.x, 0, (float)point.y);
-		}
-		return points;
 	}
 
 	void UpdateColors(double eccentricAnomaly) {
 		// Given the eccentric anomaly as the point of maximum alpha, update the color gradient on the line renderer.
 
 		// Convert radians to range 0.0 to 1.0
-		float x1 = (float)((eccentricAnomaly + periapsisLongitude) / Kepler.PI_2);
+		float x1 = (float)(eccentricAnomaly / Kepler.PI_2);
 		x1 = x1 % 1.0f;
 		if (x1 < 0.0f) x1 += 1.0f;
 
@@ -131,111 +92,24 @@ public class OrbitPlot : MonoBehaviour
 		lineRenderer.colorGradient = gradient;
 	}
 
-	public double SemiMinorAxis() {
-		return semiMajorAxis * Math.Sqrt(1.0 - eccentricity * eccentricity);
+	/// <summary>
+	/// Gets the velocity given the eccentric anomaly.
+	/// </summary>
+	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis.</param>
+	/// <returns>Velocity vector.</returns>
+	public Vector3d GetVelocityAtEccentricAnomaly(double eccentricAnomlay) {
+		double trueAnomaly = Kepler.TrueAnomalyFromEccentric(eccentricAnomlay, m_Orbit.Eccentricity);
+		return m_Orbit.GetVelocityAtTrueAnomaly(trueAnomaly);
 	}
 
-	public double OrbitalPeriod() {
-		return Kepler.OrbitalPeriod(semiMajorAxis, attractorMass);
-	}
-
-	public double PeriapsisFromFocus() {
-		double c = semiMajorAxis * eccentricity;
-		return semiMajorAxis - c;
-	}
-
-	public double ApoapsisFromFocus() {
-		double c = semiMajorAxis * eccentricity;
-		return semiMajorAxis + c;
-	}
-
-	public Vector2d VelocityAtEccentricAnomaly(double eccentricAnomlay) {
-		// Parameters:
-		//   eccentricAnomlay: angle from periapsis
-		// Returns the velocity vector in local coordinates
-		double trueAnomaly = Kepler.TrueAnomalyFromEccentric(eccentricAnomlay, eccentricity);
-		return VelocityAtTrueAnomaly(trueAnomaly);
-	}
-
-	public Vector2d VelocityAtTrueAnomaly(double trueAnomaly) {
-		double compression = eccentricity < 1.0 ? (1.0 - eccentricity * eccentricity) : (eccentricity * eccentricity - 1.0);
-		double focalParameter = semiMajorAxis * compression;
-
-		if (focalParameter <= 0.0) return Vector2d.zero;
-		
-		double sqrtMGdivP = Math.Sqrt(attractorMass * Kepler.G / focalParameter);
-		double vX = -sqrtMGdivP * Math.Sin(trueAnomaly);
-		double vY = sqrtMGdivP * (eccentricity + Math.Cos(trueAnomaly));
-		Vector2d vec = new(vX, vY);
-		return vec.Rotated(periapsisLongitude);
-	}
-
-	public Vector2d LocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
-		// Gets the xyz coordinates on the orbit line given the eccentric anomaly as the angle from the periapsis.
+	/// <summary>
+	/// Gets the position relative to the focus given the eccentric anomaly.
+	/// </summary>
+	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis.</param>
+	/// <returns>Position vector.</returns>
+	public Vector3d GetFocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
 		// To get the position as a function of time, conver the time to a mean anomaly, then convert that into the eccentric anomaly.
-		double a = semiMajorAxis;
-		double b = SemiMinorAxis();
-		double c = a * eccentricity; // Linear eccentricity, or distance from center to focus, c = a * e
-
-		Vector2d point = new Vector2d();
-		point.x = a * Math.Cos(eccentricAnomaly) - c;
-		point.y = b * Math.Sin(eccentricAnomaly);
-		// Rotate for the longitude of periapsis
-		point = point.Rotated(periapsisLongitude);
-
-		return new Vector2d(point.x, point.y);
-	}
-
-	public void SetOrbitWithPositionVelocity(Vector2d position, Vector2d velocity) {
-		Vector3d pos3d = new(position.x, 0, position.y);
-		Vector3d vel3d = new(velocity.x, 0, velocity.y);
-		SetOrbitWithPositionVelocity3D(pos3d, vel3d);
-	}
-
-	public void SetOrbitWithPositionVelocity3D(Vector3d position, Vector3d velocity) {
-		// Code below is from SimpleKeplerOrbits
-		double MG = attractorMass * Kepler.G;
-		double attractorDistance = position.magnitude;
-		Vector3d angularMomentumVector = Vector3d.Cross(position, velocity);
-		Vector3d orbitNormal = angularMomentumVector.normalized;
-		Vector3d eccVector;
-		if (orbitNormal.sqrMagnitude < 0.99) {
-			orbitNormal = Vector3d.Cross(position, Kepler.EclipticUp).normalized;
-			eccVector = new Vector3d();
-			Debug.Log("Invalid orbit normal.");
-		} else {
-			eccVector = Vector3d.Cross(velocity, angularMomentumVector) / MG - position / attractorDistance;
-		}
-
-		double focalParameter = angularMomentumVector.sqrMagnitude / MG;
-		eccentricity = eccVector.magnitude;
-
-		Vector3d semiMinorAxisVector = Vector3d.Cross(angularMomentumVector, -eccVector).normalized;
-		if (semiMinorAxisVector.sqrMagnitude < 0.99) {
-			semiMinorAxisVector = Vector3d.Cross(orbitNormal, position).normalized;
-			//Debug.Log("Invalid semiMinorAxisBasis.");
-		}
-
-		Vector3d semiMajorAxisVector = Vector3d.Cross(orbitNormal, semiMinorAxisVector).normalized;
-
-		if (eccentricity < 1.0) {
-			double compression = 1.0 - eccentricity * eccentricity;
-			semiMajorAxis = focalParameter / compression;
-		} else {
-			Debug.Log("Eccetricity >= 1.0 not yet implemented.");
-		}
-
-		// Calculate the longitude of periapsis from the SMA vector
-		if (eccentricity >= 0.0001) {
-			// Use 0.0001 as limit because at very small values of eccentricity, the below code produces a lot of jitter in the results.
-			periapsisLongitude = Math.Atan2(semiMajorAxisVector.z, semiMajorAxisVector.x);
-		} else {
-			periapsisLongitude = 0.0;
-		}
-
-		// TODO: calculate the true anomaly of the position
-		// This requires that the orbit plot keep track of the current position
-
+		return m_Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
 	}
 
 }

@@ -32,7 +32,7 @@ public class OrbitUIHandler : MonoBehaviour
 	private const double playerAltitude = 420.0; // km above Earth's surface
 	private double playerSemiMajorAxis = EarthRadius + playerAltitude; // km
 	private double playerEccentricity = 0.0;
-	private double playerPeriapsisLongitude = 180.0 * Kepler.Deg2Rad;
+	private double playerArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
 
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.0; // m/s
@@ -49,40 +49,26 @@ public class OrbitUIHandler : MonoBehaviour
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
 
 		// Set up the current player orbit
+		Attractor earth = Attractor.Earth;
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		playerOrbit.semiMajorAxis = playerSemiMajorAxis;
-		playerOrbit.eccentricity = playerEccentricity;
-		playerOrbit.periapsisLongitude = playerPeriapsisLongitude;
-		playerOrbit.attractorMass = EarthMass;
-		playerOrbit.UpdatePoints();
+		playerOrbit.SetOrbitalElements(playerEccentricity, playerSemiMajorAxis, 0, 0, playerArgOfPerifocus, 0, earth);
 
 		// Set up the target orbit
-		double targetPeriaps = playerAltitude + EarthRadius; // km
+		double targetPeriaps = playerAltitude + earth.radius; // km
 		double targetSMA = (targetPeriaps + targetApoapsis) / 2.0;
 		double targetEccen = 1.0 - (targetPeriaps / targetSMA);
 
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		targetOrbit.semiMajorAxis = targetSMA;
-		targetOrbit.eccentricity = targetEccen;
-		targetOrbit.periapsisLongitude = playerPeriapsisLongitude;
-		targetOrbit.attractorMass = EarthMass;
-		targetOrbit.UpdatePoints();
+		targetOrbit.SetOrbitalElements(targetEccen, targetSMA, 0, 0, playerArgOfPerifocus, 0, earth);
 
 		// Target Stats Text
 		double f = targetSMA * targetEccen;
-		double apoAlt = targetOrbit.ApoapsisFromFocus() - EarthRadius;
-		double periAlt = targetOrbit.PeriapsisFromFocus() - EarthRadius;
-		double period = targetOrbit.OrbitalPeriod();
+		double apoAlt = targetOrbit.Orbit.ApoapsisAltitude;
+		double periAlt = targetOrbit.Orbit.PeriapsisAltitude;
+		double period = targetOrbit.Orbit.OrbitalPeriod;
 		targetStatsText.text = "Apoapsis: " + apoAlt.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periAlt.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
-
-		// Set initial planned orbit parameters
-		OrbitPlot planOrbit = plannedOrbitLine.GetComponent<OrbitPlot>();
-		planOrbit.semiMajorAxis = playerSemiMajorAxis;
-		planOrbit.eccentricity = playerEccentricity;
-		planOrbit.periapsisLongitude = playerPeriapsisLongitude;
-		planOrbit.attractorMass = EarthMass;
 
 		// Update maneuver node & planned orbit
 		PositionManeuverNodeWithMeanAnomaly(nodeMeanAnomaly, playerOrbitLine);
@@ -93,7 +79,7 @@ public class OrbitUIHandler : MonoBehaviour
 	}
 
 	void Update() {
-		//AnimateManeuverNode();
+		AnimateManeuverNode();
 	}
 
 	void AnimateManeuverNode() {
@@ -106,14 +92,15 @@ public class OrbitUIHandler : MonoBehaviour
 		UpdatePlannedOrbit();
 	}
 
-	void PositionManeuverNodeWithMeanAnomaly(double meanAnomaly, GameObject orbit) {
+	void PositionManeuverNodeWithMeanAnomaly(double meanAnomaly, GameObject orbitGameObject) {
 		// Move Maneuver Node UI element to specific point on orbit
-		OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
+		OrbitPlot plot = orbitGameObject.GetComponent<OrbitPlot>();
 
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, plot.eccentricity);
+		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, plot.Orbit.Eccentricity);
+
 		// Get the local coordinates of the node and convert to world coordinates
-		Vector2d localPos = plot.LocalPositionAtEccentricAnomaly(eccentricAnomaly);
-		Vector3 worldPos = orbit.transform.TransformPoint(new Vector3((float)localPos.x, 0, (float)localPos.y));
+		Vector3d localPos = plot.Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
+		Vector3 worldPos = orbitGameObject.transform.TransformPoint(localPos.Vector3);
 		// Convert to 2d 
 		Vector3 point = mainCamera.WorldToViewportPoint(worldPos);
 		// Scale to canvas size
@@ -141,32 +128,31 @@ public class OrbitUIHandler : MonoBehaviour
 		// Get original velocity and position at maneuver node
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
 		double nodeEccentricAnomaly = Kepler.EccentricAnomalyFromMean(nodeMeanAnomaly, playerEccentricity);
-		Vector2d originalVelocity = playerOrbit.VelocityAtEccentricAnomaly(nodeEccentricAnomaly);
+		Vector3d originalVelocity = playerOrbit.Orbit.GetVelocityAtEccentricAnomaly(nodeEccentricAnomaly);
 		// Add prograde delta-V
-		Vector2d progradeDirection = originalVelocity.normalized;
-		Vector2d deltaVelocity = progradeDirection * progradeDeltaV;
+		Vector3d progradeDirection = originalVelocity.normalized;
+		Vector3d deltaVelocity = progradeDirection * progradeDeltaV;
 		// Calculate the new orbit based on the new velocity vector
-		Vector2d newVelocity = originalVelocity + deltaVelocity;
-		Vector2d nodePosition = playerOrbit.LocalPositionAtEccentricAnomaly(nodeEccentricAnomaly);
+		Vector3d newVelocity = originalVelocity + deltaVelocity;
+		Vector3d nodePosition = playerOrbit.Orbit.GetFocalPositionAtEccentricAnomaly(nodeEccentricAnomaly);
 
 		// Update the planned orbit parameters
 		OrbitPlot planOrbit = plannedOrbitLine.GetComponent<OrbitPlot>();
-		planOrbit.SetOrbitWithPositionVelocity(nodePosition, newVelocity);
-		planOrbit.UpdatePoints();
+		planOrbit.SetOrbitByThrow(nodePosition, newVelocity, Attractor.Earth);
 
 		// Maneuver Controls
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Maneuver Stats
-		double planApo = planOrbit.ApoapsisFromFocus();
-		double apoAlt = planApo - EarthRadius;
-		double periAlt = planOrbit.PeriapsisFromFocus() - EarthRadius;
-		double period = planOrbit.OrbitalPeriod();
+		double apoAlt = planOrbit.Orbit.ApoapsisAltitude;
+		double periAlt = planOrbit.Orbit.PeriapsisAltitude;
+		double period = planOrbit.Orbit.OrbitalPeriod;
 		playerStatsText.text = "Apoapsis: " + apoAlt.ToString("#,##0") + " km\n" +
 			"Periapsis: " + periAlt.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
 
 		// Check if planned orbit is within tolerances and enable Go button
+		double planApo = planOrbit.Orbit.ApoapsisDistance;
 		if (Math.Abs(targetApoapsis - planApo) < targetApoapsis * 0.02) {
 			goButton.SetActive(true);
 			SetInfoText(true);
@@ -187,6 +173,8 @@ public class OrbitUIHandler : MonoBehaviour
 	// Utilities
 
 	public static String FormattedTime(double timeAsSeconds) {
+		if (double.IsInfinity(timeAsSeconds)) return "Infinite";
+
 		String s = "";
 		double t = timeAsSeconds;
 		if (timeAsSeconds >= 3600.0) {
