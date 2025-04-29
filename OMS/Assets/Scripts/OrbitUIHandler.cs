@@ -49,17 +49,18 @@ public class OrbitUIHandler : MonoBehaviour
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
 
 		// Set up the current player orbit
-		Attractor earth = Attractor.Earth;
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		playerOrbit.SetOrbitalElements(playerEccentricity, playerSemiMajorAxis, 0, 0, playerArgOfPerifocus, 0, earth);
+		playerOrbit.attractor = Attractor.Earth;
+		playerOrbit.SetOrbitalElements(playerEccentricity, playerSemiMajorAxis, 0, 0, playerArgOfPerifocus, 0);
 
 		// Set up the target orbit
-		double targetPeriaps = playerAltitude + earth.radius; // km
+		double targetPeriaps = playerAltitude + Attractor.Earth.radius; // km
 		double targetSMA = (targetPeriaps + targetApoapsis) / 2.0;
 		double targetEccen = 1.0 - (targetPeriaps / targetSMA);
 
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		targetOrbit.SetOrbitalElements(targetEccen, targetSMA, 0, 0, playerArgOfPerifocus, 0, earth);
+		targetOrbit.attractor = Attractor.Earth;
+		targetOrbit.SetOrbitalElements(targetEccen, targetSMA, 0, 0, playerArgOfPerifocus, 0);
 
 		// Target Stats Text
 		double f = targetSMA * targetEccen;
@@ -138,7 +139,8 @@ public class OrbitUIHandler : MonoBehaviour
 
 		// Update the planned orbit parameters
 		OrbitPlot planOrbit = plannedOrbitLine.GetComponent<OrbitPlot>();
-		planOrbit.SetOrbitByThrow(nodePosition, newVelocity, Attractor.Earth);
+		planOrbit.attractor = Attractor.Earth;
+		planOrbit.SetOrbitByThrow(nodePosition, newVelocity);
 
 		// Maneuver Controls
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");

@@ -15,22 +15,24 @@ public class OrbitPlot : MonoBehaviour
 		get { return m_Orbit; }
 	}
 
-	private int pointCount = 180;
-	private double gradientAnimationTime = 4.0f; // seconds
-	private float maxAlpha = 1.0f;
-	private float minAlpha = 0.05f;
+	public Attractor attractor; 
+
+	private readonly int pointCount = 180;
+	private readonly double gradientAnimationTime = 4.0f; // seconds
+	private readonly float maxAlpha = 1.0f;
+	private readonly float minAlpha = 0.05f;
 
 
-	public void SetOrbitalElements(double eccentricity, double semiMajorAxis, double meanAnomaly, double inclination, double argOfPerifocus, double ascendingNode, Attractor attractor) 
+	public void SetOrbitalElements(double eccentricity, double semiMajorAxis, double meanAnomaly, double inclination, double argOfPerifocus, double ascendingNode) 
 	{
 		m_Orbit = new Orbit(eccentricity, semiMajorAxis, meanAnomaly, inclination, argOfPerifocus, ascendingNode, attractor);
-		UpdatePoints();
+		UpdateLineRenderer();
 	}
 
-	public void SetOrbitByThrow(Vector3d position, Vector3d velocity, Attractor attractor) 
+	public void SetOrbitByThrow(Vector3d position, Vector3d velocity) 
 	{
 		m_Orbit = new Orbit(position, velocity, attractor);
-		UpdatePoints();
+		UpdateLineRenderer();
 	}
 
 	void Update() {
@@ -40,7 +42,7 @@ public class OrbitPlot : MonoBehaviour
 		UpdateColors(eccentricAnomaly);
 	}
 
-	public void UpdatePoints() {
+	public void UpdateLineRenderer() {
 		// Get points and convert from double to float
 		Vector3d[] pointsd = m_Orbit.GetOrbitPoints(pointCount, 1.0e6);
 		Vector3[] points = new Vector3[pointCount];
@@ -53,9 +55,11 @@ public class OrbitPlot : MonoBehaviour
 		lineRenderer.SetPositions(points);
 	}
 
+	/// <summary>
+	/// Updates the orbit animation by updating the color gradient on the LineRenderer.
+	/// </summary>
+	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis that represents the point of maximum alpha.</param>
 	void UpdateColors(double eccentricAnomaly) {
-		// Given the eccentric anomaly as the point of maximum alpha, update the color gradient on the line renderer.
-
 		// Convert radians to range 0.0 to 1.0
 		float x1 = (float)(eccentricAnomaly / Kepler.PI_2);
 		x1 = x1 % 1.0f;
