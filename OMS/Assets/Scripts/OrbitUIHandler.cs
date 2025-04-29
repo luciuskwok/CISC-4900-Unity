@@ -164,7 +164,7 @@ public class OrbitUIHandler : MonoBehaviour
 
 	void SetInfoText(bool success) {
 		if (!success) {
-			infoText.text = "Welcome! Your first task is to adjust this maneuver node to match the target orbit. Use the slider below to adjust the planned change in velocity for this maneuver.";
+			infoText.text = "Welcome! Your first task is to adjust your orbit to match the target orbit. Use the slider below to adjust the delta-V, or the change in velocity, for this maneuver node, so that the orbits line up.";
 		} else {
 			infoText.text = "Great job! Now click on the Go button to execute the maneuver by firing your engines.";
 		}
