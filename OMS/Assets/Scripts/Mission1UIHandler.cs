@@ -21,6 +21,7 @@ public class Mission1UIHandler : MonoBehaviour
 	// Other UI elements
 	public GameObject maneuverNode;
 	public GameObject goButton;
+	public GameObject successPanel;
 
 	// Other objects
 	public Camera mainCamera;
@@ -60,6 +61,10 @@ public class Mission1UIHandler : MonoBehaviour
 
 		// Set the info text
 		SetInfoText(false);
+
+		// Hide items that should be hidden
+		successPanel.SetActive(false);
+		goButton.SetActive(false);
 	}
 
 	void Update() {
@@ -99,7 +104,22 @@ public class Mission1UIHandler : MonoBehaviour
 	}
 
 	public void HandleMenuButton() {
-		SceneManager.LoadScene(1); // Chapter Select
+		// Chapter Select
+		SceneManager.LoadScene(1);
+	}
+
+	public void HandleGoButton() {
+		// Show the "Success!" message
+		successPanel.SetActive(true);
+		// Disable the slider
+		progradeSlider.enabled = false;
+		// Hide the GO button
+		goButton.SetActive(false);
+	}
+
+	public void HandleNextMissionButton() {
+		// Go to next scene
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); 
 	}
 
 	public void ProgradeDidChange(float value) {
