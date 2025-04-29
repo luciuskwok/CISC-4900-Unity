@@ -1,8 +1,10 @@
-using System;
-using UnityEngine;
-
+// Vector3d.cs
+// Double-precision representation of a 3-dimensional vector
 // Adapted from https://github.com/Karth42/SimpleKeplerOrbits
 
+
+using System;
+using UnityEngine;
 
 public struct Vector3d {
 	public double x;

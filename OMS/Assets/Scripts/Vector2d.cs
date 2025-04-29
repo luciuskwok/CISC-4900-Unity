@@ -1,3 +1,7 @@
+// Vector2d.cs
+// Double-precision representation of a 2-dimensional vector
+// Adapted from https://github.com/Karth42/SimpleKeplerOrbits
+
 using System;
 using UnityEngine;
 

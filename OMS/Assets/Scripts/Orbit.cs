@@ -1,5 +1,8 @@
+// Orbit.cs
+// Class that represents the orbit of a body around an attractor.
+// Adapted from https://github.com/Karth42/SimpleKeplerOrbits
+
 using System;
-using System.Numerics;
 using UnityEngine;
 
 public class Orbit {

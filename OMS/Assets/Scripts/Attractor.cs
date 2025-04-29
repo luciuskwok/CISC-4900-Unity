@@ -1,10 +1,14 @@
+// Attractor.cs
+// Class that represents a gravitational attractor body.
+// Adapted from https://github.com/Karth42/SimpleKeplerOrbits
+
 using System;
 using Unity;
 
 public class Attractor {
 	public double mass; // kg
 	public double radius; // km
-	public double influence; // km
+	public double influence; // km, for sphere of influence
 
 	private static Attractor m_Earth;
 	public static Attractor Earth {

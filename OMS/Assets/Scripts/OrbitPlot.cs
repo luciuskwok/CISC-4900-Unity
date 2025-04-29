@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using System;
 
 public class OrbitPlot : MonoBehaviour
@@ -17,8 +16,10 @@ public class OrbitPlot : MonoBehaviour
 
 	public Attractor attractor; 
 
+	public bool animate = true;
+	public double gradientAnimationTime = 4.0f; // seconds
+	private readonly double gradeintAnimationTimeScale = 1200.0; // factor to speed up time for the animation
 	private readonly int pointCount = 180;
-	private readonly double gradientAnimationTime = 4.0f; // seconds
 	private readonly float maxAlpha = 1.0f;
 	private readonly float minAlpha = 0.05f;
 
@@ -46,10 +47,12 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	void Update() {
-		double x = Time.timeSinceLevelLoadAsDouble / gradientAnimationTime % 1.0f;
-		double meanAnomaly = x * Kepler.PI_2;
-		double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
-		UpdateColors(eccentricAnomaly);
+		if (animate) {
+			double x = Time.timeSinceLevelLoadAsDouble / gradientAnimationTime % 1.0f;
+			double meanAnomaly = x * Kepler.PI_2;
+			double eccentricAnomaly = Kepler.EccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
+			SetGradientByEccentricAnomaly(eccentricAnomaly);
+		}
 	}
 
 	public void UpdateLineRenderer() {
@@ -63,13 +66,16 @@ public class OrbitPlot : MonoBehaviour
 		var lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.positionCount = pointCount;
 		lineRenderer.SetPositions(points);
+
+		// Set animation time with time scale
+		gradientAnimationTime = Orbit.OrbitalPeriod / gradeintAnimationTimeScale;
 	}
 
 	/// <summary>
-	/// Updates the orbit animation by updating the color gradient on the LineRenderer.
+	/// Sets the point in the orbit where the color gradient ends.
 	/// </summary>
 	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis that represents the point of maximum alpha.</param>
-	void UpdateColors(double eccentricAnomaly) {
+	public void SetGradientByEccentricAnomaly(double eccentricAnomaly) {
 		// Convert radians to range 0.0 to 1.0
 		float x1 = (float)(eccentricAnomaly / Kepler.PI_2);
 		x1 = x1 % 1.0f;
@@ -91,14 +97,14 @@ public class OrbitPlot : MonoBehaviour
 		gradient.SetKeys(
 			// Use the same color for entire line
 			new GradientColorKey[] { 
-				new GradientColorKey(color, 0.0f), 
-				new GradientColorKey(color, 1.0f) },
+				new(color, 0.0f), 
+				new(color, 1.0f) },
 			// Vary the alpha 
 			new GradientAlphaKey[] { 
-				new GradientAlphaKey(a0, 0.0f),
-				new GradientAlphaKey(a1, x1),
-				new GradientAlphaKey(a2, x2),
-				new GradientAlphaKey(a3, 1.0f),
+				new(a0, 0.0f),
+				new(a1, x1),
+				new(a2, x2),
+				new(a3, 1.0f),
 			}
 		);
 
@@ -141,9 +147,33 @@ public class OrbitPlot : MonoBehaviour
 		double period = Orbit.OrbitalPeriod;
 		return "Apoapsis: " + ap.ToString("#,##0") + " km\n" +
 			"Periapsis: " + pe.ToString("#,##0") + " km\n" +
-			"Period: " + OrbitUIHandler.FormattedTime(period) + "\n";
+			"Period: " + OrbitPlot.FormattedTime(period) + "\n";
 	}
 
+
+	// Utilities
+	public static String FormattedTime(double timeAsSeconds) {
+		if (double.IsInfinity(timeAsSeconds)) return "Infinite";
+
+		String s = "";
+		double t = timeAsSeconds;
+		if (timeAsSeconds >= 3600.0) {
+			s += Math.Floor(t/3600.0).ToString("F0") + "h";
+			t -= Math.Floor(t/3600.0) * 3600.0;
+		}
+		if (timeAsSeconds >= 60.0) {
+			s += Math.Floor(t/60.0).ToString("F0") + "m";
+			t -= Math.Floor(t/60.0) * 60.0;
+
+		}
+		if (timeAsSeconds >= 60.0) {
+			s += Math.Floor(t).ToString("F0");
+		} else {
+			s += t.ToString("F2");
+		}
+		s += "s";
+		return s;
+	}
 
 
 }

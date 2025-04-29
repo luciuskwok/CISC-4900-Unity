@@ -1,12 +1,10 @@
 using System;
 using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class OrbitUIHandler : MonoBehaviour
+public class Mission1UIHandler : MonoBehaviour
 {
 	// Text UI
 	public Slider progradeSlider;
@@ -154,31 +152,6 @@ public class OrbitUIHandler : MonoBehaviour
 		} else {
 			infoText.text = "Great job! Now click on the Go button to execute the maneuver by firing your engines.";
 		}
-	}
-
-	// Utilities
-
-	public static String FormattedTime(double timeAsSeconds) {
-		if (double.IsInfinity(timeAsSeconds)) return "Infinite";
-
-		String s = "";
-		double t = timeAsSeconds;
-		if (timeAsSeconds >= 3600.0) {
-			s += Math.Floor(t/3600.0).ToString("F0") + "h";
-			t -= Math.Floor(t/3600.0) * 3600.0;
-		}
-		if (timeAsSeconds >= 60.0) {
-			s += Math.Floor(t/60.0).ToString("F0") + "m";
-			t -= Math.Floor(t/60.0) * 60.0;
-
-		}
-		if (timeAsSeconds >= 60.0) {
-			s += Math.Floor(t).ToString("F0");
-		} else {
-			s += t.ToString("F2");
-		}
-		s += "s";
-		return s;
 	}
 
 }
