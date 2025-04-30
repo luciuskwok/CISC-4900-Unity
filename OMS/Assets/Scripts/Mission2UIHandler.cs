@@ -55,7 +55,6 @@ public class Mission2UIHandler : MonoBehaviour
 		plannedOrbitPlot = plannedOrbitLine.GetComponent<OrbitPlot>();
 		targetOrbitPlot = targetOrbitLine.GetComponent<OrbitPlot>();
 
-
 		// Set prograde slider to initial value
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV * 1000);
 		timingSlider.SetValueWithoutNotify((float)timing);
@@ -64,6 +63,9 @@ public class Mission2UIHandler : MonoBehaviour
 		playerOrbitPlot.attractor = Attractor.Earth;
 		playerOrbitPlot.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
 		playerOrbitPlot.SetMeanAnomaly(playerMeanAnomaly);
+
+		// Set up planned orbit
+		plannedOrbitPlot.attractor = Attractor.Earth;
 
 		// Set up the target orbit
 		targetOrbitPlot.attractor = Attractor.Earth;
@@ -154,20 +156,8 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void UpdatePlannedOrbit() {
-		// Calculate the orbital parameters resulting from maneuver
-		// Get original velocity and position at maneuver node
-		double nodeEccentricAnomaly = playerOrbitPlot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
-		Vector3d originalVelocity = playerOrbitPlot.Orbit.GetVelocityAtEccentricAnomaly(nodeEccentricAnomaly);
-		// Add prograde delta-V
-		Vector3d progradeDirection = originalVelocity.normalized;
-		Vector3d deltaVelocity = progradeDirection * progradeDeltaV;
-		// Calculate the new orbit based on the new velocity vector
-		Vector3d newVelocity = originalVelocity + deltaVelocity;
-		Vector3d nodePosition = playerOrbitPlot.Orbit.GetFocalPositionAtEccentricAnomaly(nodeEccentricAnomaly);
-
-		// Update the planned orbit parameters
-		plannedOrbitPlot.attractor = Attractor.Earth;
-		plannedOrbitPlot.SetOrbitByThrow(nodePosition, newVelocity);
+		// Update the planned orbit resulting from maneuver
+		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, nodeMeanAnomaly, progradeDeltaV, 0, 0);	
 
 		// Update delta-V readout
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
@@ -176,7 +166,7 @@ public class Mission2UIHandler : MonoBehaviour
 		double mean1 = (Kepler.PI_2 - playerOrbitPlot.Orbit.MeanAnomaly) % Kepler.PI_2;
 		double mean2 = timing * Kepler.Deg2Rad;
 		double maneuverTime = (mean1 + mean2) / playerOrbitPlot.Orbit.MeanMotion;
-		timingReadout.SetText(OrbitPlot.FormattedTime(maneuverTime));
+		timingReadout.SetText("T+" + OrbitPlot.FormattedTime(maneuverTime));
 
 		// Maneuver Stats
 		maneuverStatsText.text = plannedOrbitPlot.ToString();

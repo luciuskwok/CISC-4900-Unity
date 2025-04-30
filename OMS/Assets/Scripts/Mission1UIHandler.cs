@@ -27,6 +27,11 @@ public class Mission1UIHandler : MonoBehaviour
 	private double progradeDeltaV = 0.0; // m/s
 	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
 
+	// Cached Monobehaviour script objects
+	private OrbitPlot playerOrbitPlot;
+	private OrbitPlot plannedOrbitPlot;
+	private OrbitPlot targetOrbitPlot;
+
 	void Start() {
 		// Constants
 		const double playerAltitude = 420.0; // km above Earth's surface
@@ -35,21 +40,27 @@ public class Mission1UIHandler : MonoBehaviour
 		double playerSMA = Attractor.Earth.radius + playerAltitude;
 		double targetApoapsisAlt = 4000.0; // km above surface
 
+		// Get and cache OrbitPlot objects
+		playerOrbitPlot = playerOrbitLine.GetComponent<OrbitPlot>();
+		plannedOrbitPlot = plannedOrbitLine.GetComponent<OrbitPlot>();
+		targetOrbitPlot = targetOrbitLine.GetComponent<OrbitPlot>();
+
 		// Set prograde slider to initial value
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
 
 		// Set up the current player orbit
-		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		playerOrbit.attractor = Attractor.Earth;
-		playerOrbit.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
+		playerOrbitPlot.attractor = Attractor.Earth;
+		playerOrbitPlot.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
+
+		// Set up planned orbit
+		plannedOrbitPlot.attractor = Attractor.Earth;
 
 		// Set up the target orbit
-		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		targetOrbit.attractor = Attractor.Earth;
-		targetOrbit.SetOrbitByAltitudes(playerAltitude, targetApoapsisAlt, playerArgOfPerifocus);
+		targetOrbitPlot.attractor = Attractor.Earth;
+		targetOrbitPlot.SetOrbitByAltitudes(playerAltitude, targetApoapsisAlt, playerArgOfPerifocus);
 
 		// Target Stats Text
-		targetStatsText.text = targetOrbit.ToString();
+		targetStatsText.text = targetOrbitPlot.ToString();
 		
 		// Update maneuver node & planned orbit
 		PositionManeuverNode();
@@ -76,9 +87,8 @@ public class Mission1UIHandler : MonoBehaviour
 	}
 
 	void PositionManeuverNode() {
-		OrbitPlot plot = playerOrbitLine.GetComponent<OrbitPlot>();
-		double nodeEccAnomaly = plot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
-		Vector3 worldPos = plot.GetWorldPositionAtEccentricAnomaly(nodeEccAnomaly);
+		double nodeEccAnomaly = playerOrbitPlot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
+		Vector3 worldPos = playerOrbitPlot.GetWorldPositionAtEccentricAnomaly(nodeEccAnomaly);
 
 		UINode node = maneuverNode.GetComponent<UINode>();
 		node.SetWorldPosition(worldPos);
@@ -110,35 +120,20 @@ public class Mission1UIHandler : MonoBehaviour
 	}
 
 	void UpdatePlannedOrbit() {
-		// Calculate the orbital parameters resulting from maneuver
-		// Get original velocity and position at maneuver node
-		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		double nodeEccentricAnomaly = playerOrbit.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
-		Vector3d originalVelocity = playerOrbit.Orbit.GetVelocityAtEccentricAnomaly(nodeEccentricAnomaly);
-		// Add prograde delta-V
-		Vector3d progradeDirection = originalVelocity.normalized;
-		Vector3d deltaVelocity = progradeDirection * progradeDeltaV;
-		// Calculate the new orbit based on the new velocity vector
-		Vector3d newVelocity = originalVelocity + deltaVelocity;
-		Vector3d nodePosition = playerOrbit.Orbit.GetFocalPositionAtEccentricAnomaly(nodeEccentricAnomaly);
-
-		// Update the planned orbit parameters
-		OrbitPlot planOrbit = plannedOrbitLine.GetComponent<OrbitPlot>();
-		planOrbit.attractor = Attractor.Earth;
-		planOrbit.SetOrbitByThrow(nodePosition, newVelocity);
+		// Update the planned orbit resulting from maneuver
+		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, nodeMeanAnomaly, progradeDeltaV, 0, 0);	
 
 		// Maneuver Controls
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Maneuver Stats
-		playerStatsText.text = planOrbit.ToString();
+		playerStatsText.text = plannedOrbitPlot.ToString();
 
 		// Target orbit parameter
-		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		double targetApoapsis = targetOrbit.Orbit.ApoapsisDistance;
+		double targetApoapsis = targetOrbitPlot.Orbit.ApoapsisDistance;
 
 		// Check if planned orbit is within tolerances and enable Go button
-		double planApoapsis = planOrbit.Orbit.ApoapsisDistance;
+		double planApoapsis = plannedOrbitPlot.Orbit.ApoapsisDistance;
 		if (Math.Abs(targetApoapsis - planApoapsis) < targetApoapsis * 0.02) {
 			goButton.SetActive(true);
 			SetInfoText(true);

@@ -15,6 +15,7 @@ public class Orbit {
 	// Primary variables that define this class
 	private Vector3d m_SemiMajorAxisVec; // Vector from center of ellipse to periapse
 	private Vector3d m_SemiMinorAxisVec; // Vector from center of ellipse representing the semi-minor axis
+	private double m_PeriapsisDistance; // Only used for parabolic orbits
 	private double m_Eccentricity;
 	public double Eccentricity { get { return m_Eccentricity; } }
 
@@ -49,7 +50,7 @@ public class Orbit {
 		} else if (eccentricity > 1.0) { // hyperbolic orbit
 			semiMinorAxis = semiMajorAxis * Math.Sqrt(eccentricity * eccentricity - 1.0);
 		} else { // parabolic orbit
-			semiMinorAxis = 0.0;
+			semiMinorAxis = 1.0;
 		}
 		
 		// Ascending node, inclination, and argument of perifocus
@@ -62,14 +63,14 @@ public class Orbit {
 
 		Vector3d ascendingNodeVec = Kepler.RotateVectorByAngle(EclipticRight, ascendingNode, EclipticNormal).normalized;
 		Vector3d orbitNormalVec   = Kepler.RotateVectorByAngle(EclipticNormal, inclination, ascendingNodeVec).normalized;
-		Vector3d periapseVec      = Kepler.RotateVectorByAngle(ascendingNodeVec, argOfPerifocus, orbitNormalVec).normalized;
+		Vector3d periapsisVec      = Kepler.RotateVectorByAngle(ascendingNodeVec, argOfPerifocus, orbitNormalVec).normalized;
 		
 		// Set primary variables
-		m_SemiMajorAxisVec = periapseVec * semiMajorAxis;
-		m_SemiMinorAxisVec = Vector3d.Cross(periapseVec, orbitNormalVec) * semiMinorAxis;
+		m_SemiMajorAxisVec = periapsisVec * semiMajorAxis;
+		m_SemiMinorAxisVec = Vector3d.Cross(periapsisVec, orbitNormalVec) * semiMinorAxis;
+		m_PeriapsisDistance = periapsisVec.magnitude;
 		m_Eccentricity = eccentricity;
 		m_EccentricAnomaly = 0.0; // default
-
 	}
 
 	/// <summary>
@@ -107,44 +108,57 @@ public class Orbit {
 		double focalParameter = angularMomentumVector.sqrMagnitude / MG;
 		m_Eccentricity = eccVector.magnitude;
 
-		Vector3d minor = angularMomentumVector.Cross(-eccVector).normalized;
-		if (minor.sqrMagnitude < 0.99) {
-			minor = orbitNormal.Cross(position).normalized;
+		Vector3d minorDirection = angularMomentumVector.Cross(-eccVector).normalized;
+		if (minorDirection.sqrMagnitude < 0.99) {
+			minorDirection = orbitNormal.Cross(position).normalized;
 			//Debug.Log("Invalid semiMinorAxisBasis.");
 		}
 
-		Vector3d major = orbitNormal.Cross(minor).normalized;
+		Vector3d majorDirection = orbitNormal.Cross(minorDirection).normalized;
 
-		double majorDistance = 0.0;
-		double minorDistance = 0.0;
+		double majorDistance = 0.0; // semi-major axis distance
+		double minorDistance = 0.0; // semi-minor axis distance
 		double trueAnomaly = 0.0;
 
 		if (m_Eccentricity < 1.0) { // Elliptical orbit
 			double compression = 1.0 - m_Eccentricity * m_Eccentricity;
 			majorDistance = focalParameter / compression;
 			minorDistance = majorDistance * Math.Sqrt(compression);
-			trueAnomaly = Vector3d.Angle(position, major);
-			if (position.Cross(-major).Dot(orbitNormal) < 0.0) {
-				trueAnomaly = Kepler.PI_2 - trueAnomaly;
-			}
+			m_PeriapsisDistance = majorDistance * (1.0 - m_Eccentricity);
 		} else if (m_Eccentricity > 1.0) { // Hyperbolic orbit
 			double compression = m_Eccentricity * m_Eccentricity - 1.0;
 			majorDistance = focalParameter / compression;
 			minorDistance = majorDistance * Math.Sqrt(compression);
-			trueAnomaly = Vector3d.Angle(position, eccVector);
-			if (position.Cross(-major).Dot(orbitNormal) < 0.0) {
-				trueAnomaly = -trueAnomaly;
-			}
+			m_PeriapsisDistance = majorDistance * (m_Eccentricity - 1.0);
+
 		} else { // Parabolic orbit
-			// TODO: figure out how to encode this
-			// The semi-major and semi-minor axes are used for plotting the path, and for getting the position. Maybe save periapsis distance?
+			majorDistance = 1.0;
+			minorDistance = 1.0;
+			m_PeriapsisDistance = angularMomentumVector.sqrMagnitude / MG;
 			Debug.Log("Parabolic orbits not tested and may have unexpected results.");
 		}
 
+		// Anomaly
+		if (m_Eccentricity < 1.0) {
+			trueAnomaly = Vector3d.Angle(position, majorDirection);
+			if (position.Cross(-majorDirection).Dot(orbitNormal) < 0.0) {
+				trueAnomaly = Kepler.PI_2 - trueAnomaly;
+			}
+		} else {
+			trueAnomaly = Vector3d.Angle(position, eccVector);
+			if (position.Cross(-majorDirection).Dot(orbitNormal) < 0.0) {
+				trueAnomaly = -trueAnomaly;
+			}
+		}
+
 		// Calculate the primary variables
-		m_SemiMajorAxisVec = major * majorDistance;
-		m_SemiMinorAxisVec = minor * minorDistance;
+		m_SemiMajorAxisVec = majorDirection * majorDistance;
+		m_SemiMinorAxisVec = minorDirection * minorDistance;
 		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
+
+		// Debugging
+		//double c = m_Eccentricity * majorDistance;
+		//Debug.Log("e="+m_Eccentricity+" a="+m_SemiMajorAxisVec.ToString()+" b="+m_SemiMinorAxisVec.ToString()+" c="+c+" pe="+m_PeriapsisDistance);
 	}
 
 	/// <summary>
@@ -176,29 +190,23 @@ public class Orbit {
 	{
 		double pe = this.PeriapsisDistance;
 		if (pointsCount < 2 || maxDistance < pe) return new Vector3d[0];
+
+		bool loop = m_Eccentricity < 1.0 && ApoapsisDistance < maxDistance;
+		double adjustedCount = pointsCount;
+		double maxAngle = Kepler.PI;
+		if (!loop) {
+			adjustedCount -= 1.0;
+			maxAngle = Kepler.TrueAnomalyForDistance(maxDistance, m_Eccentricity, SemiMajorAxis, pe);
+		}
 		
 		Vector3d[] result = new Vector3d[pointsCount];
-		if (m_Eccentricity < 1.0) {
-			if (this.ApoapsisDistance < maxDistance) {
-				for (int i = 0; i < pointsCount; i++) {
-					result[i] = GetFocalPositionAtEccentricAnomaly(Kepler.PI_2 * i / pointsCount);
-				}
-			} else {
-				double maxAngle = Kepler.TrueAnomalyForDistance(maxDistance, m_Eccentricity, pe, pe);
-				for (int i = 0; i < pointsCount; i++){
-					double eccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(-maxAngle + i * 2d * maxAngle / (pointsCount - 1), m_Eccentricity);
-					result[i] = GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
-				}
-			}
-		} else {
-			double maxAngle = Kepler.TrueAnomalyForDistance(maxDistance, m_Eccentricity, this.SemiMajorAxis, pe);
-
-			for (int i = 0; i < pointsCount; i++) {
-				double eccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(-maxAngle + i * 2d * maxAngle / (pointsCount - 1), m_Eccentricity);
-				result[i] = GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
-			}
+		for (int i = 0; i < pointsCount; i++){
+			double trueAnomaly = -maxAngle + i * 2d * maxAngle / adjustedCount;
+			result[i] = GetFocalPositionAtTrueAnomaly(trueAnomaly);
 		}
 
+		//Debug.Log("pe=" + pe + " maxAngle=" + maxAngle * Kepler.Rad2Deg + " sma=" + SemiMajorAxis);
+				
 		return result;
 	}
 
@@ -232,6 +240,18 @@ public class Orbit {
 		return -major * vX - minor * vY;
 	}
 
+
+
+	/// <summary>
+	/// Gets the position relative to the focal point given the true anomaly.
+	/// </summary>
+	/// <param name="trueAnomaly">The true anomaly.</param>
+	/// <returns>Position relative to orbit focus.</returns>
+	public Vector3d GetFocalPositionAtTrueAnomaly(double trueAnomaly) {
+		double ecc = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
+		return GetFocalPositionAtEccentricAnomaly(ecc);
+	}
+
 	/// <summary>
 	/// Gets the position relative to the focal point given the eccentric anomaly.
 	/// </summary>
@@ -261,9 +281,8 @@ public class Orbit {
 			double y = Math.Sinh(eccentricAnomaly) * this.SemiMinorAxis;
 			return -major * x - minor * y;
 		} else {
-			double pe = this.PeriapsisDistance;
-			double x = pe * Math.Cos(eccentricAnomaly) / (1.0 + Math.Cos(eccentricAnomaly));
-			double y = pe * Math.Sin(eccentricAnomaly) / (1.0 + Math.Cos(eccentricAnomaly));
+			double x = m_PeriapsisDistance * Math.Cos(eccentricAnomaly) / (1.0 + Math.Cos(eccentricAnomaly));
+			double y = m_PeriapsisDistance * Math.Sin(eccentricAnomaly) / (1.0 + Math.Cos(eccentricAnomaly));
 			return -major * x - minor * y;
 		}
 	}
@@ -292,16 +311,42 @@ public class Orbit {
 		get { return m_SemiMinorAxisVec.magnitude; }
 	}
 
+	public Vector3d OrbitNormal {
+		get { return m_SemiMinorAxisVec.Cross(m_SemiMajorAxisVec); }
+	}
+
 	public Vector3d CenterPoint {
-		get { return -m_SemiMajorAxisVec * m_Eccentricity; }
+		get { 
+			if (m_Eccentricity < 1.0) {
+				return -m_SemiMajorAxisVec * m_Eccentricity; 
+			} else if (m_Eccentricity > 1.0) {
+				return m_SemiMajorAxisVec * m_Eccentricity;
+			} else {
+				return Vector3d.zero;
+			}
+		}
 	}
 
 	public double PeriapsisDistance {
-		get { return SemiMajorAxis * (1.0 - m_Eccentricity); }
+		get { 
+			if (m_Eccentricity < 1.0) {
+				return SemiMajorAxis * (1.0 - m_Eccentricity); 
+			} else if (m_Eccentricity > 1.0) {
+				return SemiMajorAxis * (m_Eccentricity - 1.0);
+			} else {
+				return m_PeriapsisDistance;
+			}
+		}
 	}
 
 	public double ApoapsisDistance {
-		get { return SemiMajorAxis * (1.0 + m_Eccentricity); }
+		get { 
+			if (m_Eccentricity < 1.0) {
+				return SemiMajorAxis * (1.0 + m_Eccentricity);
+			} else {
+				return double.PositiveInfinity;
+			}
+		}
 	}
 
 	public double PeriapsisAltitude {
@@ -332,7 +377,7 @@ public class Orbit {
 			} else if (m_Eccentricity > 1.0) {
 				return Math.Sqrt(GM / Math.Pow(SemiMajorAxis, 3));
 			} else {
-				return Math.Sqrt(GM * 0.5 / Math.Pow(PeriapsisDistance, 3));
+				return Math.Sqrt(GM * 0.5 / Math.Pow(m_PeriapsisDistance, 3));
 			}
 		}
 	}

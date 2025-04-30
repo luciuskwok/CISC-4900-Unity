@@ -47,6 +47,29 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Sets the orbital parameters to the result of a maneuver on another orbit.
+	/// </summary>
+	public void SetOrbitByManeuver(OrbitPlot originalOrbit, double meanAnomaly, double prograde, double normal, double inward) 
+	{
+		// Get original velocity and position at maneuver node
+		double eccAnomaly = originalOrbit.GetEccentricAnomalyFromMean(meanAnomaly);
+		Vector3d originalVelocity = originalOrbit.Orbit.GetVelocityAtEccentricAnomaly(eccAnomaly);
+
+		// Add delta-V for each direction
+		Vector3d progradeDirection = originalVelocity.normalized;
+		Vector3d normalDirection = originalOrbit.Orbit.OrbitNormal.normalized;
+		Vector3d inwardDirection = progradeDirection.Cross(normalDirection).normalized;
+		Vector3d deltaVelocity = progradeDirection * prograde + normalDirection * normal + inwardDirection * inward;
+
+		// Calculate the new orbit based on the new velocity vector
+		Vector3d newVelocity = originalVelocity + deltaVelocity;
+		Vector3d nodePosition = originalOrbit.Orbit.GetFocalPositionAtEccentricAnomaly(eccAnomaly);
+
+		// Update the planned orbit parameters
+		SetOrbitByThrow(nodePosition, newVelocity);
+	}
+
+	/// <summary>
 	/// Sets the orbital parameters, including anomaly, given a position and velocity vector.
 	/// </summary>
 	public void SetOrbitByThrow(Vector3d position, Vector3d velocity) 
@@ -84,15 +107,22 @@ public class OrbitPlot : MonoBehaviour
 	/// Update the orbit plot and animation time.
 	/// </summary>
 	public void UpdateLineRenderer() {
+		// Unity will show an error if objects are too large or too far away from the world origin, so the max distance must be small. 
+		double maxDistance = attractor.influence; // km
+
+		bool loop = (Orbit.ApoapsisDistance <= maxDistance) && (Orbit.Eccentricity < 1.0);
+
 		// Get points and convert from double to float
-		Vector3d[] pointsd = m_Orbit.GetOrbitPoints(pointCount, 1.0e6);
-		Vector3[] points = new Vector3[pointCount];
-		for (int i = 0; i < pointCount; i++) {
+		Vector3d[] pointsd = m_Orbit.GetOrbitPoints(pointCount, maxDistance);
+		int count = pointsd.Length;
+		Vector3[] points = new Vector3[count];
+		for (int i = 0; i < count; i++) {
 			points[i] = pointsd[i].Vector3;
 		}
 
 		var lineRenderer = GetComponent<LineRenderer>();
-		lineRenderer.positionCount = pointCount;
+		lineRenderer.loop = loop;
+		lineRenderer.positionCount = count;
 		lineRenderer.SetPositions(points);
 
 		// Set animation time with time scale
@@ -105,9 +135,11 @@ public class OrbitPlot : MonoBehaviour
 	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis that represents the point of maximum alpha.</param>
 	public void SetGradientByEccentricAnomaly(double eccentricAnomaly) {
 		// Convert radians to range 0.0 to 1.0
-		float x1 = (float)(eccentricAnomaly / Kepler.PI_2);
+		// Rotate 180 degrees because periapsis is set to middle of the line
+		double trueAnomaly = Kepler.GetTrueAnomalyFromEccentric(eccentricAnomaly, Orbit.Eccentricity);
+		float x1 = (float)(trueAnomaly / Kepler.PI_2 + 0.5);
 		x1 = x1 % 1.0f;
-		if (x1 < 0.0f) x1 += 1.0f;
+		if (x1 < 0.0f) x1 = 1.0f - x1;
 
 		// Calculate the locations and alpha values for a fade
 		float x2 = x1 + 1.0f / pointCount;
