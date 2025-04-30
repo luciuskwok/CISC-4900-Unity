@@ -197,7 +197,7 @@ public static class Kepler {
 	/// Maps an anomaly value to the range of 0 to PI_2.
 	/// </summary>
 	public static double NormalizedAnomaly(double a) {
-		a = a % PI_2;
+		a %= PI_2;
 		if (a < 0) a += PI_2;
 		return a;
 	}

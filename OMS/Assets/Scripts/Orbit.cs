@@ -12,15 +12,53 @@ using UnityEngine;
 public class Orbit {
 	public Attractor attractor;
 
-	// Primary variables that define this class
-	private Vector3d m_SemiMajorAxisVec; // Vector from center of ellipse to periapse
-	private Vector3d m_SemiMinorAxisVec; // Vector from center of ellipse representing the semi-minor axis
-	private double m_PeriapsisDistance; // Only used for parabolic orbits
-	private double m_Eccentricity;
-	public double Eccentricity { get { return m_Eccentricity; } }
+	// ## Primary fields which are the minimum to describe an orbit
 
+	/// <summary>
+	/// Vector which describes the semi-major axis, which is from the center of the ellipse to the periapsis.
+	/// </summary>
+	private Vector3d m_SemiMajorAxisVec;
+
+	/// <summary>
+	/// Vector which describes the semi-minor axis.
+	/// </summary>
+	private Vector3d m_SemiMinorAxisVec;
+
+	/// <summary>
+	/// Distance from the focus to the periapsis, which is required for parabolic orbits.
+	/// </summary>
+	private double m_PeriapsisDistance;
+
+	/// <summary>
+	/// Describes whether the orbit is elliptical, parabolic, or hyperbolic, which affects how the semi-major and semi-minor axes are interpreted.
+	/// </summary>
+	private double m_Eccentricity;
+
+	/// <summary>
+	/// Describes the angle in radians from the periapsis.
+	/// </summary>
 	private double m_EccentricAnomaly; 
+
+	// ## Accessors for the primary fields
+	public double Eccentricity { get { return m_Eccentricity; } }
 	public double EccentricAnomaly { get { return m_EccentricAnomaly; } }
+
+	// ## Derived values from the primary fields
+
+	/// <summary>
+	/// Length of the semi-major axis. For parabolic orbits, this value is 0.
+	/// </summary>
+	public double SemiMajorAxis { 
+		get { return m_Eccentricity == 1.0? 0.0 : m_SemiMajorAxisVec.magnitude; } 
+	}
+
+	/// <summary>
+	/// Length of the semi-minor axis. For parabolic orbits, this value is 0.
+	/// </summary>
+	public double SemiMinorAxis { 
+		get { return m_Eccentricity == 1.0? 0.0 : m_SemiMinorAxisVec.magnitude; } 
+	}
+
 
 	// Constants
 	public static readonly Vector3d EclipticNormal = new Vector3d(0, 0, 1); // positive z is the direction of north, towards the North Pole Star
@@ -294,22 +332,13 @@ public class Orbit {
 	public void UpdateWithTime(double deltaTime) 
 	{
 		double meanAnomaly = MeanAnomaly + MeanMotion * deltaTime;
-		if (Eccentricity < 1.0) {
+		if (m_Eccentricity < 1.0) {
 			// Keep anomaly values within range of 0 to PI_2
-			meanAnomaly %= Kepler.PI_2;
-			if (meanAnomaly < 0.0) meanAnomaly = Kepler.PI_2 - meanAnomaly;
-			m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
+			meanAnomaly = Kepler.NormalizedAnomaly(meanAnomaly);
 		}
 		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
 	}
 
-	public double SemiMajorAxis {
-		get { return m_SemiMajorAxisVec.magnitude; }
-	}
-
-	public double SemiMinorAxis {
-		get { return m_SemiMinorAxisVec.magnitude; }
-	}
 
 	public Vector3d OrbitNormal {
 		get { return m_SemiMinorAxisVec.Cross(m_SemiMajorAxisVec); }
