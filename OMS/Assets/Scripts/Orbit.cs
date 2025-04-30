@@ -212,7 +212,7 @@ public class Orbit {
 		// Debugging
 		//double c = m_Eccentricity * majorDistance;
 		//Debug.Log("e="+m_Eccentricity+" a="+m_SemiMajorAxisVec.ToString()+" b="+m_SemiMinorAxisVec.ToString()+" c="+c+" pe="+m_PeriapsisDistance);
-		//Debug.Log("periapsisTime="+periapsisTime);
+		
 	}
 
 	/// <summary>

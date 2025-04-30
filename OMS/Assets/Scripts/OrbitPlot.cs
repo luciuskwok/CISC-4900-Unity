@@ -76,15 +76,13 @@ public class OrbitPlot : MonoBehaviour
 
 		// Update line renderer and gradient
 		UpdateLineRenderer();
-		UpdateGradientWithEccentricAnomaly(eccAnomaly);
+		UpdateGradientWithTime(atTime);
 	}
 
 	void Update() {
 		if (animate) {
 			animationTime += Time.deltaTime * animationTimeScale;
-			double meanAnomaly = Orbit.GetMeanAnomalyAtTime(animationTime);
-			double eccentricAnomaly = Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Orbit.Eccentricity);
-			UpdateGradientWithEccentricAnomaly(eccentricAnomaly);
+			UpdateGradientWithTime(animationTime);
 		}
 	}
 
@@ -93,7 +91,7 @@ public class OrbitPlot : MonoBehaviour
 	/// </summary>
 	/// <param name="atTime">The point in time that the gradient represents.</param>
 	public void UpdateGradientWithTime(double atTime) {
-		double meanAnomaly = Orbit.GetMeanAnomalyAtTime(animationTime);
+		double meanAnomaly = Orbit.GetMeanAnomalyAtTime(atTime);
 		double eccentricAnomaly = Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Orbit.Eccentricity);
 		UpdateGradientWithEccentricAnomaly(eccentricAnomaly);
 	}

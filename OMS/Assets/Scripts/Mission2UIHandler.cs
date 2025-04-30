@@ -30,7 +30,6 @@ public class Mission2UIHandler : MonoBehaviour
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.1; // km/s
 	private double maneuverSliderValue = 0.0; // degrees
-	private double maneuverTime;
 
 	// Animation parameters
 	private double animationTime = 0.0;
@@ -100,13 +99,15 @@ public class Mission2UIHandler : MonoBehaviour
 		PositionSpacecraftNodes(animationTime);
 	}
 
-	void PositionManeuverNode() {
+	double GetManeuverTime() {
 		double maneuverMeanAnomaly = maneuverSliderValue * Kepler.Deg2Rad;
 		double t1 = playerOrbitPlot.Orbit.periapsisTime;
 		double t2 = maneuverMeanAnomaly / playerOrbitPlot.Orbit.MeanMotion;
-		maneuverTime = t1 + t2;
+		return t1 + t2;
+	}
 
-		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, maneuverTime);
+	void PositionManeuverNode() {
+		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, GetManeuverTime());
 		UpdatePlannedOrbit();
 	}
 
@@ -159,6 +160,8 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void UpdatePlannedOrbit() {
+		double maneuverTime = GetManeuverTime();
+
 		// Update delta-V readout
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
@@ -175,7 +178,7 @@ public class Mission2UIHandler : MonoBehaviour
 		CalculateClosestApproach(maneuverTime);
 	}
 
-	void CalculateClosestApproach(double startTime) {
+	void CalculateClosestApproach(double maneuverTime) {
 		double targetApoapsis = targetOrbitPlot.Orbit.ApoapsisDistance;
 		double planApoapsis = plannedOrbitPlot.Orbit.ApoapsisDistance;
 		if (planApoapsis < targetApoapsis * 0.95) return;
