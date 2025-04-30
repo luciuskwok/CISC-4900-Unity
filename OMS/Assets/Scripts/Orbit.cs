@@ -357,6 +357,10 @@ public class Orbit {
 		get { return ApoapsisDistance - attractor.radius; }
 	}
 
+	/// <summary>
+	/// Gets the orbital period, or the time it takes to make one revolution around the orbit.
+	/// </summary>
+	/// <returns>Orbital period in seconds.</returns>
 	public double OrbitalPeriod { 
 		get {
 			if (m_Eccentricity < 1.0) {

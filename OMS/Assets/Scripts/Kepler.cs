@@ -193,12 +193,13 @@ public static class Kepler {
 		}
 	}
 
-
-	public static double OrbitalPeriod(double semiMajorAxis, double mass) {
-		// Parameters: semi-major axis of the orbit; mass of the two bodies.
-		// Returns the orbital period in seconds.
-		double gm = G * mass;
-		double a = semiMajorAxis; 
-		return 2.0 * PI * Math.Sqrt(a * a * a / gm);
+	/// <summary>
+	/// Maps an anomaly value to the range of 0 to PI_2.
+	/// </summary>
+	public static double NormalizedAnomaly(double a) {
+		a = a % PI_2;
+		if (a < 0) a += PI_2;
+		return a;
 	}
+
 }
