@@ -1603,6 +1603,8 @@ MonoBehaviour:
   plannedOrbitLine: {fileID: 1150283336}
   targetOrbitLine: {fileID: 1394266522}
   maneuverNode: {fileID: 1906363384}
+  playerNode: {fileID: 1584532630}
+  targetNode: {fileID: 1172723007}
   goButton: {fileID: 872447908}
   successPanel: {fileID: 1233583571}
 --- !u!1 &468076641
@@ -3458,7 +3460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0, b: 0, a: 0}
-  animate: 1
+  animate: 0
   gradientAnimationTime: 4
 --- !u!120 &1150283338
 LineRenderer:
@@ -4312,7 +4314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0, g: 1, b: 0.25464916, a: 0}
-  animate: 1
+  animate: 0
   gradientAnimationTime: 4
 --- !u!1 &1396500638
 GameObject:
@@ -4469,7 +4471,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.7490196, g: 0.1872549, b: 0.1872549, a: 0}
-  animate: 1
+  animate: 0
   gradientAnimationTime: 4
 --- !u!1 &1519427311
 GameObject:

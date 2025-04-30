@@ -41,7 +41,7 @@ public class Mission1UIHandler : MonoBehaviour
 		// Set up the current player orbit
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
 		playerOrbit.attractor = Attractor.Earth;
-		playerOrbit.SetOrbitalElements(playerEcc, playerSMA, 0, 0, playerArgOfPerifocus, 0);
+		playerOrbit.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
 
 		// Set up the target orbit
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();

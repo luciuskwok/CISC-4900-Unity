@@ -37,10 +37,12 @@ public class Mission2UIHandler : MonoBehaviour
 		const double playerAltitude = 420.0; // km above Earth's surface
 		const double playerEcc = 0.0; // circular orbit
 		const double playerArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
+		const double playerMeanAnomaly = -1.0/8.0;
 		double playerSMA = Attractor.Earth.radius + playerAltitude;
 		const double targetAltitude = 4000.0; // km above surface
 		const double targetEcc = 0.0;
 		const double targetArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
+		const double targetMeanAnomaly = 3.0/8.0;
 		double targetSMA = Attractor.Earth.radius + targetAltitude;
 
 		// Set prograde slider to initial value
@@ -50,18 +52,22 @@ public class Mission2UIHandler : MonoBehaviour
 		// Set up the current player orbit
 		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
 		playerOrbit.attractor = Attractor.Earth;
-		playerOrbit.SetOrbitalElements(playerEcc, playerSMA, 0, 0, playerArgOfPerifocus, 0);
+		playerOrbit.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
+		playerOrbit.SetMeanAnomaly(playerMeanAnomaly);
 
 		// Set up the target orbit
 		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
 		targetOrbit.attractor = Attractor.Earth;
-		targetOrbit.SetOrbitalElements(targetEcc, targetSMA, 0, 0, targetArgOfPerifocus, 0);
+		targetOrbit.SetOrbitalElements(targetEcc, targetSMA, 0, targetArgOfPerifocus, 0);
+		targetOrbit.SetMeanAnomaly(targetMeanAnomaly);
 
 		// Target Stats Text
 		targetStatsText.text = targetOrbit.ToString();
 		
-		// Update maneuver node & planned orbit
+		// Position nodes & update planned orbit
 		PositionManeuverNode();
+		PositionNodeWithOrbit(playerNode, playerOrbit, playerOrbit.EccentricAnomaly);
+		PositionNodeWithOrbit(targetNode, targetOrbit, targetOrbit.EccentricAnomaly);
 
 		// Set the info text
 		SetInfoText(false);
@@ -75,18 +81,24 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void PositionManeuverNode() {
-		// Calculate the mean anomaly from timing
-		OrbitPlot plot = playerOrbitLine.GetComponent<OrbitPlot>();
-		//double period = plot.Orbit.OrbitalPeriod;
-
 		nodeMeanAnomaly = timing * Kepler.Deg2Rad;
 
-		double nodeEccAnomaly = plot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
-		Vector3 worldPos = plot.GetWorldPositionAtEccentricAnomaly(nodeEccAnomaly);
+		OrbitPlot playerOrbitPlot = playerOrbitLine.GetComponent<OrbitPlot>();
+		double nodeEccAnomaly = playerOrbitPlot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
 
-		UINode node = maneuverNode.GetComponent<UINode>();
-		node.SetWorldPosition(worldPos);
+		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, nodeEccAnomaly);
 		UpdatePlannedOrbit();
+	}
+
+	/// <summary>
+	/// Sets the position of the node icon GameObject given an orbit GameObject and eccentric anomaly.
+	/// </summary>
+	/// <param name="node">GameObject for the node icon.</param>
+	/// <param name="orbitPlot">OrbitPlot object for the orbit.</param>
+	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from perapsis.</param>
+	void PositionNodeWithOrbit(GameObject node, OrbitPlot orbitPlot, double eccentricAnomaly) {
+		Vector3 worldPos = orbitPlot.GetWorldPositionAtEccentricAnomaly(eccentricAnomaly);
+		node.GetComponent<UINode>().SetWorldPosition(worldPos);
 	}
 
 	public void HandleMenuButton() {

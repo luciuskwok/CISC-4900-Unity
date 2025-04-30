@@ -16,6 +16,7 @@ public class Orbit {
 	public double Eccentricity { get { return m_Eccentricity; } }
 
 	private double m_EccentricAnomaly; 
+	public double EccentricAnomaly { get { return m_EccentricAnomaly; } }
 
 	// Secondary variables that are derived from primary varibles
 	private Vector3d m_Position; // Current position in orbit, derived from eccentric anomaly.
@@ -32,12 +33,11 @@ public class Orbit {
 	/// </summary>
 	/// <param name="eccentricity">Eccentricity.</param>
 	/// <param name="semiMajorAxis">Semi-major axis, in km.</param>
-	/// <param name="meanAnomaly">Mean anomaly, in radians</param>
 	/// <param name="inclination">Inclination from ecliptic, in radians.</param>
 	/// <param name="argOfPerifocus">Argument of perifocus, in radians.</param>
 	/// <param name="ascendingNode">Ascending node, in radians.</param>
 	/// <param name="attractor">Parent gravitational body at focus of orbit.</param>
-	public Orbit(double eccentricity, double semiMajorAxis, double meanAnomaly, double inclination, double argOfPerifocus, double ascendingNode, Attractor attractor) 
+	public Orbit(double eccentricity, double semiMajorAxis, double inclination, double argOfPerifocus, double ascendingNode, Attractor attractor) 
 	{		
 		// Attractor
 		this.attractor = attractor;
@@ -68,11 +68,10 @@ public class Orbit {
 		m_SemiMajorAxisVec = periapseVec * semiMajorAxis;
 		m_SemiMinorAxisVec = Vector3d.Cross(periapseVec, orbitNormalVec) * semiMinorAxis;
 		m_Eccentricity = eccentricity;
-		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, eccentricity);
+		m_EccentricAnomaly = 0.0; // default
 
 		// Set secondary variables
 		m_Position = GetFocalPositionAtEccentricAnomaly(m_EccentricAnomaly);
-
 	}
 
 	/// <summary>
@@ -150,6 +149,30 @@ public class Orbit {
 		m_SemiMajorAxisVec = major * majorDistance;
 		m_SemiMinorAxisVec = minor * minorDistance;
 		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
+	}
+
+	/// <summary>
+	/// Sets the position on the orbit using the eccentric anomaly.
+	/// </summary>
+	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapse.</param>
+	public void SetEccentricAnomaly(double eccentricAnomaly) 
+	{
+		m_EccentricAnomaly = eccentricAnomaly;
+
+		// Update position
+		m_Position = GetFocalPositionAtEccentricAnomaly(m_EccentricAnomaly);
+	}
+
+	/// <summary>
+	/// Sets the position on the orbit using the mean anomaly.
+	/// </summary>
+	/// <param name="meanAnomaly">The mean anomaly in radians from periapse.</param>
+	public void SetMeanAnomaly(double meanAnomaly) 
+	{
+		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
+
+		// Update position
+		m_Position = GetFocalPositionAtEccentricAnomaly(m_EccentricAnomaly);
 	}
 
 	/// <summary>

@@ -24,9 +24,9 @@ public class OrbitPlot : MonoBehaviour
 	private readonly float minAlpha = 0.05f;
 
 
-	public void SetOrbitalElements(double eccentricity, double semiMajorAxis, double meanAnomaly, double inclination, double argOfPerifocus, double ascendingNode) 
+	public void SetOrbitalElements(double eccentricity, double semiMajorAxis, double inclination, double argOfPerifocus, double ascendingNode) 
 	{
-		m_Orbit = new Orbit(eccentricity, semiMajorAxis, meanAnomaly, inclination, argOfPerifocus, ascendingNode, attractor);
+		m_Orbit = new Orbit(eccentricity, semiMajorAxis, inclination, argOfPerifocus, ascendingNode, attractor);
 		UpdateLineRenderer();
 	}
 
@@ -37,13 +37,24 @@ public class OrbitPlot : MonoBehaviour
 		double a = (pe + ap) / 2.0;
 		double e = 1.0 - (pe / a);
 
-		SetOrbitalElements(e, a, 0, 0, argOfPerifocus, 0);
+		SetOrbitalElements(e, a, 0, argOfPerifocus, 0);
 	}
 
 	public void SetOrbitByThrow(Vector3d position, Vector3d velocity) 
 	{
 		m_Orbit = new Orbit(position, velocity, attractor);
 		UpdateLineRenderer();
+	}
+
+	public void SetMeanAnomaly(double meanAnomaly) {
+		m_Orbit.SetMeanAnomaly(meanAnomaly);
+		if (!animate) {
+			SetGradientByEccentricAnomaly(m_Orbit.EccentricAnomaly);
+		}
+	}
+
+	public double EccentricAnomaly {
+		get { return m_Orbit.EccentricAnomaly; }
 	}
 
 	void Update() {
