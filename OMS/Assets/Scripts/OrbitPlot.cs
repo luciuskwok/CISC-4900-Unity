@@ -62,10 +62,6 @@ public class OrbitPlot : MonoBehaviour
 		}
 	}
 
-	public double EccentricAnomaly {
-		get { return m_Orbit.EccentricAnomaly; }
-	}
-
 	void Update() {
 		if (animate) {
 			double x = Time.timeSinceLevelLoadAsDouble / gradientAnimationTime % 1.0f;

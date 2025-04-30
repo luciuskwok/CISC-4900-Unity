@@ -32,6 +32,11 @@ public class Mission2UIHandler : MonoBehaviour
 	private double timing = 0.0; // seconds
 	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
 
+	// Cached Monobehaviour script objects
+	private OrbitPlot playerOrbitPlot;
+	private OrbitPlot plannedOrbitPlot;
+	private OrbitPlot targetOrbitPlot;
+
 	void Start() {
 		// Constants
 		const double playerAltitude = 420.0; // km above Earth's surface
@@ -45,24 +50,28 @@ public class Mission2UIHandler : MonoBehaviour
 		const double targetMeanAnomaly = 75.0 * Kepler.Deg2Rad;
 		double targetSMA = Attractor.Earth.radius + targetAltitude;
 
+		// Get and cache OrbitPlot objects
+		playerOrbitPlot = playerOrbitLine.GetComponent<OrbitPlot>();
+		plannedOrbitPlot = plannedOrbitLine.GetComponent<OrbitPlot>();
+		targetOrbitPlot = targetOrbitLine.GetComponent<OrbitPlot>();
+
+
 		// Set prograde slider to initial value
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV * 1000);
 		timingSlider.SetValueWithoutNotify((float)timing);
 
 		// Set up the current player orbit
-		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		playerOrbit.attractor = Attractor.Earth;
-		playerOrbit.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
-		playerOrbit.SetMeanAnomaly(playerMeanAnomaly);
+		playerOrbitPlot.attractor = Attractor.Earth;
+		playerOrbitPlot.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
+		playerOrbitPlot.SetMeanAnomaly(playerMeanAnomaly);
 
 		// Set up the target orbit
-		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		targetOrbit.attractor = Attractor.Earth;
-		targetOrbit.SetOrbitalElements(targetEcc, targetSMA, 0, targetArgOfPerifocus, 0);
-		targetOrbit.SetMeanAnomaly(targetMeanAnomaly);
+		targetOrbitPlot.attractor = Attractor.Earth;
+		targetOrbitPlot.SetOrbitalElements(targetEcc, targetSMA, 0, targetArgOfPerifocus, 0);
+		targetOrbitPlot.SetMeanAnomaly(targetMeanAnomaly);
 
 		// Target Stats Text
-		targetStatsText.text = targetOrbit.ToString();
+		targetStatsText.text = targetOrbitPlot.ToString();
 		
 		// Position nodes & update planned orbit
 		PositionManeuverNode();
@@ -84,18 +93,14 @@ public class Mission2UIHandler : MonoBehaviour
 		const double timeScale = 300.0;
 		double deltaTime = Time.deltaTime * timeScale;
 
-		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		playerOrbit.UpdateWithTime(deltaTime);
-		PositionNodeWithOrbit(playerNode, playerOrbit, playerOrbit.EccentricAnomaly);
-		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		targetOrbit.UpdateWithTime(deltaTime);
-		PositionNodeWithOrbit(targetNode, targetOrbit, targetOrbit.EccentricAnomaly);
+		playerOrbitPlot.UpdateWithTime(deltaTime);
+		targetOrbitPlot.UpdateWithTime(deltaTime);
+		PositionSpacecraftNodes();
 	}
 
 	void PositionManeuverNode() {
 		nodeMeanAnomaly = timing * Kepler.Deg2Rad;
 
-		OrbitPlot playerOrbitPlot = playerOrbitLine.GetComponent<OrbitPlot>();
 		double nodeEccAnomaly = playerOrbitPlot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
 
 		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, nodeEccAnomaly);
@@ -103,10 +108,8 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void PositionSpacecraftNodes() {
-		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		PositionNodeWithOrbit(playerNode, playerOrbit, playerOrbit.EccentricAnomaly);
-		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		PositionNodeWithOrbit(targetNode, targetOrbit, targetOrbit.EccentricAnomaly);
+		PositionNodeWithOrbit(playerNode, playerOrbitPlot, playerOrbitPlot.Orbit.EccentricAnomaly);
+		PositionNodeWithOrbit(targetNode, targetOrbitPlot, targetOrbitPlot.Orbit.EccentricAnomaly);
 	}
 
 	/// <summary>
@@ -153,41 +156,49 @@ public class Mission2UIHandler : MonoBehaviour
 	void UpdatePlannedOrbit() {
 		// Calculate the orbital parameters resulting from maneuver
 		// Get original velocity and position at maneuver node
-		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
-		double nodeEccentricAnomaly = playerOrbit.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
-		Vector3d originalVelocity = playerOrbit.Orbit.GetVelocityAtEccentricAnomaly(nodeEccentricAnomaly);
+		double nodeEccentricAnomaly = playerOrbitPlot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
+		Vector3d originalVelocity = playerOrbitPlot.Orbit.GetVelocityAtEccentricAnomaly(nodeEccentricAnomaly);
 		// Add prograde delta-V
 		Vector3d progradeDirection = originalVelocity.normalized;
 		Vector3d deltaVelocity = progradeDirection * progradeDeltaV;
 		// Calculate the new orbit based on the new velocity vector
 		Vector3d newVelocity = originalVelocity + deltaVelocity;
-		Vector3d nodePosition = playerOrbit.Orbit.GetFocalPositionAtEccentricAnomaly(nodeEccentricAnomaly);
+		Vector3d nodePosition = playerOrbitPlot.Orbit.GetFocalPositionAtEccentricAnomaly(nodeEccentricAnomaly);
 
 		// Update the planned orbit parameters
-		OrbitPlot planOrbit = plannedOrbitLine.GetComponent<OrbitPlot>();
-		planOrbit.attractor = Attractor.Earth;
-		planOrbit.SetOrbitByThrow(nodePosition, newVelocity);
+		plannedOrbitPlot.attractor = Attractor.Earth;
+		plannedOrbitPlot.SetOrbitByThrow(nodePosition, newVelocity);
 
-		// Update readouts
+		// Update delta-V readout
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
-		timingReadout.SetText(timing.ToString("F0") + "s");
+
+		// Update time readout
+		double mean1 = (Kepler.PI_2 - playerOrbitPlot.Orbit.MeanAnomaly) % Kepler.PI_2;
+		double mean2 = timing * Kepler.Deg2Rad;
+		double maneuverTime = (mean1 + mean2) / playerOrbitPlot.Orbit.MeanMotion;
+		timingReadout.SetText(OrbitPlot.FormattedTime(maneuverTime));
 
 		// Maneuver Stats
-		maneuverStatsText.text = planOrbit.ToString();
+		maneuverStatsText.text = plannedOrbitPlot.ToString();
 
-		// Target orbit parameter
-		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
-		double targetApoapsis = targetOrbit.Orbit.ApoapsisDistance;
+		CalculateClosestApproach(maneuverTime);
+	}
 
-		// Check if planned orbit is within tolerances and enable Go button
-		double planApoapsis = planOrbit.Orbit.ApoapsisDistance;
-		if (Math.Abs(targetApoapsis - planApoapsis) < targetApoapsis * 0.02) {
-			goButton.SetActive(true);
-			SetInfoText(true);
-		} else {
-			goButton.SetActive(false);
-			SetInfoText(false);
+	void CalculateClosestApproach(double startTime) {
+		double targetApoapsis = targetOrbitPlot.Orbit.ApoapsisDistance;
+		double planApoapsis = plannedOrbitPlot.Orbit.ApoapsisDistance;
+		if (planApoapsis < targetApoapsis * 0.95) return;
+
+		if (planApoapsis <= targetApoapsis) {
+			// Calculate the one closest approach at the apoapsis
+
 		}
+
+	}
+
+	void SetSuccess(bool success) {
+		goButton.SetActive(success);
+		SetInfoText(success);
 	}
 
 	void SetInfoText(bool success) {
