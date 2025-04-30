@@ -97,9 +97,6 @@ public class Mission2UIHandler : MonoBehaviour
 
 	void AnimateSpacecraftPositions() {
 		animationTime += Time.deltaTime * animationTimeScale;
-		
-		playerOrbitPlot.UpdateGradientWithTime(animationTime);
-		targetOrbitPlot.UpdateGradientWithTime(animationTime);
 		PositionSpacecraftNodes(animationTime);
 	}
 
@@ -114,6 +111,8 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void PositionSpacecraftNodes(double atTime) {
+		playerOrbitPlot.UpdateGradientWithTime(atTime);
+		targetOrbitPlot.UpdateGradientWithTime(atTime);
 		PositionNodeWithOrbit(playerNode, playerOrbitPlot, atTime);
 		PositionNodeWithOrbit(targetNode, targetOrbitPlot, atTime);
 	}
