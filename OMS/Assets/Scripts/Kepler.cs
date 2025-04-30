@@ -4,6 +4,9 @@
 
 using System;
 
+/// <summary>
+/// Utility functions for working with Kepler orbits.
+/// </summary>
 public static class Kepler {
 	public const double PI_2 = 6.2831853071796d; // 2 * PI
 	public const double PI = 3.14159265358979;
@@ -12,12 +15,22 @@ public static class Kepler {
 	public const double G = 6.67430e-20; // (km^3)/(kg*s^2) Gravitational Constant
 
 
-	// Regular Acosh, but without exception when out of possible range.
+	/// <summary>
+	/// Regular Acosh, but without exception when out of possible range.
+	/// </summary>
+	/// <param name="x">The input value.</param>
+	/// <returns>Calculated Acos value or 0.</returns>
 	public static double Acosh(double x) {
 		if (x < 1.0) return 0;
 		return Math.Log(x + Math.Sqrt(x * x - 1.0));
 	}
 
+	/// <summary>
+	/// Converts the eccentric to true anomaly.
+	/// </summary>
+	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapsis. This value must be in the range of 0 to PI_2.</param>
+	/// <param name="eccentricity">The eccentricity.</param>
+	/// <returns>True anomaly in radians.</returns>
 	public static double GetTrueAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
 		if (eccentricity < 1.0) {
 			double cosE  = Math.Cos(eccentricAnomaly);
@@ -35,6 +48,12 @@ public static class Kepler {
 		}
 	}
 
+	/// <summary>
+	/// Converts the true to eccentric anomaly.
+	/// </summary>
+	/// <param name="trueAnomaly">The true anomaly in radians from periapsis. This value must be in the range of 0 to PI_2.</param>
+	/// <param name="eccentricity">The eccentricity.</param>
+	/// <returns>Eccentric anomaly in radians.</returns>
 	public static double GetEccentricAnomalyFromTrue(double trueAnomaly, double eccentricity) {
 		if (double.IsNaN(eccentricity) || double.IsInfinity(eccentricity)) return trueAnomaly;
 
@@ -59,6 +78,12 @@ public static class Kepler {
 		}
 	}
 
+		/// <summary>
+		/// Converts the eccentric to mean anomaly.
+		/// </summary>
+		/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapsis.</param>
+		/// <param name="eccentricity">The eccentricity.</param>
+		/// <returns>Mean anomaly in radians.</returns>
 	public static double GetMeanAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
 		// This handles all the cases of eccentricity
 		if (eccentricity < 1.0) {
@@ -71,6 +96,12 @@ public static class Kepler {
 		}	
 	}
 
+	/// <summary>
+	/// Converts the mean to eccentric anomaly, by means of Newton's method.
+	/// </summary>
+	/// <param name="meanAnomaly">The mean anomaly in radians from the periapsis.</param>
+	/// <param name="eccentricity">The eccentricity.</param>
+	/// <returns>Eccentric anomaly in radians.</returns>
 	public static double GetEccentricAnomalyFromMean(double meanAnomaly, double eccentricity) {
 		if (eccentricity < 1.0) {
 			return Mean2EccentricAnomalyElliptical(meanAnomaly, eccentricity);
@@ -85,7 +116,7 @@ public static class Kepler {
 		}
 	}
 
-	public static double Mean2EccentricAnomalyElliptical(double meanAnomaly, double eccentricity) {
+	private static double Mean2EccentricAnomalyElliptical(double meanAnomaly, double eccentricity) {
 		// Converts mean anomaly to eccentric anomaly using Kepler Solver.
 		// This is only valid for elliptical orbits. For hyperbolic orbits, see the original code.
 		// Iterations count range from 2 to 6 when eccentricity is in range from 0 to 1.
@@ -102,7 +133,7 @@ public static class Kepler {
 		return m;
 	}
 
-	public static double Mean2EccentricAnomalyHyperbolic(double meanAnomaly, double eccentricity) {
+	private static double Mean2EccentricAnomalyHyperbolic(double meanAnomaly, double eccentricity) {
 		double delta = 1d;
 
 		// Danby guess.
@@ -115,6 +146,12 @@ public static class Kepler {
 		return F;
 	}
 
+	/// <summary>
+	/// Rotate vector around another vector (double).
+	/// </summary>
+	/// <param name="v">Vector to rotate.</param>
+	/// <param name="angleRad">angle in radians.</param>
+	/// <param name="n">normalized vector to rotate around, or normal of rotation plane.</param>
 	public static Vector3d RotateVectorByAngle(Vector3d v, double angleRad, Vector3d n)
 	{
 		double cosT        = Math.Cos(angleRad);

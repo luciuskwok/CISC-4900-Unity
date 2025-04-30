@@ -82,6 +82,7 @@ public class OrbitPlot : MonoBehaviour
 		m_Orbit.SetMeanAnomaly(meanAnomaly);
 		if (!animate) {
 			SetGradientByEccentricAnomaly(m_Orbit.EccentricAnomaly);
+			
 		}
 	}
 
@@ -140,6 +141,8 @@ public class OrbitPlot : MonoBehaviour
 		float x1 = (float)(trueAnomaly / Kepler.PI_2 + 0.5);
 		x1 = x1 % 1.0f;
 		if (x1 < 0.0f) x1 = 1.0f - x1;
+
+		Debug.Log("eccAnomaly=" + (m_Orbit.EccentricAnomaly * Kepler.Rad2Deg).ToString("F1") + "° trueAnomaly=" + (trueAnomaly * Kepler.Rad2Deg).ToString("F1") + "° x1=" + x1.ToString("F3"));
 
 		// Calculate the locations and alpha values for a fade
 		float x2 = x1 + 1.0f / pointCount;
