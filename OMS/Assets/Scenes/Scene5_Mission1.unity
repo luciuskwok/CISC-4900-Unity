@@ -2649,7 +2649,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0, b: 0, a: 0}
   animate: 1
-  gradientAnimationTime: 4
+  animationTime: 0
 --- !u!120 &1150283338
 LineRenderer:
   serializedVersion: 2
@@ -2791,7 +2791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1233583572
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3453,7 +3453,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 0, g: 1, b: 0.25464916, a: 0}
   animate: 1
-  gradientAnimationTime: 4
+  animationTime: 0
 --- !u!1 &1396500638
 GameObject:
   m_ObjectHideFlags: 0
@@ -3610,7 +3610,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 0.7490196, g: 0.1872549, b: 0.1872549, a: 0}
   animate: 1
-  gradientAnimationTime: 4
+  animationTime: 0
 --- !u!1 &1519427311
 GameObject:
   m_ObjectHideFlags: 0

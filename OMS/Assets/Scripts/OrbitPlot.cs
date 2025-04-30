@@ -17,8 +17,8 @@ public class OrbitPlot : MonoBehaviour
 	public Attractor attractor; 
 
 	public bool animate = true;
-	public double gradientAnimationTime = 4.0f; // seconds
-	private readonly double gradeintAnimationTimeScale = 1200.0; // factor to speed up time for the animation
+	public double animationTime = 0.0;
+	private readonly double animationTimeScale = 1200.0; // factor to speed up time for the animation
 	private readonly int pointCount = 180;
 	private readonly float maxAlpha = 1.0f;
 	private readonly float minAlpha = 0.05f;
@@ -79,19 +79,10 @@ public class OrbitPlot : MonoBehaviour
 		SetGradientByEccentricAnomaly(m_Orbit.EccentricAnomaly);
 	}
 
-	public void SetMeanAnomaly(double meanAnomaly) {
-		meanAnomaly = Kepler.NormalizedAnomaly(meanAnomaly);
-		m_Orbit.SetMeanAnomaly(meanAnomaly);
-		if (!animate) {
-			SetGradientByEccentricAnomaly(m_Orbit.EccentricAnomaly);
-			
-		}
-	}
-
 	void Update() {
 		if (animate) {
-			double x = Time.timeSinceLevelLoadAsDouble / gradientAnimationTime % 1.0f;
-			double meanAnomaly = x * Kepler.PI_2;
+			animationTime += Time.deltaTime * animationTimeScale;
+			double meanAnomaly = Orbit.GetMeanAnomalyAtTime(animationTime);
 			double eccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
 			SetGradientByEccentricAnomaly(eccentricAnomaly);
 		}
@@ -127,9 +118,6 @@ public class OrbitPlot : MonoBehaviour
 		lineRenderer.loop = loop;
 		lineRenderer.positionCount = count;
 		lineRenderer.SetPositions(points);
-
-		// Set animation time with time scale
-		gradientAnimationTime = Orbit.OrbitalPeriod / gradeintAnimationTimeScale;
 	}
 
 	/// <summary>

@@ -62,7 +62,7 @@ public class Mission2UIHandler : MonoBehaviour
 		// Set up the current player orbit
 		playerOrbitPlot.attractor = Attractor.Earth;
 		playerOrbitPlot.SetOrbitalElements(playerEcc, playerSMA, 0, playerArgOfPerifocus, 0);
-		playerOrbitPlot.SetMeanAnomaly(playerMeanAnomaly);
+		playerOrbitPlot.Orbit.SetPeriapsisTimeWithMeanAnomaly(playerMeanAnomaly, 0);
 
 		// Set up planned orbit
 		plannedOrbitPlot.attractor = Attractor.Earth;
@@ -70,8 +70,8 @@ public class Mission2UIHandler : MonoBehaviour
 		// Set up the target orbit
 		targetOrbitPlot.attractor = Attractor.Earth;
 		targetOrbitPlot.SetOrbitalElements(targetEcc, targetSMA, 0, targetArgOfPerifocus, 0);
-		targetOrbitPlot.SetMeanAnomaly(targetMeanAnomaly);
-
+		targetOrbitPlot.Orbit.SetPeriapsisTimeWithMeanAnomaly(targetMeanAnomaly, 0);
+	
 		// Target Stats Text
 		targetStatsText.text = targetOrbitPlot.ToString();
 		
@@ -161,9 +161,9 @@ public class Mission2UIHandler : MonoBehaviour
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Update time readout
-		double mean1 = (Kepler.PI_2 - playerOrbitPlot.Orbit.MeanAnomaly) % Kepler.PI_2;
-		double mean2 = timing * Kepler.Deg2Rad;
-		double maneuverTime = (mean1 + mean2) / playerOrbitPlot.Orbit.MeanMotion;
+		double t1 = playerOrbitPlot.Orbit.periapsisTime;
+		double t2 = timing * Kepler.Deg2Rad / playerOrbitPlot.Orbit.MeanMotion;
+		double maneuverTime = t1 + t2;
 		timingReadout.SetText("T+" + OrbitPlot.FormattedTime(maneuverTime));
 
 		// Update the planned orbit resulting from maneuver

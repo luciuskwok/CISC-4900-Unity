@@ -415,12 +415,15 @@ public class Orbit {
 	}
 
 	/// <summary>
-	/// Sets the position on the orbit using the eccentric anomaly.
+	/// Gets the mean anomaly, given a point in time, calculated from the time of periapsis passage and the mean motion.
 	/// </summary>
-	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapse.</param>
-	public void SetEccentricAnomaly(double eccentricAnomaly) 
+	/// <param name="atTime">The point in time.</param>
+	public double GetMeanAnomalyAtTime(double atTime) 
 	{
-		m_EccentricAnomaly = eccentricAnomaly;
+		double timeDiff = atTime - periapsisTime;
+		double meanAnomaly = timeDiff * MeanMotion;
+		if (m_Eccentricity < 1.0) meanAnomaly = Kepler.NormalizedAnomaly(meanAnomaly);
+		return meanAnomaly;
 	}
 
 	/// <summary>
