@@ -21,8 +21,6 @@ public class Orbit {
 
 	private double m_Eccentricity; // Determines if orbit is elliptical, parabolic, or hyperbolic, and how the above fields are interpreted.
 
-	private double m_EccentricAnomaly; // Current position in orbit. This might not be needed if the periapsis time is used instead.
-
 	/// <summary>
 	/// Time of periapsis passage (T₀): time at which the orbiting body is at periapsis, which is when the mean anomaly and true anomaly are zero.
 	/// </summary>
@@ -39,11 +37,6 @@ public class Orbit {
 	/// Eccentricty (e): Describes whether the orbit is elliptical, parabolic, or hyperbolic, which affects how the semi-major and semi-minor axes are interpreted.
 	/// </summary>
 	public double Eccentricity { get { return m_Eccentricity; } }
-	
-	/// <summary>
-	/// Eccentric anomaly (E): current position in the orbit as the angle in radians from the periapsis.
-	/// </summary>
-	public double EccentricAnomaly { get { return m_EccentricAnomaly; } }
 
 	// ## Derived values from the primary fields
 
@@ -124,9 +117,6 @@ public class Orbit {
 		m_SemiMinorAxisVec = Vector3d.Cross(periapsisVec, orbitNormalVec) * semiMinorAxis;
 		m_PeriapsisDistance = periapsisVec.magnitude;
 		m_Eccentricity = eccentricity;
-
-		// Set epoch-related variables to default of zero
-		m_EccentricAnomaly = 0.0;
 	}
 
 	/// <summary>
@@ -214,13 +204,10 @@ public class Orbit {
 		m_SemiMinorAxisVec = minorDirection * minorDistance;
 
 		// Set the periapsis time by working backwards from mean anomaly
-		double eccAnomaly = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
-		double meanAnomaly = Kepler.GetMeanAnomalyFromEccentric(eccAnomaly, m_Eccentricity);
+		double eccAnomaly = Kepler.ConvertTrueAnomalyToEccentric(trueAnomaly, m_Eccentricity);
+		double meanAnomaly = Kepler.ConvertEccentricAnomalyToMean(eccAnomaly, m_Eccentricity);
 		double timeSincePeriapsis = meanAnomaly * MeanMotion;
 		periapsisTime = atTime - timeSincePeriapsis;
-
-		// TODO: remove m_EccentricAnomaly as a field from class
-		m_EccentricAnomaly = eccAnomaly;
 
 		// Debugging
 		//double c = m_Eccentricity * majorDistance;
@@ -266,7 +253,7 @@ public class Orbit {
 	/// <returns>Velocity vector.</returns>
 	public Vector3d GetVelocityAtEccentricAnomaly(double eccentricAnomaly)
 	{
-		return GetVelocityAtTrueAnomaly(Kepler.GetTrueAnomalyFromEccentric(eccentricAnomaly, Eccentricity));
+		return GetVelocityAtTrueAnomaly(Kepler.ConvertEccentricAnomalyToTrue(eccentricAnomaly, Eccentricity));
 	}
 
 	/// <summary>
@@ -297,7 +284,7 @@ public class Orbit {
 	/// <param name="trueAnomaly">The true anomaly.</param>
 	/// <returns>Position relative to orbit focus.</returns>
 	public Vector3d GetFocalPositionAtTrueAnomaly(double trueAnomaly) {
-		double ecc = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
+		double ecc = Kepler.ConvertTrueAnomalyToEccentric(trueAnomaly, m_Eccentricity);
 		return GetFocalPositionAtEccentricAnomaly(ecc);
 	}
 
@@ -399,7 +386,7 @@ public class Orbit {
 	}
 
 	/// <summary>
-	/// Mean motion: the change in the mean anomaly per second.
+	/// Mean motion: the change in the mean anomaly, in the form of the angular velocity.
 	/// </summary>
 	public double MeanMotion {
 		get {
@@ -427,35 +414,13 @@ public class Orbit {
 	}
 
 	/// <summary>
-	/// Gets the mean anomaly, which is the current position in the orbit.
+	/// Gets the eccentric anomaly, given a point in time.
 	/// </summary>
-	public double MeanAnomaly {
-		get {
-			return Kepler.GetMeanAnomalyFromEccentric(m_EccentricAnomaly, m_Eccentricity);
-		}
-	}
-
-	/// <summary>
-	/// Sets the current position on the orbit using the mean anomaly.
-	/// </summary>
-	/// <param name="meanAnomaly">The mean anomaly in radians from periapse.</param>
-	public void SetMeanAnomaly(double meanAnomaly) 
+	/// <param name="atTime">The point in time.</param>
+	public double GetEccentricAnomalyAtTime(double atTime) 
 	{
-		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
-	}
-	
-	/// <summary>
-	/// Updates the current eccentric anomaly by time delta.
-	/// </summary>
-	/// <param name="deltaTime">Time increment in seconds.</param>
-	public void UpdateWithTime(double deltaTime) 
-	{
-		double meanAnomaly = MeanAnomaly + MeanMotion * deltaTime;
-		if (m_Eccentricity < 1.0) {
-			// Keep anomaly values within range of 0 to PI_2
-			meanAnomaly = Kepler.NormalizedAnomaly(meanAnomaly);
-		}
-		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
+		double meanAnomaly = GetMeanAnomalyAtTime(atTime);
+		return Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Eccentricity);
 	}
 
 	/// <summary>
@@ -464,9 +429,20 @@ public class Orbit {
 	/// <param name="deltaTime">Time increment in seconds.</param>
 	public void SetPeriapsisTimeWithMeanAnomaly(double meanAnomaly, double atTime) 
 	{
-		double timeSincePeriapsis = meanAnomaly * MeanMotion;
+		double timeSincePeriapsis = meanAnomaly / MeanMotion;
 		periapsisTime = atTime - timeSincePeriapsis;
+		Debug.Log("periapsisTime="+periapsisTime);
 	}
+
+	/// <summary>
+	/// Converts mean anomaly to eccentric anomaly.
+	/// </summary>
+	/// <param name="meanAnomaly">Mean anomaly in radians.</param>
+	public double ConvertMeanAnomalyToEccentric(double meanAnomaly) 
+	{
+		return Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Eccentricity);
+	}
+
 
 
 }

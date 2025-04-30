@@ -49,10 +49,16 @@ public class OrbitPlot : MonoBehaviour
 	/// <summary>
 	/// Sets the orbital parameters to the result of a maneuver on another orbit.
 	/// </summary>
+	/// <param name="originalOrbit">The original orbit the maneuver is on.</param>
+	/// <param name="meanAnomaly">The position of the maneuver on the original orbit.</param>
+	/// <param name="atTime">The point in time that the maneuver occurs.</param>
+	/// <param name="prograde">The prograde delta-V.</param>
+	/// <param name="normal">The normal delta-V.</param>
+	/// <param name="inward">The inward delta-V.</param>
 	public void SetOrbitByManeuver(OrbitPlot originalOrbit, double meanAnomaly, double atTime, double prograde, double normal, double inward) 
 	{
 		// Get original velocity and position at maneuver node
-		double eccAnomaly = originalOrbit.GetEccentricAnomalyFromMean(meanAnomaly);
+		double eccAnomaly = originalOrbit.Orbit.ConvertMeanAnomalyToEccentric(meanAnomaly);
 		Vector3d originalVelocity = originalOrbit.Orbit.GetVelocityAtEccentricAnomaly(eccAnomaly);
 
 		// Add delta-V for each direction
@@ -66,35 +72,30 @@ public class OrbitPlot : MonoBehaviour
 		Vector3d nodePosition = originalOrbit.Orbit.GetFocalPositionAtEccentricAnomaly(eccAnomaly);
 
 		// Update the planned orbit parameters
-		SetOrbitByThrow(nodePosition, newVelocity, atTime);
-	}
+		m_Orbit = new Orbit(nodePosition, newVelocity, atTime, attractor);
 
-	/// <summary>
-	/// Sets the orbital parameters, including anomaly, given a position and velocity vector.
-	/// </summary>
-	public void SetOrbitByThrow(Vector3d position, Vector3d velocity, double atTime) 
-	{
-		m_Orbit = new Orbit(position, velocity, atTime, attractor);
+		// Update line renderer and gradient
 		UpdateLineRenderer();
-		SetGradientByEccentricAnomaly(m_Orbit.EccentricAnomaly);
+		UpdateGradientWithEccentricAnomaly(eccAnomaly);
 	}
 
 	void Update() {
 		if (animate) {
 			animationTime += Time.deltaTime * animationTimeScale;
 			double meanAnomaly = Orbit.GetMeanAnomalyAtTime(animationTime);
-			double eccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
-			SetGradientByEccentricAnomaly(eccentricAnomaly);
+			double eccentricAnomaly = Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Orbit.Eccentricity);
+			UpdateGradientWithEccentricAnomaly(eccentricAnomaly);
 		}
 	}
 
 	/// <summary>
-	/// Update the anomaly on the orbit by a specified amount of time.
+	/// Update the color gradient to show the position on the orbit at the given time.
 	/// </summary>
-	public void UpdateWithTime(double deltaTime) {
-		Orbit.UpdateWithTime(deltaTime);
-		// Update the gradient to match the current anomaly
-		SetGradientByEccentricAnomaly(Orbit.EccentricAnomaly);
+	/// <param name="atTime">The point in time that the gradient represents.</param>
+	public void UpdateGradientWithTime(double atTime) {
+		double meanAnomaly = Orbit.GetMeanAnomalyAtTime(animationTime);
+		double eccentricAnomaly = Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Orbit.Eccentricity);
+		UpdateGradientWithEccentricAnomaly(eccentricAnomaly);
 	}
 
 	/// <summary>
@@ -121,13 +122,13 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Sets the point in the orbit where the color gradient ends.
+	/// Updates the color gradient to end at the eccentric anomaly.
 	/// </summary>
-	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis that represents the point of maximum alpha.</param>
-	public void SetGradientByEccentricAnomaly(double eccentricAnomaly) {
+	/// <param name="eccentricAnomaly">The eccentric anomaly where the gradient should end.</param>
+	public void UpdateGradientWithEccentricAnomaly(double eccentricAnomaly) {
 		// Convert radians to range 0.0 to 1.0
 		// Rotate 180 degrees because periapsis is set to middle of the line
-		double trueAnomaly = Kepler.GetTrueAnomalyFromEccentric(eccentricAnomaly, Orbit.Eccentricity);
+		double trueAnomaly = Kepler.ConvertEccentricAnomalyToTrue(eccentricAnomaly, Orbit.Eccentricity);
 		float x1 = (float)(trueAnomaly / Kepler.PI_2 + 0.5);
 		x1 = x1 % 1.0f;
 		if (x1 < 0.0f) x1 = 1.0f - x1;
@@ -166,35 +167,6 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Gets the velocity given the eccentric anomaly.
-	/// </summary>
-	/// <param name="eccentricAnomaly">The eccentric anomaly as measured from periapsis.</param>
-	/// <returns>Velocity vector.</returns>
-	public Vector3d GetVelocityAtEccentricAnomaly(double eccentricAnomlay) {
-		double trueAnomaly = Kepler.GetTrueAnomalyFromEccentric(eccentricAnomlay, m_Orbit.Eccentricity);
-		return m_Orbit.GetVelocityAtTrueAnomaly(trueAnomaly);
-	}
-
-	/// <summary>
-	/// Gets the position relative to the focus given the eccentric anomaly.
-	/// </summary>
-	/// <param name="eccentricAnomaly">The eccentric anomaly as radians from periapsis.</param>
-	/// <returns>Position vector.</returns>
-	public Vector3d GetFocalPositionAtEccentricAnomaly(double eccentricAnomaly) {
-		// To get the position as a function of time, conver the time to a mean anomaly, then convert that into the eccentric anomaly.
-		return m_Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
-	}
-
-	/// <summary>
-	/// Gets the eccentric anomaly given the mean anomaly.
-	/// </summary>
-	/// <param name="meanAnomaly">The mean anomaly as radians from periapsis.</param>
-	/// <returns>Eccentric anomaly as radians from periapsis.</returns>
-	public double GetEccentricAnomalyFromMean(double meanAnomaly) {
-		return Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Orbit.Eccentricity);
-	}
-
-	/// <summary>
 	/// Gets the position on the orbit in terms of Unity's world space given the eccentric anomaly.
 	/// </summary>
 	/// <param name="eccentricAnomaly">The eccentric anomaly as radians from periapsis.</param>
@@ -203,6 +175,16 @@ public class OrbitPlot : MonoBehaviour
 		// Get the local coordinates of the node and convert to world coordinates
 		Vector3d localPos = Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
 		return gameObject.transform.TransformPoint(localPos.Vector3);
+	}
+
+	/// <summary>
+	/// Gets the position on the orbit in terms of Unity's world space given a point in time.
+	/// </summary>
+	/// <param name="atTime">The point in time.</param>
+	/// <returns>World position vector.</returns>
+	public Vector3 GetWorldPositionAtTime(double atTime) {
+		double eccAnomaly = Orbit.GetEccentricAnomalyAtTime(atTime);
+		return GetWorldPositionAtEccentricAnomaly(eccAnomaly);
 	}
 
 	public override String ToString() {

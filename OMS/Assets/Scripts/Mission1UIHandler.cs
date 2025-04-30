@@ -87,7 +87,7 @@ public class Mission1UIHandler : MonoBehaviour
 	}
 
 	void PositionManeuverNode() {
-		double nodeEccAnomaly = playerOrbitPlot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
+		double nodeEccAnomaly = playerOrbitPlot.Orbit.ConvertMeanAnomalyToEccentric(nodeMeanAnomaly);
 		Vector3 worldPos = playerOrbitPlot.GetWorldPositionAtEccentricAnomaly(nodeEccAnomaly);
 
 		UINode node = maneuverNode.GetComponent<UINode>();

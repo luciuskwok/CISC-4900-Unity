@@ -31,7 +31,7 @@ public static class Kepler {
 	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapsis. This value must be in the range of 0 to PI_2.</param>
 	/// <param name="eccentricity">The eccentricity.</param>
 	/// <returns>True anomaly in radians.</returns>
-	public static double GetTrueAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
+	public static double ConvertEccentricAnomalyToTrue(double eccentricAnomaly, double eccentricity) {
 		if (eccentricity < 1.0) {
 			double cosE  = Math.Cos(eccentricAnomaly);
 			double tAnom = Math.Acos((cosE - eccentricity) / (1d - eccentricity * cosE));
@@ -54,7 +54,7 @@ public static class Kepler {
 	/// <param name="trueAnomaly">The true anomaly in radians from periapsis. This value must be in the range of 0 to PI_2.</param>
 	/// <param name="eccentricity">The eccentricity.</param>
 	/// <returns>Eccentric anomaly in radians.</returns>
-	public static double GetEccentricAnomalyFromTrue(double trueAnomaly, double eccentricity) {
+	public static double ConvertTrueAnomalyToEccentric(double trueAnomaly, double eccentricity) {
 		if (double.IsNaN(eccentricity) || double.IsInfinity(eccentricity)) return trueAnomaly;
 
 		trueAnomaly %= PI_2;
@@ -84,7 +84,7 @@ public static class Kepler {
 		/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapsis.</param>
 		/// <param name="eccentricity">The eccentricity.</param>
 		/// <returns>Mean anomaly in radians.</returns>
-	public static double GetMeanAnomalyFromEccentric(double eccentricAnomaly, double eccentricity) {
+	public static double ConvertEccentricAnomalyToMean(double eccentricAnomaly, double eccentricity) {
 		// This handles all the cases of eccentricity
 		if (eccentricity < 1.0) {
 			return eccentricAnomaly - eccentricity * Math.Sin(eccentricAnomaly);
@@ -102,7 +102,7 @@ public static class Kepler {
 	/// <param name="meanAnomaly">The mean anomaly in radians from the periapsis.</param>
 	/// <param name="eccentricity">The eccentricity.</param>
 	/// <returns>Eccentric anomaly in radians.</returns>
-	public static double GetEccentricAnomalyFromMean(double meanAnomaly, double eccentricity) {
+	public static double ConvertMeanAnomalyToEccentric(double meanAnomaly, double eccentricity) {
 		if (eccentricity < 1.0) {
 			return Mean2EccentricAnomalyElliptical(meanAnomaly, eccentricity);
 		} else if (eccentricity > 1.0) {

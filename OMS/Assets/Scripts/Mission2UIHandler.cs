@@ -29,8 +29,12 @@ public class Mission2UIHandler : MonoBehaviour
 
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.1; // km/s
-	private double timing = 0.0; // seconds
-	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
+	private double maneuverSliderValue = 0.0; // degrees
+	private double maneuverTime;
+
+	// Animation parameters
+	private double animationTime = 0.0;
+	private readonly double animationTimeScale = 300.0;
 
 	// Cached Monobehaviour script objects
 	private OrbitPlot playerOrbitPlot;
@@ -57,7 +61,7 @@ public class Mission2UIHandler : MonoBehaviour
 
 		// Set prograde slider to initial value
 		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV * 1000);
-		timingSlider.SetValueWithoutNotify((float)timing);
+		timingSlider.SetValueWithoutNotify((float)maneuverSliderValue);
 
 		// Set up the current player orbit
 		playerOrbitPlot.attractor = Attractor.Earth;
@@ -77,7 +81,7 @@ public class Mission2UIHandler : MonoBehaviour
 		
 		// Position nodes & update planned orbit
 		PositionManeuverNode();
-		PositionSpacecraftNodes();
+		PositionSpacecraftNodes(0);
 
 		// Set the info text
 		SetInfoText(false);
@@ -92,26 +96,26 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void AnimateSpacecraftPositions() {
-		const double timeScale = 300.0;
-		double deltaTime = Time.deltaTime * timeScale;
-
-		playerOrbitPlot.UpdateWithTime(deltaTime);
-		targetOrbitPlot.UpdateWithTime(deltaTime);
-		PositionSpacecraftNodes();
+		animationTime += Time.deltaTime * animationTimeScale;
+		
+		playerOrbitPlot.UpdateGradientWithTime(animationTime);
+		targetOrbitPlot.UpdateGradientWithTime(animationTime);
+		PositionSpacecraftNodes(animationTime);
 	}
 
 	void PositionManeuverNode() {
-		nodeMeanAnomaly = timing * Kepler.Deg2Rad;
+		double maneuverMeanAnomaly = maneuverSliderValue * Kepler.Deg2Rad;
+		double t1 = playerOrbitPlot.Orbit.periapsisTime;
+		double t2 = maneuverMeanAnomaly / playerOrbitPlot.Orbit.MeanMotion;
+		maneuverTime = t1 + t2;
 
-		double nodeEccAnomaly = playerOrbitPlot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
-
-		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, nodeEccAnomaly);
+		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, maneuverTime);
 		UpdatePlannedOrbit();
 	}
 
-	void PositionSpacecraftNodes() {
-		PositionNodeWithOrbit(playerNode, playerOrbitPlot, playerOrbitPlot.Orbit.EccentricAnomaly);
-		PositionNodeWithOrbit(targetNode, targetOrbitPlot, targetOrbitPlot.Orbit.EccentricAnomaly);
+	void PositionSpacecraftNodes(double atTime) {
+		PositionNodeWithOrbit(playerNode, playerOrbitPlot, atTime);
+		PositionNodeWithOrbit(targetNode, targetOrbitPlot, atTime);
 	}
 
 	/// <summary>
@@ -120,8 +124,8 @@ public class Mission2UIHandler : MonoBehaviour
 	/// <param name="node">GameObject for the node icon.</param>
 	/// <param name="orbitPlot">OrbitPlot object for the orbit.</param>
 	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from perapsis.</param>
-	void PositionNodeWithOrbit(GameObject node, OrbitPlot orbitPlot, double eccentricAnomaly) {
-		Vector3 worldPos = orbitPlot.GetWorldPositionAtEccentricAnomaly(eccentricAnomaly);
+	void PositionNodeWithOrbit(GameObject node, OrbitPlot orbitPlot, double atTime) {
+		Vector3 worldPos = orbitPlot.GetWorldPositionAtTime(atTime);
 		node.GetComponent<UINode>().SetWorldPosition(worldPos);
 	}
 
@@ -151,23 +155,20 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	public void TimingDidChange(float value) {
-		timing = value;
+		maneuverSliderValue = value;
 		PositionManeuverNode();
 	}
 
 	void UpdatePlannedOrbit() {
-
 		// Update delta-V readout
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Update time readout
-		double t1 = playerOrbitPlot.Orbit.periapsisTime;
-		double t2 = timing * Kepler.Deg2Rad / playerOrbitPlot.Orbit.MeanMotion;
-		double maneuverTime = t1 + t2;
 		timingReadout.SetText("T+" + OrbitPlot.FormattedTime(maneuverTime));
 
 		// Update the planned orbit resulting from maneuver
-		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, nodeMeanAnomaly, maneuverTime, progradeDeltaV, 0, 0);	
+		double maneuverMeanAnomaly = maneuverSliderValue * Kepler.Deg2Rad;
+		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, maneuverMeanAnomaly, maneuverTime, progradeDeltaV, 0, 0);	
 
 		// Maneuver Stats
 		maneuverStatsText.text = plannedOrbitPlot.ToString();
