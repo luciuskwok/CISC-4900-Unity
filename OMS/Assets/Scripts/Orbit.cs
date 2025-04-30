@@ -14,55 +14,66 @@ public class Orbit {
 
 	// ## Primary fields which are the minimum to describe an orbit
 
-	/// <summary>
-	/// Vector which describes the semi-major axis, which is from the center of the ellipse to the periapsis.
-	/// </summary>
-	private Vector3d m_SemiMajorAxisVec;
+	private Vector3d m_SemiMajorAxisVec; // Semi-major axis (a): Vector from center to periapsis
+
+	private Vector3d m_SemiMinorAxisVec; // Semi-minor axis (b)
+
+	private double m_PeriapsisDistance; // Needed for parabolic orbits.
+
+	private double m_Eccentricity; // Determines if orbit is elliptical, parabolic, or hyperbolic, and how the above fields are interpreted.
+
+	private double m_EccentricAnomaly; // Current position in orbit. This might not be needed if the periapsis time is used instead.
 
 	/// <summary>
-	/// Vector which describes the semi-minor axis.
+	/// Time of periapsis passage (T₀): time at which the orbiting body is at periapsis, which is when the mean anomaly and true anomaly are zero.
 	/// </summary>
-	private Vector3d m_SemiMinorAxisVec;
+	private double m_PeriapsisTime; 
 
-	/// <summary>
-	/// Distance from the focus to the periapsis, which is required for parabolic orbits.
-	/// </summary>
-	private double m_PeriapsisDistance;
-
-	/// <summary>
-	/// Describes whether the orbit is elliptical, parabolic, or hyperbolic, which affects how the semi-major and semi-minor axes are interpreted.
-	/// </summary>
-	private double m_Eccentricity;
-
-	/// <summary>
-	/// Describes the angle in radians from the periapsis.
-	/// </summary>
-	private double m_EccentricAnomaly; 
 
 	// ## Accessors for the primary fields
+
+	/// <summary>
+	/// Eccentricty (e): Describes whether the orbit is elliptical, parabolic, or hyperbolic, which affects how the semi-major and semi-minor axes are interpreted.
+	/// </summary>
 	public double Eccentricity { get { return m_Eccentricity; } }
+	
+	/// <summary>
+	/// Eccentric anomaly (E): current position in the orbit as the angle in radians from the periapsis.
+	/// </summary>
 	public double EccentricAnomaly { get { return m_EccentricAnomaly; } }
 
 	// ## Derived values from the primary fields
 
 	/// <summary>
-	/// Length of the semi-major axis. For parabolic orbits, this value is 0.
+	/// Length of the semi-major axis (a). For parabolic orbits, this value is 0.
 	/// </summary>
-	public double SemiMajorAxis { 
+	public double SemiMajorAxisLength { 
 		get { return m_Eccentricity == 1.0? 0.0 : m_SemiMajorAxisVec.magnitude; } 
 	}
 
 	/// <summary>
-	/// Length of the semi-minor axis. For parabolic orbits, this value is 0.
+	/// Length of the semi-minor axis (b). For parabolic orbits, this value is 0.
 	/// </summary>
-	public double SemiMinorAxis { 
+	public double SemiMinorAxisLength { 
 		get { return m_Eccentricity == 1.0? 0.0 : m_SemiMinorAxisVec.magnitude; } 
 	}
 
 
 	// Constants
-	public static readonly Vector3d EclipticNormal = new Vector3d(0, 0, 1); // positive z is the direction of north, towards the North Pole Star
+
+	/// <summary>
+	/// Ecliptic Normal: the north direction, or the positive z-axis.
+	/// </summary>
+	public static readonly Vector3d EclipticNormal = new Vector3d(0, 0, 1);
+
+	/// <summary>
+	/// Ecliptic Up: the positive y-axis.
+	/// </summary>
 	public static readonly Vector3d EclipticUp = new Vector3d(0, 1, 0);
+
+	/// <summary>
+	/// Ecliptic Right: the positive x-axis.
+	/// </summary>
 	public static readonly Vector3d EclipticRight = new Vector3d(1, 0, 0);
 
 	// # Constructors
@@ -234,7 +245,7 @@ public class Orbit {
 		double maxAngle = Kepler.PI;
 		if (!loop) {
 			adjustedCount -= 1.0;
-			maxAngle = Kepler.TrueAnomalyForDistance(maxDistance, m_Eccentricity, SemiMajorAxis, pe);
+			maxAngle = Kepler.TrueAnomalyForDistance(maxDistance, m_Eccentricity, SemiMajorAxisLength, pe);
 		}
 		
 		Vector3d[] result = new Vector3d[pointsCount];
@@ -266,7 +277,7 @@ public class Orbit {
 	public Vector3d GetVelocityAtTrueAnomaly(double trueAnomaly) {
 		double e = m_Eccentricity;
 		double compression = e < 1.0 ? (1.0 - e * e) : (e * e - 1.0);
-		double focalParameter = this.SemiMajorAxis * compression;
+		double focalParameter = this.SemiMajorAxisLength * compression;
 
 		if (focalParameter <= 0.0) return Vector3d.zero;
 		
@@ -311,12 +322,12 @@ public class Orbit {
 		Vector3d major = m_SemiMajorAxisVec.normalized;
 		Vector3d minor = m_SemiMinorAxisVec.normalized;
 		if (m_Eccentricity < 1.0) {
-			double x = -Math.Cos(eccentricAnomaly) * this.SemiMajorAxis;
-			double y = Math.Sin(eccentricAnomaly) * this.SemiMinorAxis;
+			double x = -Math.Cos(eccentricAnomaly) * this.SemiMajorAxisLength;
+			double y = Math.Sin(eccentricAnomaly) * this.SemiMinorAxisLength;
 			return -major * x - minor * y;
 		} else if (m_Eccentricity > 1.0) {
-			double x = Math.Cosh(eccentricAnomaly) * this.SemiMajorAxis;
-			double y = Math.Sinh(eccentricAnomaly) * this.SemiMinorAxis;
+			double x = Math.Cosh(eccentricAnomaly) * this.SemiMajorAxisLength;
+			double y = Math.Sinh(eccentricAnomaly) * this.SemiMinorAxisLength;
 			return -major * x - minor * y;
 		} else {
 			double x = m_PeriapsisDistance * Math.Cos(eccentricAnomaly) / (1.0 + Math.Cos(eccentricAnomaly));
@@ -359,9 +370,9 @@ public class Orbit {
 	public double PeriapsisDistance {
 		get { 
 			if (m_Eccentricity < 1.0) {
-				return SemiMajorAxis * (1.0 - m_Eccentricity); 
+				return SemiMajorAxisLength * (1.0 - m_Eccentricity); 
 			} else if (m_Eccentricity > 1.0) {
-				return SemiMajorAxis * (m_Eccentricity - 1.0);
+				return SemiMajorAxisLength * (m_Eccentricity - 1.0);
 			} else {
 				return m_PeriapsisDistance;
 			}
@@ -371,7 +382,7 @@ public class Orbit {
 	public double ApoapsisDistance {
 		get { 
 			if (m_Eccentricity < 1.0) {
-				return SemiMajorAxis * (1.0 + m_Eccentricity);
+				return SemiMajorAxisLength * (1.0 + m_Eccentricity);
 			} else {
 				return double.PositiveInfinity;
 			}
@@ -394,7 +405,7 @@ public class Orbit {
 		get {
 			if (m_Eccentricity < 1.0) {
 				double GM = Kepler.G * attractor.mass;
-				double a = this.SemiMajorAxis; 
+				double a = this.SemiMajorAxisLength; 
 				return Kepler.PI_2 * Math.Sqrt(a * a * a / GM);
 			} else {
 				return double.PositiveInfinity;
@@ -408,7 +419,7 @@ public class Orbit {
 			if (m_Eccentricity < 1.0) {
 				return Kepler.PI_2 / OrbitalPeriod;
 			} else if (m_Eccentricity > 1.0) {
-				return Math.Sqrt(GM / Math.Pow(SemiMajorAxis, 3));
+				return Math.Sqrt(GM / Math.Pow(SemiMajorAxisLength, 3));
 			} else {
 				return Math.Sqrt(GM * 0.5 / Math.Pow(m_PeriapsisDistance, 3));
 			}
