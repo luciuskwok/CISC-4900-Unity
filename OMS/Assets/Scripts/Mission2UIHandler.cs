@@ -22,12 +22,14 @@ public class Mission2UIHandler : MonoBehaviour
 
 	// Other UI elements
 	public GameObject maneuverNode;
+	public GameObject playerNode;
+	public GameObject targetNode;
 	public GameObject goButton;
 	public GameObject successPanel;
 
 	// Maneuver node parameters
-	private double progradeDeltaV = 100.0; // m/s
-	private double timing = 0.0; // m/s
+	private double progradeDeltaV = 0.1; // km/s
+	private double timing = 0.0; // seconds
 	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
 
 	void Start() {
@@ -42,7 +44,7 @@ public class Mission2UIHandler : MonoBehaviour
 		double targetSMA = Attractor.Earth.radius + targetAltitude;
 
 		// Set prograde slider to initial value
-		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV);
+		progradeSlider.SetValueWithoutNotify((float)progradeDeltaV * 1000);
 		timingSlider.SetValueWithoutNotify((float)timing);
 
 		// Set up the current player orbit
@@ -73,7 +75,12 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void PositionManeuverNode() {
+		// Calculate the mean anomaly from timing
 		OrbitPlot plot = playerOrbitLine.GetComponent<OrbitPlot>();
+		//double period = plot.Orbit.OrbitalPeriod;
+
+		nodeMeanAnomaly = timing * Kepler.Deg2Rad;
+
 		double nodeEccAnomaly = plot.GetEccentricAnomalyFromMean(nodeMeanAnomaly);
 		Vector3 worldPos = plot.GetWorldPositionAtEccentricAnomaly(nodeEccAnomaly);
 
@@ -107,6 +114,11 @@ public class Mission2UIHandler : MonoBehaviour
 		UpdatePlannedOrbit();
 	}
 
+	public void TimingDidChange(float value) {
+		timing = value;
+		PositionManeuverNode();
+	}
+
 	void UpdatePlannedOrbit() {
 		// Calculate the orbital parameters resulting from maneuver
 		// Get original velocity and position at maneuver node
@@ -125,8 +137,9 @@ public class Mission2UIHandler : MonoBehaviour
 		planOrbit.attractor = Attractor.Earth;
 		planOrbit.SetOrbitByThrow(nodePosition, newVelocity);
 
-		// Maneuver Controls
+		// Update readouts
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
+		timingReadout.SetText(timing.ToString("F0") + "s");
 
 		// Maneuver Stats
 		maneuverStatsText.text = planOrbit.ToString();

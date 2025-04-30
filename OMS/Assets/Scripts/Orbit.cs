@@ -212,7 +212,7 @@ public class Orbit {
 		if (focalParameter <= 0.0) return Vector3d.zero;
 		
 		double sqrtMGdivP = Math.Sqrt(attractor.mass * Kepler.G / focalParameter);
-		double vX = -sqrtMGdivP * Math.Sin(trueAnomaly);
+		double vX = sqrtMGdivP * Math.Sin(trueAnomaly);
 		double vY = sqrtMGdivP * (m_Eccentricity + Math.Cos(trueAnomaly));
 		Vector3d major = m_SemiMajorAxisVec.normalized;
 		Vector3d minor = m_SemiMinorAxisVec.normalized;
