@@ -121,7 +121,7 @@ public class Mission1UIHandler : MonoBehaviour
 
 	void UpdatePlannedOrbit() {
 		// Update the planned orbit resulting from maneuver
-		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, nodeMeanAnomaly, progradeDeltaV, 0, 0);	
+		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, nodeMeanAnomaly, 0, progradeDeltaV, 0, 0);	
 
 		// Maneuver Controls
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");

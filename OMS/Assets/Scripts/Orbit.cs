@@ -10,7 +10,6 @@ using UnityEngine;
 /// Orbit of a body around an attractor.
 /// </summary>
 public class Orbit {
-	public Attractor attractor;
 
 	// ## Primary fields which are the minimum to describe an orbit
 
@@ -27,8 +26,12 @@ public class Orbit {
 	/// <summary>
 	/// Time of periapsis passage (T₀): time at which the orbiting body is at periapsis, which is when the mean anomaly and true anomaly are zero.
 	/// </summary>
-	private double m_PeriapsisTime; 
+	public double periapsisTime; 
 
+	/// <summary>
+	/// The gravitational body at the focus of the orbit.
+	/// </summary>
+	public Attractor attractor;
 
 	// ## Accessors for the primary fields
 
@@ -86,11 +89,13 @@ public class Orbit {
 	/// <param name="inclination">Inclination from ecliptic, in radians.</param>
 	/// <param name="argOfPerifocus">Argument of perifocus, in radians.</param>
 	/// <param name="ascendingNode">Ascending node, in radians.</param>
+	/// <param name="periapsisTime">Time of periapsis passage (T₀): point in time at which the orbiting body is at periapsis.</param>
 	/// <param name="attractor">Parent gravitational body at focus of orbit.</param>
 	public Orbit(double eccentricity, double semiMajorAxis, double inclination, double argOfPerifocus, double ascendingNode, Attractor attractor) 
 	{		
-		// Attractor
+		// Public fields
 		this.attractor = attractor;
+		this.periapsisTime = 0.0;
 
 		// Semi-minor axis
 		double semiMinorAxis;
@@ -119,19 +124,22 @@ public class Orbit {
 		m_SemiMinorAxisVec = Vector3d.Cross(periapsisVec, orbitNormalVec) * semiMinorAxis;
 		m_PeriapsisDistance = periapsisVec.magnitude;
 		m_Eccentricity = eccentricity;
-		m_EccentricAnomaly = 0.0; // default
+
+		// Set epoch-related variables to default of zero
+		m_EccentricAnomaly = 0.0;
 	}
 
 	/// <summary>
-	/// Construct orbit given position and velocity relative to the attractor at the focus.
+	/// Construct an orbit, given the position and velocity relative to the focus, at a given point in time.
 	/// </summary>
 	/// <param name="position">Position relative to focus.</param>
 	/// <param name="velocity">Velocity vector relative to focus.</param>
+	/// <param name="atTime">Point in time of the maneuver.</param>
 	/// <param name="attractor">Parent gravitational body at focus of orbit.</param>
-	public Orbit(Vector3d position, Vector3d velocity, Attractor attractor) 
+	public Orbit(Vector3d position, Vector3d velocity, double atTime, Attractor attractor) 
 	{
 		this.attractor = attractor;
-		SetOrbitByThrowing(position, velocity);
+		SetOrbitByThrowing(position, velocity, atTime);
 	}
 
 	/// <summary>
@@ -139,7 +147,8 @@ public class Orbit {
 	/// </summary>
 	/// <param name="position">Position relative to focus.</param>
 	/// <param name="velocity">Velocity vector relative to focus.</param>
-	public void SetOrbitByThrowing(Vector3d position, Vector3d velocity) 
+	/// <param name="atTime">Point in time of the maneuver.</param>
+	public void SetOrbitByThrowing(Vector3d position, Vector3d velocity, double atTime) 
 	{
 		double MG = attractor.mass * Kepler.G;
 		double attractorDistance = position.magnitude;
@@ -184,10 +193,10 @@ public class Orbit {
 			majorDistance = 1.0;
 			minorDistance = 1.0;
 			m_PeriapsisDistance = angularMomentumVector.sqrMagnitude / MG;
-			Debug.Log("Parabolic orbits not tested and may have unexpected results.");
+			Debug.Log("Parabolic orbits have not been tested and may have unexpected results.");
 		}
 
-		// Anomaly
+		// Epoch-describing elements
 		if (m_Eccentricity < 1.0) {
 			trueAnomaly = Vector3d.Angle(position, majorDirection);
 			if (position.Cross(-majorDirection).Dot(orbitNormal) < 0.0) {
@@ -203,29 +212,20 @@ public class Orbit {
 		// Calculate the primary variables
 		m_SemiMajorAxisVec = majorDirection * majorDistance;
 		m_SemiMinorAxisVec = minorDirection * minorDistance;
-		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
+
+		// Set the periapsis time by working backwards from mean anomaly
+		double eccAnomaly = Kepler.GetEccentricAnomalyFromTrue(trueAnomaly, m_Eccentricity);
+		double meanAnomaly = Kepler.GetMeanAnomalyFromEccentric(eccAnomaly, m_Eccentricity);
+		double timeSincePeriapsis = meanAnomaly * MeanMotion;
+		periapsisTime = atTime - timeSincePeriapsis;
+
+		// TODO: remove m_EccentricAnomaly as a field from class
+		m_EccentricAnomaly = eccAnomaly;
 
 		// Debugging
 		//double c = m_Eccentricity * majorDistance;
 		//Debug.Log("e="+m_Eccentricity+" a="+m_SemiMajorAxisVec.ToString()+" b="+m_SemiMinorAxisVec.ToString()+" c="+c+" pe="+m_PeriapsisDistance);
-	}
-
-	/// <summary>
-	/// Sets the position on the orbit using the eccentric anomaly.
-	/// </summary>
-	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapse.</param>
-	public void SetEccentricAnomaly(double eccentricAnomaly) 
-	{
-		m_EccentricAnomaly = eccentricAnomaly;
-	}
-
-	/// <summary>
-	/// Sets the position on the orbit using the mean anomaly.
-	/// </summary>
-	/// <param name="meanAnomaly">The mean anomaly in radians from periapse.</param>
-	public void SetMeanAnomaly(double meanAnomaly) 
-	{
-		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
+		//Debug.Log("periapsisTime="+periapsisTime);
 	}
 
 	/// <summary>
@@ -335,21 +335,6 @@ public class Orbit {
 			return -major * x - minor * y;
 		}
 	}
-	
-	/// <summary>
-	/// Updates the current eccentric anomaly by time delta.
-	/// </summary>
-	/// <param name="deltaTime">Time increment in seconds.</param>
-	public void UpdateWithTime(double deltaTime) 
-	{
-		double meanAnomaly = MeanAnomaly + MeanMotion * deltaTime;
-		if (m_Eccentricity < 1.0) {
-			// Keep anomaly values within range of 0 to PI_2
-			meanAnomaly = Kepler.NormalizedAnomaly(meanAnomaly);
-		}
-		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
-	}
-
 
 	public Vector3d OrbitNormal {
 		get { return m_SemiMinorAxisVec.Cross(m_SemiMajorAxisVec); }
@@ -413,6 +398,9 @@ public class Orbit {
 		}
 	}
 
+	/// <summary>
+	/// Mean motion: the change in the mean anomaly per second.
+	/// </summary>
 	public double MeanMotion {
 		get {
 			double GM = Kepler.G * attractor.mass;
@@ -426,10 +414,56 @@ public class Orbit {
 		}
 	}
 
+	/// <summary>
+	/// Sets the position on the orbit using the eccentric anomaly.
+	/// </summary>
+	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from periapse.</param>
+	public void SetEccentricAnomaly(double eccentricAnomaly) 
+	{
+		m_EccentricAnomaly = eccentricAnomaly;
+	}
+
+	/// <summary>
+	/// Gets the mean anomaly, which is the current position in the orbit.
+	/// </summary>
 	public double MeanAnomaly {
 		get {
 			return Kepler.GetMeanAnomalyFromEccentric(m_EccentricAnomaly, m_Eccentricity);
 		}
 	}
+
+	/// <summary>
+	/// Sets the current position on the orbit using the mean anomaly.
+	/// </summary>
+	/// <param name="meanAnomaly">The mean anomaly in radians from periapse.</param>
+	public void SetMeanAnomaly(double meanAnomaly) 
+	{
+		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
+	}
+	
+	/// <summary>
+	/// Updates the current eccentric anomaly by time delta.
+	/// </summary>
+	/// <param name="deltaTime">Time increment in seconds.</param>
+	public void UpdateWithTime(double deltaTime) 
+	{
+		double meanAnomaly = MeanAnomaly + MeanMotion * deltaTime;
+		if (m_Eccentricity < 1.0) {
+			// Keep anomaly values within range of 0 to PI_2
+			meanAnomaly = Kepler.NormalizedAnomaly(meanAnomaly);
+		}
+		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
+	}
+
+	/// <summary>
+	/// Sets the time of periapsis passage, given a mean anomaly at a point in time.
+	/// </summary>
+	/// <param name="deltaTime">Time increment in seconds.</param>
+	public void SetPeriapsisTimeWithMeanAnomaly(double meanAnomaly, double atTime) 
+	{
+		double timeSincePeriapsis = meanAnomaly * MeanMotion;
+		periapsisTime = atTime - timeSincePeriapsis;
+	}
+
 
 }

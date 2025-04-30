@@ -49,7 +49,7 @@ public class OrbitPlot : MonoBehaviour
 	/// <summary>
 	/// Sets the orbital parameters to the result of a maneuver on another orbit.
 	/// </summary>
-	public void SetOrbitByManeuver(OrbitPlot originalOrbit, double meanAnomaly, double prograde, double normal, double inward) 
+	public void SetOrbitByManeuver(OrbitPlot originalOrbit, double meanAnomaly, double atTime, double prograde, double normal, double inward) 
 	{
 		// Get original velocity and position at maneuver node
 		double eccAnomaly = originalOrbit.GetEccentricAnomalyFromMean(meanAnomaly);
@@ -66,15 +66,15 @@ public class OrbitPlot : MonoBehaviour
 		Vector3d nodePosition = originalOrbit.Orbit.GetFocalPositionAtEccentricAnomaly(eccAnomaly);
 
 		// Update the planned orbit parameters
-		SetOrbitByThrow(nodePosition, newVelocity);
+		SetOrbitByThrow(nodePosition, newVelocity, atTime);
 	}
 
 	/// <summary>
 	/// Sets the orbital parameters, including anomaly, given a position and velocity vector.
 	/// </summary>
-	public void SetOrbitByThrow(Vector3d position, Vector3d velocity) 
+	public void SetOrbitByThrow(Vector3d position, Vector3d velocity, double atTime) 
 	{
-		m_Orbit = new Orbit(position, velocity, attractor);
+		m_Orbit = new Orbit(position, velocity, atTime, attractor);
 		UpdateLineRenderer();
 		SetGradientByEccentricAnomaly(m_Orbit.EccentricAnomaly);
 	}

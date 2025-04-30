@@ -156,8 +156,6 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void UpdatePlannedOrbit() {
-		// Update the planned orbit resulting from maneuver
-		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, nodeMeanAnomaly, progradeDeltaV, 0, 0);	
 
 		// Update delta-V readout
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
@@ -167,6 +165,9 @@ public class Mission2UIHandler : MonoBehaviour
 		double mean2 = timing * Kepler.Deg2Rad;
 		double maneuverTime = (mean1 + mean2) / playerOrbitPlot.Orbit.MeanMotion;
 		timingReadout.SetText("T+" + OrbitPlot.FormattedTime(maneuverTime));
+
+		// Update the planned orbit resulting from maneuver
+		plannedOrbitPlot.SetOrbitByManeuver(playerOrbitPlot, nodeMeanAnomaly, maneuverTime, progradeDeltaV, 0, 0);	
 
 		// Maneuver Stats
 		maneuverStatsText.text = plannedOrbitPlot.ToString();
