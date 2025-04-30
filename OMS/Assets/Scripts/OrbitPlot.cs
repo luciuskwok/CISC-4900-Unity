@@ -24,12 +24,18 @@ public class OrbitPlot : MonoBehaviour
 	private readonly float minAlpha = 0.05f;
 
 
+	/// <summary>
+	/// Sets the orbital parameters given the orbital elements. Resets the anomaly to zero.
+	/// </summary>
 	public void SetOrbitalElements(double eccentricity, double semiMajorAxis, double inclination, double argOfPerifocus, double ascendingNode) 
 	{
 		m_Orbit = new Orbit(eccentricity, semiMajorAxis, inclination, argOfPerifocus, ascendingNode, attractor);
 		UpdateLineRenderer();
 	}
 
+	/// <summary>
+	/// Sets the orbital parameters given the periapsis and apoapsis altitude, and the argument of perifocus. Resets the anomaly to zero.
+	/// </summary>
 	public void SetOrbitByAltitudes(double periapsisAltitude, double apoapsisAltitude, double argOfPerifocus) 
 	{
 		double pe = periapsisAltitude + attractor.radius; // km
@@ -40,6 +46,9 @@ public class OrbitPlot : MonoBehaviour
 		SetOrbitalElements(e, a, 0, argOfPerifocus, 0);
 	}
 
+	/// <summary>
+	/// Sets the orbital parameters, including anomaly, given a position and velocity vector.
+	/// </summary>
 	public void SetOrbitByThrow(Vector3d position, Vector3d velocity) 
 	{
 		m_Orbit = new Orbit(position, velocity, attractor);
@@ -66,6 +75,18 @@ public class OrbitPlot : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Update the anomaly on the orbit by a specified amount of time.
+	/// </summary>
+	public void UpdateWithTime(double deltaTime) {
+		Orbit.UpdateWithTime(deltaTime);
+		// Update the gradient to match the current anomaly
+		SetGradientByEccentricAnomaly(Orbit.EccentricAnomaly);
+	}
+
+	/// <summary>
+	/// Update the orbit plot and animation time.
+	/// </summary>
 	public void UpdateLineRenderer() {
 		// Get points and convert from double to float
 		Vector3d[] pointsd = m_Orbit.GetOrbitPoints(pointCount, 1.0e6);

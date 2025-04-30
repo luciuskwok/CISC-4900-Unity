@@ -3,23 +3,23 @@
 // Adapted from https://github.com/Karth42/SimpleKeplerOrbits
 
 using System;
+using System.Security.Cryptography;
 using UnityEngine;
 
+/// <summary>
+/// Orbit of a body around an attractor.
+/// </summary>
 public class Orbit {
 	public Attractor attractor;
 
 	// Primary variables that define this class
 	private Vector3d m_SemiMajorAxisVec; // Vector from center of ellipse to periapse
 	private Vector3d m_SemiMinorAxisVec; // Vector from center of ellipse representing the semi-minor axis
-	
 	private double m_Eccentricity;
 	public double Eccentricity { get { return m_Eccentricity; } }
 
 	private double m_EccentricAnomaly; 
 	public double EccentricAnomaly { get { return m_EccentricAnomaly; } }
-
-	// Secondary variables that are derived from primary varibles
-	private Vector3d m_Position; // Current position in orbit, derived from eccentric anomaly.
 
 	// Constants
 	public static readonly Vector3d EclipticNormal = new Vector3d(0, 0, 1); // positive z is the direction of north, towards the North Pole Star
@@ -70,8 +70,6 @@ public class Orbit {
 		m_Eccentricity = eccentricity;
 		m_EccentricAnomaly = 0.0; // default
 
-		// Set secondary variables
-		m_Position = GetFocalPositionAtEccentricAnomaly(m_EccentricAnomaly);
 	}
 
 	/// <summary>
@@ -93,8 +91,6 @@ public class Orbit {
 	/// <param name="velocity">Velocity vector relative to focus.</param>
 	public void SetOrbitByThrowing(Vector3d position, Vector3d velocity) 
 	{
-		m_Position = position;
-		
 		double MG = attractor.mass * Kepler.G;
 		double attractorDistance = position.magnitude;
 		Vector3d angularMomentumVector = position.Cross(velocity);
@@ -158,9 +154,6 @@ public class Orbit {
 	public void SetEccentricAnomaly(double eccentricAnomaly) 
 	{
 		m_EccentricAnomaly = eccentricAnomaly;
-
-		// Update position
-		m_Position = GetFocalPositionAtEccentricAnomaly(m_EccentricAnomaly);
 	}
 
 	/// <summary>
@@ -170,9 +163,6 @@ public class Orbit {
 	public void SetMeanAnomaly(double meanAnomaly) 
 	{
 		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
-
-		// Update position
-		m_Position = GetFocalPositionAtEccentricAnomaly(m_EccentricAnomaly);
 	}
 
 	/// <summary>
@@ -265,7 +255,7 @@ public class Orbit {
 		if (m_Eccentricity < 1.0) {
 			double x = -Math.Cos(eccentricAnomaly) * this.SemiMajorAxis;
 			double y = Math.Sin(eccentricAnomaly) * this.SemiMinorAxis;
-			return -major.normalized * x - minor * y;
+			return -major * x - minor * y;
 		} else if (m_Eccentricity > 1.0) {
 			double x = Math.Cosh(eccentricAnomaly) * this.SemiMajorAxis;
 			double y = Math.Sinh(eccentricAnomaly) * this.SemiMinorAxis;
@@ -276,6 +266,22 @@ public class Orbit {
 			double y = pe * Math.Sin(eccentricAnomaly) / (1.0 + Math.Cos(eccentricAnomaly));
 			return -major * x - minor * y;
 		}
+	}
+	
+	/// <summary>
+	/// Updates the current eccentric anomaly by time delta.
+	/// </summary>
+	/// <param name="deltaTime">Time increment in seconds.</param>
+	public void UpdateWithTime(double deltaTime) 
+	{
+		double meanAnomaly = MeanAnomaly + MeanMotion * deltaTime;
+		if (Eccentricity < 1.0) {
+			// Keep anomaly values within range of 0 to PI_2
+			meanAnomaly %= Kepler.PI_2;
+			if (meanAnomaly < 0.0) meanAnomaly = Kepler.PI_2 - meanAnomaly;
+			m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
+		}
+		m_EccentricAnomaly = Kepler.GetEccentricAnomalyFromMean(meanAnomaly, m_Eccentricity);
 	}
 
 	public double SemiMajorAxis {
@@ -309,14 +315,32 @@ public class Orbit {
 	public double OrbitalPeriod { 
 		get {
 			if (m_Eccentricity < 1.0) {
-				double gm = Kepler.G * attractor.mass;
+				double GM = Kepler.G * attractor.mass;
 				double a = this.SemiMajorAxis; 
-				return Kepler.PI_2 * Math.Sqrt(a * a * a / gm);
+				return Kepler.PI_2 * Math.Sqrt(a * a * a / GM);
 			} else {
 				return double.PositiveInfinity;
 			}
 		}
 	}
 
+	public double MeanMotion {
+		get {
+			double GM = Kepler.G * attractor.mass;
+			if (m_Eccentricity < 1.0) {
+				return Kepler.PI_2 / OrbitalPeriod;
+			} else if (m_Eccentricity > 1.0) {
+				return Math.Sqrt(GM / Math.Pow(SemiMajorAxis, 3));
+			} else {
+				return Math.Sqrt(GM * 0.5 / Math.Pow(PeriapsisDistance, 3));
+			}
+		}
+	}
+
+	public double MeanAnomaly {
+		get {
+			return Kepler.GetMeanAnomalyFromEccentric(m_EccentricAnomaly, m_Eccentricity);
+		}
+	}
 
 }

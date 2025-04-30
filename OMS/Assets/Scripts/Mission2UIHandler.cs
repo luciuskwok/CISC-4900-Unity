@@ -66,8 +66,7 @@ public class Mission2UIHandler : MonoBehaviour
 		
 		// Position nodes & update planned orbit
 		PositionManeuverNode();
-		PositionNodeWithOrbit(playerNode, playerOrbit, playerOrbit.EccentricAnomaly);
-		PositionNodeWithOrbit(targetNode, targetOrbit, targetOrbit.EccentricAnomaly);
+		PositionSpacecraftNodes();
 
 		// Set the info text
 		SetInfoText(false);
@@ -78,6 +77,19 @@ public class Mission2UIHandler : MonoBehaviour
 	}
 
 	void Update() {
+		//AnimateSpacecraftPositions();		
+	}
+
+	void AnimateSpacecraftPositions() {
+		const double timeScale = 300.0;
+		double deltaTime = Time.deltaTime * timeScale;
+
+		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
+		playerOrbit.UpdateWithTime(deltaTime);
+		PositionNodeWithOrbit(playerNode, playerOrbit, playerOrbit.EccentricAnomaly);
+		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
+		targetOrbit.UpdateWithTime(deltaTime);
+		PositionNodeWithOrbit(targetNode, targetOrbit, targetOrbit.EccentricAnomaly);
 	}
 
 	void PositionManeuverNode() {
@@ -88,6 +100,13 @@ public class Mission2UIHandler : MonoBehaviour
 
 		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, nodeEccAnomaly);
 		UpdatePlannedOrbit();
+	}
+
+	void PositionSpacecraftNodes() {
+		OrbitPlot playerOrbit = playerOrbitLine.GetComponent<OrbitPlot>();
+		PositionNodeWithOrbit(playerNode, playerOrbit, playerOrbit.EccentricAnomaly);
+		OrbitPlot targetOrbit = targetOrbitLine.GetComponent<OrbitPlot>();
+		PositionNodeWithOrbit(targetNode, targetOrbit, targetOrbit.EccentricAnomaly);
 	}
 
 	/// <summary>
