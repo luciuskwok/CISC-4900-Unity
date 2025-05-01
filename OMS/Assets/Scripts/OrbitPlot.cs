@@ -165,7 +165,7 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Gets the position on the orbit in terms of Unity's world space given the eccentric anomaly.
+	/// Gets the position on the orbit in terms of Unity's world space, given the eccentric anomaly.
 	/// </summary>
 	/// <param name="eccentricAnomaly">The eccentric anomaly as radians from periapsis.</param>
 	/// <returns>World position vector.</returns>
@@ -176,13 +176,23 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Gets the position on the orbit in terms of Unity's world space given a point in time.
+	/// Gets the position on the orbit in terms of Unity's world space, given a point in time.
 	/// </summary>
 	/// <param name="atTime">The point in time.</param>
 	/// <returns>World position vector.</returns>
 	public Vector3 GetWorldPositionAtTime(double atTime) {
 		double eccAnomaly = Orbit.GetEccentricAnomalyAtTime(atTime);
 		return GetWorldPositionAtEccentricAnomaly(eccAnomaly);
+	}
+
+	/// <summary>
+	/// Gets the position on the orbit relative to the focus, given a point in time.
+	/// </summary>
+	/// <param name="atTime">The point in time.</param>
+	/// <returns>World position vector.</returns>
+	public Vector3d GetFocalPositionAtTime(double atTime) {
+		double eccAnomaly = Orbit.GetEccentricAnomalyAtTime(atTime);
+		return Orbit.GetFocalPositionAtEccentricAnomaly(eccAnomaly);
 	}
 
 	public override String ToString() {

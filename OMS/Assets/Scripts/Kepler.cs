@@ -175,7 +175,7 @@ public static class Kepler {
 	}
 
 	/// <summary>
-	/// Gets the True anomaly value from current distance from the focus (attractor).
+	/// Gets the true anomaly value for a distance from the focus (attractor).
 	/// </summary>
 	/// <param name="distance">The distance from attractor.</param>
 	/// <param name="eccentricity">The eccentricity.</param>

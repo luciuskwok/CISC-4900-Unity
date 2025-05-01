@@ -13,6 +13,7 @@ public class Mission2UIHandler : MonoBehaviour
 	public TMP_Text timingReadout;
 	public TMP_Text maneuverStatsText;
 	public TMP_Text targetStatsText;
+	public TMP_Text approachStatsText;
 	public TMP_Text infoText;
 	
 	// Orbit lines
@@ -181,10 +182,50 @@ public class Mission2UIHandler : MonoBehaviour
 	void CalculateClosestApproach(double maneuverTime) {
 		double targetApoapsis = targetOrbitPlot.Orbit.ApoapsisDistance;
 		double planApoapsis = plannedOrbitPlot.Orbit.ApoapsisDistance;
-		if (planApoapsis < targetApoapsis * 0.95) return;
+		if (planApoapsis < targetApoapsis * 0.95) {
+			approachStatsText.text = "None";
+			return;
+		}
+
+		// Get the time of apoapsis, and then get the distance from the apoapsis to the target 
+		double peTime = plannedOrbitPlot.Orbit.periapsisTime;
+		double apTime = peTime + 0.5 * plannedOrbitPlot.Orbit.OrbitalPeriod;
 
 		if (planApoapsis <= targetApoapsis) {
-			// Calculate the one closest approach at the apoapsis
+			// Use the planned apoapsis as a shortcut for finding the closest approach.
+			// This works because the target orbit is circular and on the same plane as the planned orbit.
+
+			Vector3d plannedPosition = plannedOrbitPlot.GetFocalPositionAtTime(apTime);
+			Vector3d targetPosition = targetOrbitPlot.GetFocalPositionAtTime(apTime);
+			double distance = Vector3d.Distance(plannedPosition, targetPosition);
+
+			approachStatsText.text = "Distance: " + distance.ToString("F3") + " km\n" + 
+				"Time: " + OrbitPlot.FormattedTime(apTime);
+
+		} else {
+			// Because the target orbit is circular and on the same plane as the planned orbit, getting the intersections at a specific distance will work.
+			double true1 = plannedOrbitPlot.Orbit.TrueAnomalyForDistance(targetApoapsis);
+			double true2 = Kepler.PI_2 - true1;
+
+			double mean1 = plannedOrbitPlot.Orbit.ConvertTrueAnomalyToMean(true1);
+			double mean2 = plannedOrbitPlot.Orbit.ConvertTrueAnomalyToMean(true2);
+
+			double time1 = mean1 / plannedOrbitPlot.Orbit.MeanMotion + maneuverTime;
+			double time2 = mean2 / plannedOrbitPlot.Orbit.MeanMotion + maneuverTime;
+
+			Vector3d plannedPos1 = plannedOrbitPlot.GetFocalPositionAtTime(time1);
+			Vector3d targetPos1 = targetOrbitPlot.GetFocalPositionAtTime(time1);
+			double dist1 = Vector3d.Distance(plannedPos1, targetPos1);
+
+			Vector3d plannedPos2 = plannedOrbitPlot.GetFocalPositionAtTime(time2);
+			Vector3d targetPos2 = targetOrbitPlot.GetFocalPositionAtTime(time2);
+			double dist2 = Vector3d.Distance(plannedPos2, targetPos2);
+
+			approachStatsText.text = "Distance: " + dist1.ToString("F3") + " km\n" + 
+				"Time: " + OrbitPlot.FormattedTime(time1) + "\n" +
+				"\nSecond Approach:\n" +
+				"Distance: " + dist2.ToString("F3") + " km\n" + 
+				"Time: " + OrbitPlot.FormattedTime(time2) + "\n";
 
 		}
 

@@ -402,9 +402,21 @@ public class Orbit {
 	}
 
 	/// <summary>
+	/// Sets the time of periapsis passage, given a mean anomaly at a point in time.
+	/// </summary>
+	/// <param name="deltaTime">Time increment in seconds.</param>
+	public void SetPeriapsisTimeWithMeanAnomaly(double meanAnomaly, double atTime) 
+	{
+		double timeSincePeriapsis = meanAnomaly / MeanMotion;
+		periapsisTime = atTime - timeSincePeriapsis;
+		Debug.Log("periapsisTime="+periapsisTime);
+	}
+
+	/// <summary>
 	/// Gets the mean anomaly, given a point in time, calculated from the time of periapsis passage and the mean motion.
 	/// </summary>
 	/// <param name="atTime">The point in time.</param>
+	/// <returns>Mean anomaly in radians.</returns>
 	public double GetMeanAnomalyAtTime(double atTime) 
 	{
 		double timeDiff = atTime - periapsisTime;
@@ -417,6 +429,7 @@ public class Orbit {
 	/// Gets the eccentric anomaly, given a point in time.
 	/// </summary>
 	/// <param name="atTime">The point in time.</param>
+	/// <returns>Eccentric anomaly in radians.</returns>
 	public double GetEccentricAnomalyAtTime(double atTime) 
 	{
 		double meanAnomaly = GetMeanAnomalyAtTime(atTime);
@@ -424,25 +437,45 @@ public class Orbit {
 	}
 
 	/// <summary>
-	/// Sets the time of periapsis passage, given a mean anomaly at a point in time.
-	/// </summary>
-	/// <param name="deltaTime">Time increment in seconds.</param>
-	public void SetPeriapsisTimeWithMeanAnomaly(double meanAnomaly, double atTime) 
-	{
-		double timeSincePeriapsis = meanAnomaly / MeanMotion;
-		periapsisTime = atTime - timeSincePeriapsis;
-		Debug.Log("periapsisTime="+periapsisTime);
-	}
-
-	/// <summary>
 	/// Converts mean anomaly to eccentric anomaly.
 	/// </summary>
 	/// <param name="meanAnomaly">Mean anomaly in radians.</param>
+	/// <returns>Eccentric anomaly in radians.</returns>
 	public double ConvertMeanAnomalyToEccentric(double meanAnomaly) 
 	{
 		return Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Eccentricity);
 	}
 
+	/// <summary>
+	/// Converts true anomaly to mean anomaly.
+	/// </summary>
+	/// <param name="trueAnomaly">True anomaly in radians.</param>
+	/// <returns>Mean anomaly in radians.</returns>
+	public double ConvertTrueAnomalyToMean(double trueAnomaly) 
+	{
+		double ecc = Kepler.ConvertTrueAnomalyToEccentric(trueAnomaly, m_Eccentricity);
+		return Kepler.ConvertEccentricAnomalyToMean(ecc, m_Eccentricity);
+	}
+
+	/// <summary>
+	/// Converts true anomaly to eccentric anomaly.
+	/// </summary>
+	/// <param name="trueAnomaly">True anomaly in radians.</param>
+	/// <returns>Eccentric anomaly in radians.</returns>
+	public double ConvertTrueAnomalyToEccentric(double trueAnomaly) 
+	{
+		return Kepler.ConvertTrueAnomalyToEccentric(trueAnomaly, m_Eccentricity);
+	}
+
+	/// <summary>
+	/// Gets the true anomaly value for a distance from the focus.
+	/// </summary>
+	/// <param name="distance">The distance from the focus.</param>
+	/// <returns>True anomaly in radians.</returns>
+	public double TrueAnomalyForDistance(double distance)
+	{
+		return Kepler.TrueAnomalyForDistance(distance, m_Eccentricity, SemiMajorAxisLength, m_PeriapsisDistance);
+	}
 
 
 }
