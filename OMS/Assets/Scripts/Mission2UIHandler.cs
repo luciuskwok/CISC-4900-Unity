@@ -21,10 +21,16 @@ public class Mission2UIHandler : MonoBehaviour
 	public GameObject plannedOrbitLine;
 	public GameObject targetOrbitLine;
 
-	// Other UI elements
+	// Node UI elements
 	public GameObject maneuverNode;
 	public GameObject playerNode;
 	public GameObject targetNode;
+	public GameObject approachPlayerNode1;
+	public GameObject approachTargetNode1;
+	public GameObject approachPlayerNode2;
+	public GameObject approachTargetNode2;
+
+	// Other UI elements
 	public GameObject goButton;
 	public GameObject successPanel;
 
@@ -183,6 +189,12 @@ public class Mission2UIHandler : MonoBehaviour
 		double targetApoapsis = targetOrbitPlot.Orbit.ApoapsisDistance;
 		double planApoapsis = plannedOrbitPlot.Orbit.ApoapsisDistance;
 		if (planApoapsis < targetApoapsis * 0.95) {
+			// No closest approach. Hide approach nodes and set text.
+			approachPlayerNode1.SetActive(false);
+			approachTargetNode1.SetActive(false);
+			approachPlayerNode2.SetActive(false);
+			approachTargetNode2.SetActive(false);
+
 			approachStatsText.text = "None";
 			return;
 		}
@@ -201,6 +213,16 @@ public class Mission2UIHandler : MonoBehaviour
 
 			approachStatsText.text = "Distance: " + distance.ToString("F3") + " km\n" + 
 				"Time: " + OrbitPlot.FormattedTime(apTime);
+
+			// Position and show nodes for first approach
+			PositionNodeWithOrbit(approachPlayerNode1, plannedOrbitPlot, apTime);
+			PositionNodeWithOrbit(approachTargetNode1, targetOrbitPlot, apTime);
+			approachPlayerNode1.SetActive(true);
+			approachTargetNode1.SetActive(true);
+
+			// Hide nodes for second approach
+			approachPlayerNode2.SetActive(false);
+			approachTargetNode2.SetActive(false);
 
 		} else {
 			// Because the target orbit is circular and on the same plane as the planned orbit, getting the intersections at a specific distance will work.
@@ -227,8 +249,16 @@ public class Mission2UIHandler : MonoBehaviour
 				"Distance: " + dist2.ToString("F3") + " km\n" + 
 				"Time: " + OrbitPlot.FormattedTime(time2) + "\n";
 
+			// Position nodes for both approaches
+			PositionNodeWithOrbit(approachPlayerNode1, plannedOrbitPlot, time1);
+			PositionNodeWithOrbit(approachTargetNode1, targetOrbitPlot, time1);
+			PositionNodeWithOrbit(approachPlayerNode2, plannedOrbitPlot, time2);
+			PositionNodeWithOrbit(approachTargetNode2, targetOrbitPlot, time2);
+			approachPlayerNode1.SetActive(true);
+			approachTargetNode1.SetActive(true);
+			approachPlayerNode2.SetActive(true);
+			approachTargetNode2.SetActive(true);
 		}
-
 	}
 
 	void SetSuccess(bool success) {
