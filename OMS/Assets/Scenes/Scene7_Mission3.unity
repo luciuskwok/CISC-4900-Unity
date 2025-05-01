@@ -468,6 +468,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 90270187}
   m_CullTransparentMesh: 1
+--- !u!1 &98266861 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1408581670749804, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+  m_PrefabInstance: {fileID: 1027523121}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &123765442
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,7 +850,7 @@ GameObject:
   - component: {fileID: 266225767}
   - component: {fileID: 266225766}
   m_Layer: 5
-  m_Name: Target Title
+  m_Name: Moon Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -890,7 +895,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Target Orbit
+  m_text: Moon (target)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1004,7 +1009,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 300, y: 200}
+  m_AnchoredPosition: {x: 1030, y: 169}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &327182885
@@ -1076,7 +1081,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Mission 2: Rendezvous'
+  m_text: 'Mission 3: To the Moon'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1313,7 +1318,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 437447188}
-        m_TargetAssemblyTypeName: Mission2UIHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: Mission3_UIHandler, Assembly-CSharp
         m_MethodName: HandleNextMissionButton
         m_Mode: 1
         m_Arguments:
@@ -1728,14 +1733,14 @@ MonoBehaviour:
   m_HandleRect: {fileID: 562545826}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 180
+  m_MaxValue: 90
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 45
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 437447188}
-        m_TargetAssemblyTypeName: Mission2UIHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: Mission3_UIHandler, Assembly-CSharp
         m_MethodName: TimingDidChange
         m_Mode: 0
         m_Arguments:
@@ -1923,7 +1928,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 437447185}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81c1dafd1a0a87740841c2a35091e8e7, type: 3}
+  m_Script: {fileID: 11500000, guid: e7776d1f22f4e6140bcc21779ffe1cbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   progradeSlider: {fileID: 820522113}
@@ -1931,7 +1936,6 @@ MonoBehaviour:
   timingSlider: {fileID: 424397701}
   timingReadout: {fileID: 707388323}
   maneuverStatsText: {fileID: 130517989}
-  targetStatsText: {fileID: 1526231557}
   approachStatsText: {fileID: 419399467}
   infoText: {fileID: 468076643}
   playerOrbitLine: {fileID: 1396500638}
@@ -1946,6 +1950,7 @@ MonoBehaviour:
   approachTargetNode2: {fileID: 327182883}
   goButton: {fileID: 872447908}
   successPanel: {fileID: 1233583571}
+  moon: {fileID: 98266861}
 --- !u!1 &468076641
 GameObject:
   m_ObjectHideFlags: 0
@@ -2353,7 +2358,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 437447188}
-        m_TargetAssemblyTypeName: Mission2_UIHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: Mission3_UIHandler, Assembly-CSharp
         m_MethodName: HandleMenuButton
         m_Mode: 1
         m_Arguments:
@@ -2513,11 +2518,11 @@ RectTransform:
   - {fileID: 930946621}
   m_Father: {fileID: 1550071776}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -16, y: -48}
-  m_SizeDelta: {x: 160, y: 80}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 16, y: 260}
+  m_SizeDelta: {x: 240, y: 80}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &537325550
 GameObject:
   m_ObjectHideFlags: 0
@@ -2553,7 +2558,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 300}
+  m_AnchoredPosition: {x: 930, y: 269}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &537325552
@@ -2625,7 +2630,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1daf8ecedcfda4b4e9bd75367383102c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bdb5858543cd7c94d990248f47844ca1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2753,7 +2758,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 200}
+  m_AnchoredPosition: {x: 930, y: 169}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &566332518
@@ -3195,15 +3200,15 @@ MonoBehaviour:
   m_FillRect: {fileID: 498504156}
   m_HandleRect: {fileID: 43433253}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1000
+  m_MinValue: 2000
+  m_MaxValue: 4000
   m_WholeNumbers: 0
-  m_Value: 532
+  m_Value: 2000
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 437447188}
-        m_TargetAssemblyTypeName: Mission2UIHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: Mission3_UIHandler, Assembly-CSharp
         m_MethodName: ProgradeDidChange
         m_Mode: 0
         m_Arguments:
@@ -3323,9 +3328,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 16}
-  m_SizeDelta: {x: 63, y: 16}
-  m_Pivot: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: -16}
+  m_SizeDelta: {x: 63, y: 32}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &867784211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3509,7 +3514,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 437447188}
-        m_TargetAssemblyTypeName: Mission2UIHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: Mission3_UIHandler, Assembly-CSharp
         m_MethodName: HandleGoButton
         m_Mode: 1
         m_Arguments:
@@ -3704,7 +3709,7 @@ GameObject:
   m_Component:
   - component: {fileID: 922856938}
   m_Layer: 5
-  m_Name: Target Group
+  m_Name: Moon Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3726,11 +3731,11 @@ RectTransform:
   - {fileID: 1526231556}
   m_Father: {fileID: 1550071776}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -16, y: 16}
-  m_SizeDelta: {x: 160, y: 80}
-  m_Pivot: {x: 1, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 16, y: 120}
+  m_SizeDelta: {x: 240, y: 120}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &924002494
 GameObject:
   m_ObjectHideFlags: 0
@@ -3943,6 +3948,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 930946620}
   m_CullTransparentMesh: 1
+--- !u!1001 &1027523121
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1408581670749804, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_Name
+      value: Moon
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.7381
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.7381
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.7381
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 384
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693579709242440, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 199940970818216614, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f9a741bb8762344c6a2a9cb4217ef728, type: 3}
 --- !u!1 &1033737325
 GameObject:
   m_ObjectHideFlags: 0
@@ -4000,7 +4082,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1daf8ecedcfda4b4e9bd75367383102c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bdb5858543cd7c94d990248f47844ca1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4128,7 +4210,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 300, y: 300}
+  m_AnchoredPosition: {x: 1030, y: 269}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1114618564
@@ -4228,7 +4310,7 @@ LineRenderer:
   - {x: -7000, y: 7000, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.2
+    widthMultiplier: 0.8
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -4335,7 +4417,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 100, y: 200}
+  m_AnchoredPosition: {x: 830, y: 169}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1172723009
@@ -4460,11 +4542,11 @@ RectTransform:
   - {fileID: 419399466}
   m_Father: {fileID: 1550071776}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -16, y: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -16, y: 16}
   m_SizeDelta: {x: 160, y: 140}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 1, y: 0}
 --- !u!1 &1261455938
 GameObject:
   m_ObjectHideFlags: 0
@@ -5055,7 +5137,7 @@ LineRenderer:
   - {x: -7500, y: 7500, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 1.6
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -5212,7 +5294,7 @@ LineRenderer:
   - {x: -7000, y: 7000, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.4
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -5390,13 +5472,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1519427311}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.67559016, z: 0, w: 0.7372774}
+  m_LocalRotation: {x: 0, y: 0.60876137, z: 0, w: 0.7933534}
   m_LocalPosition: {x: 5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 85, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 75, z: 0}
 --- !u!114 &1519427314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5432,7 +5514,7 @@ GameObject:
   - component: {fileID: 1526231558}
   - component: {fileID: 1526231557}
   m_Layer: 5
-  m_Name: Target Stats
+  m_Name: Moon Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5477,11 +5559,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Apoapsis: 4,000 km
-
-    Periapsis: 420 km
-
-    Period: 97 min.'
+  m_text: "Radius: 1,738 km\nMass: 0.073\xD710\xB2\u2074 kg\nSemi-major axis: 385,000
+    km\nOrbital period: 27.3 days"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5801,10 +5880,10 @@ RectTransform:
   - {fileID: 1114618563}
   - {fileID: 327182884}
   - {fileID: 532886964}
+  - {fileID: 922856938}
   - {fileID: 470315231}
   - {fileID: 1265930602}
   - {fileID: 161101414}
-  - {fileID: 922856938}
   - {fileID: 1235100387}
   - {fileID: 872447909}
   - {fileID: 1233583572}
@@ -5850,7 +5929,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 100, y: 300}
+  m_AnchoredPosition: {x: 830, y: 269}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1584532632
@@ -5924,8 +6003,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 10
-  far clip plane: 300
-  field of view: 25
+  far clip plane: 1000
+  field of view: 45
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -5951,13 +6030,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1605080068}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.6427876, y: 0, z: 0, w: 0.7660445}
-  m_LocalPosition: {x: 0, y: 60, z: -13}
+  m_LocalRotation: {x: 0.18456215, y: 0.41376248, z: -0.08606274, w: 0.8873166}
+  m_LocalPosition: {x: -84.05014, y: 78.9032, z: -85.14547}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 80, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 23.5, y: 50, z: 0}
 --- !u!114 &1605080072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6059,8 +6138,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1daf8ecedcfda4b4e9bd75367383102c, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6134,7 +6213,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Next Mission
+  m_text: Next
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6617,7 +6696,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Target
+  m_text: Moon
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -6869,7 +6948,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 100, y: 400}
+  m_AnchoredPosition: {x: 830, y: 369}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1906363386
@@ -6979,10 +7058,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "You've successfully set up a transfer orbit that for a rendezvous with
-    the target! Don't worry if it's not exact. We just need to be in the neighborhood.
-    \n\nYour next mission is to fly by the Moon. Much like this rendezvous mission,
-    you will need to set up a maneuver that has a close approach."
+  m_text: "You've successfully set up a lunar transfer orbit! \n\nYou've completed
+    all the missions in this demo, but there's much more to learn about orbital mechanics.
+    \n\nNext, you'll be able to explore the solar system and see the orbital mechanics
+    of the planets."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7417,6 +7496,7 @@ SceneRoots:
   - {fileID: 1605080071}
   - {fileID: 1519427313}
   - {fileID: 1703442798}
+  - {fileID: 1027523121}
   - {fileID: 1396500640}
   - {fileID: 1150283339}
   - {fileID: 1394266524}

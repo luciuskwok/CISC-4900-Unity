@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Mission2UIHandler : MonoBehaviour
+public class Mission2_UIHandler : MonoBehaviour
 {
 	// Text UI
 	public Slider progradeSlider;
@@ -52,12 +52,12 @@ public class Mission2UIHandler : MonoBehaviour
 		const double playerAltitude = 420.0; // km above Earth's surface
 		const double playerEcc = 0.0; // circular orbit
 		const double playerArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
-		const double playerMeanAnomaly = -30.0 * Kepler.Deg2Rad;
+		const double playerMeanAnomaly = -45.0 * Kepler.Deg2Rad;
 		double playerSMA = Attractor.Earth.radius + playerAltitude;
 		const double targetAltitude = 4000.0; // km above surface
 		const double targetEcc = 0.0;
 		const double targetArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
-		const double targetMeanAnomaly = 75.0 * Kepler.Deg2Rad;
+		const double targetMeanAnomaly = 55.0 * Kepler.Deg2Rad;
 		double targetSMA = Attractor.Earth.radius + targetAltitude;
 
 		// Get and cache OrbitPlot objects

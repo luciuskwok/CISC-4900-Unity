@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Mission1UIHandler : MonoBehaviour
+public class Mission1_UIHandler : MonoBehaviour
 {
 	// Text UI
 	public Slider progradeSlider;

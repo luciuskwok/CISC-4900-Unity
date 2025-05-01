@@ -409,7 +409,7 @@ public class Orbit {
 	{
 		double timeSincePeriapsis = meanAnomaly / MeanMotion;
 		periapsisTime = atTime - timeSincePeriapsis;
-		Debug.Log("periapsisTime="+periapsisTime);
+		//Debug.Log("periapsisTime="+periapsisTime);
 	}
 
 	/// <summary>

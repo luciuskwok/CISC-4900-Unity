@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Scene6_Mission2.unity
     guid: 4bb45fd46eb24954b879e67d996e39ac
   - enabled: 1
+    path: Assets/Scenes/Scene7_Mission3.unity
+    guid: eee5a046a0b1f25419810ba638ce5098
+  - enabled: 1
     path: Assets/Scenes/CelestialScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
