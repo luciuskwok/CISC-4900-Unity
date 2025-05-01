@@ -186,13 +186,85 @@ public class OrbitPlot : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Gets the position on the orbit relative to the focus, given a point in time.
+	/// Sets the position of the node icon GameObject given a point in time.
 	/// </summary>
-	/// <param name="atTime">The point in time.</param>
-	/// <returns>World position vector.</returns>
-	public Vector3d GetFocalPositionAtTime(double atTime) {
-		double eccAnomaly = Orbit.GetEccentricAnomalyAtTime(atTime);
-		return Orbit.GetFocalPositionAtEccentricAnomaly(eccAnomaly);
+	/// <param name="node">GameObject for the node icon.</param>
+	/// <param name="orbitPlot">OrbitPlot object for the orbit.</param>
+	/// <param name="atTime">Point in time.</param>
+	public void PositionNodeAtTime(GameObject node, double atTime) {
+		Vector3 worldPos = GetWorldPositionAtTime(atTime);
+		node.GetComponent<UINode>().SetWorldPosition(worldPos);
+	}
+
+	/// <summary>
+	/// Sets the position of a pair of player and target nodes at a given time in their respective orbits. Pass in NaN for atTime to hide the nodes.
+	/// </summary>
+	public void PositionApproachNodes(GameObject playerNode, GameObject targetNode, OrbitPlot targetOrbit, double atTime) 
+	{
+		if (double.IsNaN(atTime)) {
+			playerNode.SetActive(false);
+			targetNode.SetActive(false);
+		} else {
+			// Player node
+			PositionNodeAtTime(playerNode, atTime);
+			targetOrbit.PositionNodeAtTime(targetNode, atTime);
+			playerNode.SetActive(true);
+			targetNode.SetActive(true);
+		}
+	}
+
+	/// <summary>
+	/// Calculates the distance between two objects at a given time in their orbits.
+	/// </summary>
+	public double DistanceToTargetAtTime(OrbitPlot targetOrbit, double atTime) {
+		if (double.IsNaN(atTime)) return double.PositiveInfinity;
+
+		Vector3d pos1 = Orbit.GetFocalPositionAtTime(atTime);
+		Vector3d pos2 = targetOrbit.Orbit.GetFocalPositionAtTime(atTime);
+		return Vector3d.Distance(pos1, pos2);
+	}
+
+	/// <summary>
+	/// Gets up to 2 closest approaches to the target orbit.
+	/// </summary>
+	/// <returns>Number of valid times</returns>
+	public int CalculateClosestApproachesToCircularOrbit(double maneuverTime, OrbitPlot target, out double time1, out double time2) 
+	{
+		time1 = double.NaN;
+		time2 = double.NaN;
+
+		double myPeriapsis = Orbit.PeriapsisDistance;
+		double targetRadius = target.Orbit.ApoapsisDistance;
+		double myApoapsis = Orbit.ApoapsisDistance;
+		if (myApoapsis < targetRadius * 0.95 || myPeriapsis > targetRadius) 
+		{
+			return 0;
+		}
+
+		// My orbit is elliptical and smaller than the target orbit
+		if (myApoapsis <= targetRadius) {
+			double peTime = Orbit.periapsisTime; // TODO: handle case where maneuverTime is past this time
+			double apTime = peTime + 0.5 * Orbit.OrbitalPeriod;
+			time1 = apTime;
+			return 1;
+		}
+
+		// My orbit is elliptical and the apoapsis exceeds the radius 
+		// Because the target orbit is circular and on the same plane as the planned orbit, getting the intersections at a specific distance will work.
+		double true1 = Orbit.TrueAnomalyForDistance(targetRadius);
+		double mean1 = Orbit.ConvertTrueAnomalyToMean(true1);
+		time1 = mean1 / Orbit.MeanMotion + maneuverTime;
+
+		// For non-elliptical orbits, only return one approach
+		if (Orbit.Eccentricity >= 1.0) {
+			return 1;
+		}
+
+		// For elliptical orbits, also return the second approach
+		double true2 = Kepler.PI_2 - true1;
+		double mean2 = Orbit.ConvertTrueAnomalyToMean(true2);
+		time2 = mean2 / Orbit.MeanMotion + maneuverTime;
+		return 2;
 	}
 
 	public override String ToString() {
@@ -203,7 +275,6 @@ public class OrbitPlot : MonoBehaviour
 			"Periapsis: " + pe.ToString("#,##0") + " km\n" +
 			"Period: " + OrbitPlot.FormattedTime(period) + "\n";
 	}
-
 
 	// Utilities
 	public static String FormattedTime(double timeAsSeconds) {

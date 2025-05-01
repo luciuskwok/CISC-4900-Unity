@@ -116,7 +116,7 @@ public class Mission3_UIHandler : MonoBehaviour
 
 	void PositionManeuverNode()
 	{
-		PositionNodeWithOrbit(maneuverNode, playerOrbitPlot, GetManeuverTime());
+		playerOrbitPlot.PositionNodeAtTime(maneuverNode, GetManeuverTime());
 		UpdatePlannedOrbit();
 	}
 
@@ -124,8 +124,8 @@ public class Mission3_UIHandler : MonoBehaviour
 	{
 		playerOrbitPlot.UpdateGradientWithTime(atTime);
 		targetOrbitPlot.UpdateGradientWithTime(atTime);
-		PositionNodeWithOrbit(playerNode, playerOrbitPlot, atTime);
-		PositionNodeWithOrbit(targetNode, targetOrbitPlot, atTime);
+		playerOrbitPlot.PositionNodeAtTime(playerNode, atTime);
+		targetOrbitPlot.PositionNodeAtTime(targetNode, atTime);
 
 		// Also move and rotate the Moon
 		Vector3 moonPosition = targetOrbitPlot.GetWorldPositionAtTime(atTime);
@@ -133,18 +133,6 @@ public class Mission3_UIHandler : MonoBehaviour
 		float yRotation = 90.0f + (float)targetOrbitPlot.Orbit.GetEccentricAnomalyAtTime(atTime);
 		moonRotation.eulerAngles = new Vector3(0, yRotation, 0);
 		moon.transform.SetLocalPositionAndRotation(moonPosition, moonRotation);
-	}
-
-	/// <summary>
-	/// Sets the position of the node icon GameObject given an orbit GameObject and eccentric anomaly.
-	/// </summary>
-	/// <param name="node">GameObject for the node icon.</param>
-	/// <param name="orbitPlot">OrbitPlot object for the orbit.</param>
-	/// <param name="eccentricAnomaly">The eccentric anomaly in radians from perapsis.</param>
-	void PositionNodeWithOrbit(GameObject node, OrbitPlot orbitPlot, double atTime)
-	{
-		Vector3 worldPos = orbitPlot.GetWorldPositionAtTime(atTime);
-		node.GetComponent<UINode>().SetWorldPosition(worldPos);
 	}
 
 	public void HandleMenuButton()
@@ -204,86 +192,28 @@ public class Mission3_UIHandler : MonoBehaviour
 
 	void CalculateClosestApproach(double maneuverTime)
 	{
-		//double targetPeriapsis = targetOrbitPlot.Orbit.PeriapsisDistance;
-		double planPeriapsis = targetOrbitPlot.Orbit.PeriapsisDistance;
-		double targetApoapsis = targetOrbitPlot.Orbit.ApoapsisDistance;
-		double planApoapsis = plannedOrbitPlot.Orbit.ApoapsisDistance;
-		if (planApoapsis < targetApoapsis * 0.95 || planPeriapsis > targetApoapsis)
-		{
-			// No closest approach. Hide approach nodes and set text.
-			approachPlayerNode1.SetActive(false);
-			approachTargetNode1.SetActive(false);
-			approachPlayerNode2.SetActive(false);
-			approachTargetNode2.SetActive(false);
+		double time1, time2;
+		int count = plannedOrbitPlot.CalculateClosestApproachesToCircularOrbit(maneuverTime, targetOrbitPlot, out time1, out time2);
 
+		// Position or hide approach nodes
+		plannedOrbitPlot.PositionApproachNodes(approachPlayerNode1, approachTargetNode1, targetOrbitPlot, time1);
+		plannedOrbitPlot.PositionApproachNodes(approachPlayerNode2, approachTargetNode2, targetOrbitPlot, time2);
+
+		// Calculate distances
+		double distance1 = plannedOrbitPlot.DistanceToTargetAtTime(targetOrbitPlot, time1);
+		double distance2 = plannedOrbitPlot.DistanceToTargetAtTime(targetOrbitPlot, time2);
+
+		if (count == 0) {
 			approachStatsText.text = "None";
-			return;
-		}
-
-		// Get the time of apoapsis, and then get the distance from the apoapsis to the target 
-		double peTime = plannedOrbitPlot.Orbit.periapsisTime;
-		double apTime = peTime + 0.5 * plannedOrbitPlot.Orbit.OrbitalPeriod;
-		double distance1 = double.PositiveInfinity;
-		double distance2 = double.PositiveInfinity;
-
-		if (planApoapsis <= targetApoapsis)
-		{
-			// Use the planned apoapsis as a shortcut for finding the closest approach.
-			// This works because the target orbit is circular and on the same plane as the planned orbit.
-
-			Vector3d plannedPosition = plannedOrbitPlot.GetFocalPositionAtTime(apTime);
-			Vector3d targetPosition = targetOrbitPlot.GetFocalPositionAtTime(apTime);
-			distance1 = Vector3d.Distance(plannedPosition, targetPosition);
-
-			approachStatsText.text = "Distance: " + distance1.ToString("F3") + " km\n" +
-				"Time: " + OrbitPlot.FormattedTime(apTime);
-
-			// Position and show nodes for first approach
-			PositionNodeWithOrbit(approachPlayerNode1, plannedOrbitPlot, apTime);
-			PositionNodeWithOrbit(approachTargetNode1, targetOrbitPlot, apTime);
-			approachPlayerNode1.SetActive(true);
-			approachTargetNode1.SetActive(true);
-
-			// Hide nodes for second approach
-			approachPlayerNode2.SetActive(false);
-			approachTargetNode2.SetActive(false);
-
-		}
-		else
-		{
-			// Because the target orbit is circular and on the same plane as the planned orbit, getting the intersections at a specific distance will work.
-			double true1 = plannedOrbitPlot.Orbit.TrueAnomalyForDistance(targetApoapsis);
-			double true2 = Kepler.PI_2 - true1;
-
-			double mean1 = plannedOrbitPlot.Orbit.ConvertTrueAnomalyToMean(true1);
-			double mean2 = plannedOrbitPlot.Orbit.ConvertTrueAnomalyToMean(true2);
-
-			double time1 = mean1 / plannedOrbitPlot.Orbit.MeanMotion + maneuverTime;
-			double time2 = mean2 / plannedOrbitPlot.Orbit.MeanMotion + maneuverTime;
-
-			Vector3d plannedPos1 = plannedOrbitPlot.GetFocalPositionAtTime(time1);
-			Vector3d targetPos1 = targetOrbitPlot.GetFocalPositionAtTime(time1);
-			distance1 = Vector3d.Distance(plannedPos1, targetPos1);
-
-			Vector3d plannedPos2 = plannedOrbitPlot.GetFocalPositionAtTime(time2);
-			Vector3d targetPos2 = targetOrbitPlot.GetFocalPositionAtTime(time2);
-			distance2 = Vector3d.Distance(plannedPos2, targetPos2);
-
-			approachStatsText.text = "Distance: " + distance1.ToString("F3") + " km\n" +
+		} else if (count == 1) {
+			approachStatsText.text = "Distance: " + distance1.ToString("#,###") + " km\n" +
+				"Time: " + OrbitPlot.FormattedTime(time1);
+		} else {
+			approachStatsText.text = "Distance: " + distance1.ToString("#,###") + " km\n" +
 				"Time: " + OrbitPlot.FormattedTime(time1) + "\n" +
 				"\nSecond Approach:\n" +
-				"Distance: " + distance2.ToString("F3") + " km\n" +
+				"Distance: " + distance2.ToString("#,###") + " km\n" +
 				"Time: " + OrbitPlot.FormattedTime(time2) + "\n";
-
-			// Position nodes for both approaches
-			PositionNodeWithOrbit(approachPlayerNode1, plannedOrbitPlot, time1);
-			PositionNodeWithOrbit(approachTargetNode1, targetOrbitPlot, time1);
-			PositionNodeWithOrbit(approachPlayerNode2, plannedOrbitPlot, time2);
-			PositionNodeWithOrbit(approachTargetNode2, targetOrbitPlot, time2);
-			approachPlayerNode1.SetActive(true);
-			approachTargetNode1.SetActive(true);
-			approachPlayerNode2.SetActive(true);
-			approachTargetNode2.SetActive(true);
 		}
 
 		// GO button

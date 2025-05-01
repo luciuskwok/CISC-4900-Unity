@@ -276,8 +276,6 @@ public class Orbit {
 		return -major * vX - minor * vY;
 	}
 
-
-
 	/// <summary>
 	/// Gets the position relative to the focal point given the true anomaly.
 	/// </summary>
@@ -434,6 +432,16 @@ public class Orbit {
 	{
 		double meanAnomaly = GetMeanAnomalyAtTime(atTime);
 		return Kepler.ConvertMeanAnomalyToEccentric(meanAnomaly, m_Eccentricity);
+	}
+
+	/// <summary>
+	/// Gets the position on the orbit relative to the focus, given a point in time.
+	/// </summary>
+	/// <param name="atTime">The point in time.</param>
+	/// <returns>World position vector.</returns>
+	public Vector3d GetFocalPositionAtTime(double atTime) {
+		double eccAnomaly = GetEccentricAnomalyAtTime(atTime);
+		return GetFocalPositionAtEccentricAnomaly(eccAnomaly);
 	}
 
 	/// <summary>
