@@ -1411,10 +1411,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: This Orbital Mechanics Simulator program is designed and built by Lucius
-    Kwok as an independet project while at Brooklyn College in Spring 2025. Includes
-    data, images, and video from NASA. Unity Assets include "Planets of the Solar
-    System 3D" by Evgenii Nikolskii.
+  m_text: Made by Lucius Kwok in Spring 2025. Includes data, images, and video from
+    NASA. Planet shaders from "Planets of the Solar System 3D" by Evgenii Nikolskii.
+    Orbital calculations adapted from Karth42's SimpleKeplerOrbits. Music by Kevin
+    McLeod.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
