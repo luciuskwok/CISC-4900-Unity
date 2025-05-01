@@ -211,15 +211,24 @@ public class OrbitPlot : MonoBehaviour
 
 		String s = "";
 		double t = timeAsSeconds;
+		const double day = 24.0 * 3600.0;
+
+		if (timeAsSeconds >= day) {
+			s += Math.Floor(t/day).ToString("F0") + "d ";
+			t -= Math.Floor(t/day) * 3600.0;
+		}
+
 		if (timeAsSeconds >= 3600.0) {
-			s += Math.Floor(t/3600.0).ToString("F0") + "h";
+			s += Math.Floor(t/3600.0).ToString("F0") + "h ";
 			t -= Math.Floor(t/3600.0) * 3600.0;
 		}
+
 		if (timeAsSeconds >= 60.0) {
-			s += Math.Floor(t/60.0).ToString("F0") + "m";
+			s += Math.Floor(t/60.0).ToString("F0") + "m ";
 			t -= Math.Floor(t/60.0) * 60.0;
 
 		}
+
 		if (timeAsSeconds >= 60.0) {
 			s += Math.Floor(t).ToString("F0");
 		} else {
