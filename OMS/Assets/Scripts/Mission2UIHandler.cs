@@ -202,6 +202,8 @@ public class Mission2UIHandler : MonoBehaviour
 		// Get the time of apoapsis, and then get the distance from the apoapsis to the target 
 		double peTime = plannedOrbitPlot.Orbit.periapsisTime;
 		double apTime = peTime + 0.5 * plannedOrbitPlot.Orbit.OrbitalPeriod;
+		double distance1 = double.PositiveInfinity;
+		double distance2 = double.PositiveInfinity;
 
 		if (planApoapsis <= targetApoapsis) {
 			// Use the planned apoapsis as a shortcut for finding the closest approach.
@@ -209,9 +211,9 @@ public class Mission2UIHandler : MonoBehaviour
 
 			Vector3d plannedPosition = plannedOrbitPlot.GetFocalPositionAtTime(apTime);
 			Vector3d targetPosition = targetOrbitPlot.GetFocalPositionAtTime(apTime);
-			double distance = Vector3d.Distance(plannedPosition, targetPosition);
+			distance1 = Vector3d.Distance(plannedPosition, targetPosition);
 
-			approachStatsText.text = "Distance: " + distance.ToString("F3") + " km\n" + 
+			approachStatsText.text = "Distance: " + distance1.ToString("F3") + " km\n" + 
 				"Time: " + OrbitPlot.FormattedTime(apTime);
 
 			// Position and show nodes for first approach
@@ -237,16 +239,16 @@ public class Mission2UIHandler : MonoBehaviour
 
 			Vector3d plannedPos1 = plannedOrbitPlot.GetFocalPositionAtTime(time1);
 			Vector3d targetPos1 = targetOrbitPlot.GetFocalPositionAtTime(time1);
-			double dist1 = Vector3d.Distance(plannedPos1, targetPos1);
+			distance1 = Vector3d.Distance(plannedPos1, targetPos1);
 
 			Vector3d plannedPos2 = plannedOrbitPlot.GetFocalPositionAtTime(time2);
 			Vector3d targetPos2 = targetOrbitPlot.GetFocalPositionAtTime(time2);
-			double dist2 = Vector3d.Distance(plannedPos2, targetPos2);
+			distance2 = Vector3d.Distance(plannedPos2, targetPos2);
 
-			approachStatsText.text = "Distance: " + dist1.ToString("F3") + " km\n" + 
+			approachStatsText.text = "Distance: " + distance1.ToString("F3") + " km\n" + 
 				"Time: " + OrbitPlot.FormattedTime(time1) + "\n" +
 				"\nSecond Approach:\n" +
-				"Distance: " + dist2.ToString("F3") + " km\n" + 
+				"Distance: " + distance2.ToString("F3") + " km\n" + 
 				"Time: " + OrbitPlot.FormattedTime(time2) + "\n";
 
 			// Position nodes for both approaches
@@ -259,6 +261,10 @@ public class Mission2UIHandler : MonoBehaviour
 			approachPlayerNode2.SetActive(true);
 			approachTargetNode2.SetActive(true);
 		}
+
+		// GO button
+		const double maxDistance = 80.0; // km
+		SetSuccess(distance1 <= maxDistance || distance2 <= maxDistance);
 	}
 
 	void SetSuccess(bool success) {
