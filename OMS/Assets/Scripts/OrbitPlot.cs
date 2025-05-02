@@ -4,6 +4,8 @@ using System;
 public class OrbitPlot : MonoBehaviour
 {
 	public Color color;
+	public float maxAlpha = 1.0f;
+	public float minAlpha = 0.05f;
 
 	// Note: the coordinate system that is conventionally used for orbital mechanics has the ecliptic on the x-y plane, and positive z is towards the North Pole Star. The positive x axis is the direction of the Sun as seen from the Earth at the (spring) vernal equinox. This means that the Earth is at longitude 0 at the autumnal equinox, and at 180 at the spring equinox.
 	// Unity uses the convention that the x-z plane is horizontal, and positive y points up. So the y and z axes are swapped. 
@@ -20,8 +22,6 @@ public class OrbitPlot : MonoBehaviour
 	public double animationTime = 0.0;
 	private readonly double animationTimeScale = 1200.0; // factor to speed up time for the animation
 	private readonly int pointCount = 180;
-	private readonly float maxAlpha = 1.0f;
-	private readonly float minAlpha = 0.05f;
 
 
 	/// <summary>
