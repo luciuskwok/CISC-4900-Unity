@@ -20554,10 +20554,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 253843e955822f04d8330bfb94b804cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dryMass: 0
-  wetMass: 0
-  consumptionRate: 0
-  thrust: 0
+  dryMass: 689000
+  wetMass: 2214000
+  consumptionRate: 13000
+  thrust: 34000
+  countdown: 1
 --- !u!1 &1520202208
 GameObject:
   m_ObjectHideFlags: 0
