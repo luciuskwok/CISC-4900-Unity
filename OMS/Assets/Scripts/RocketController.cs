@@ -33,7 +33,7 @@ public class RocketController : MonoBehaviour
 		double totalMass = dryMass + wetMass;
 		double rocketAcceleration = 0.0;
 		if (wetMass > 0.0) {
-			rocketAcceleration = thrust / totalMass;
+			rocketAcceleration = thrust / totalMass * 1000.0;
 			wetMass -= consumptionRate * Time.deltaTime;
 			if (wetMass < 0.0) wetMass = 0.0;
 		}
