@@ -273,40 +273,7 @@ public class OrbitPlot : MonoBehaviour
 		double period = Orbit.OrbitalPeriod;
 		return "Apoapsis: " + ap.ToString("#,##0") + " km\n" +
 			"Periapsis: " + pe.ToString("#,##0") + " km\n" +
-			"Period: " + OrbitPlot.FormattedTime(period) + "\n";
-	}
-
-	// Utilities
-	public static String FormattedTime(double timeAsSeconds) {
-		if (double.IsInfinity(timeAsSeconds)) return "Infinite";
-
-		String s = "";
-		double t = timeAsSeconds;
-		const double day = 24.0 * 3600.0;
-
-		if (timeAsSeconds >= day) {
-			s += Math.Floor(t/day).ToString("F0") + "d ";
-			t -= Math.Floor(t/day) * 3600.0;
-		}
-
-		if (timeAsSeconds >= 3600.0) {
-			s += Math.Floor(t/3600.0).ToString("F0") + "h ";
-			t -= Math.Floor(t/3600.0) * 3600.0;
-		}
-
-		if (timeAsSeconds >= 60.0) {
-			s += Math.Floor(t/60.0).ToString("F0") + "m ";
-			t -= Math.Floor(t/60.0) * 60.0;
-
-		}
-
-		if (timeAsSeconds >= 60.0) {
-			s += Math.Floor(t).ToString("F0");
-		} else {
-			s += t.ToString("F2");
-		}
-		s += "s";
-		return s;
+			"Period: " + StringUtil.FormatTimeWithLabels(period) + "\n";
 	}
 
 

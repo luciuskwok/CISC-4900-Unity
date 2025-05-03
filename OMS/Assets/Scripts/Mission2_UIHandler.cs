@@ -162,7 +162,7 @@ public class Mission2_UIHandler : MonoBehaviour
 		progradeReadout.SetText((progradeDeltaV * 1000.0).ToString("F1") + " m/s");
 
 		// Update time readout
-		timingReadout.SetText("T+" + OrbitPlot.FormattedTime(maneuverTime));
+		timingReadout.SetText("T+" + StringUtil.FormatTimeWithLabels(maneuverTime));
 
 		// Update the planned orbit resulting from maneuver
 		double maneuverMeanAnomaly = maneuverSliderValue * Kepler.Deg2Rad;
@@ -191,13 +191,13 @@ public class Mission2_UIHandler : MonoBehaviour
 			approachStatsText.text = "None";
 		} else if (count == 1) {
 			approachStatsText.text = "Distance: " + distance1.ToString("#,###.0") + " km\n" +
-				"Time: " + OrbitPlot.FormattedTime(time1);
+				"Time: " + StringUtil.FormatTimeWithLabels(time1);
 		} else {
 			approachStatsText.text = "Distance: " + distance1.ToString("#,###.0") + " km\n" +
-				"Time: " + OrbitPlot.FormattedTime(time1) + "\n" +
+				"Time: " + StringUtil.FormatTimeWithLabels(time1) + "\n" +
 				"\nSecond Approach:\n" +
 				"Distance: " + distance2.ToString("#,###.0") + " km\n" +
-				"Time: " + OrbitPlot.FormattedTime(time2) + "\n";
+				"Time: " + StringUtil.FormatTimeWithLabels(time2) + "\n";
 		}
 
 		// GO button

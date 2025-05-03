@@ -6,14 +6,16 @@ public class RocketController : MonoBehaviour
 	public double wetMass; // kg
 	public double consumptionRate; // kg/second
 	public double thrust; // kN
+
 	public double countdown; // seconds to wait before release
 
-	private Vector3 velocity;
+	private bool isHeldDown = true; // when true, gravity and thrust are not applied
+	private Vector3 velocity = new();
 	private double gravity = 9.81; // m/s^2 
 
 	void Start()
 	{
-		velocity = new Vector3();
+		
 	}
 
 	void Update()
@@ -27,6 +29,7 @@ public class RocketController : MonoBehaviour
 			}
 		}
 
+		if (isHeldDown) return;
 
 		// force = mass * acceleration
 		// acceleration = force / mass
