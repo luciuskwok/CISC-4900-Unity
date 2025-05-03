@@ -149,7 +149,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -354,7 +358,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -772,7 +780,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -1060,7 +1072,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1740105118}
-        m_TargetAssemblyTypeName: ChapterSelectUIHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: SceneButtonHandler, Assembly-CSharp
         m_MethodName: Exit
         m_Mode: 1
         m_Arguments:
@@ -1144,7 +1156,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -1286,7 +1302,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -1524,7 +1544,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -1650,7 +1674,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -1757,7 +1785,7 @@ GameObject:
   - component: {fileID: 1740105117}
   - component: {fileID: 1740105118}
   m_Layer: 0
-  m_Name: ChapterSelectUIHandler
+  m_Name: Scene Button Handler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1787,7 +1815,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1740105115}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3747b3c549fe6d49a0b65f511e911df, type: 3}
+  m_Script: {fileID: 11500000, guid: d565ddc1a6a9548439768e63ecd7ac43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1947980702
@@ -1941,7 +1969,11 @@ PrefabInstance:
       objectReference: {fileID: 1740105118}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToScene
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
@@ -2053,6 +2085,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1740105118}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoToSceneAtIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 4426104819872276773, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneButtonHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 4838016817706188512, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

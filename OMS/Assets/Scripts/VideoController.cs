@@ -3,18 +3,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using System.Collections;
 
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-
-public class VideoSceneHandler : MonoBehaviour
+public class VideoController : MonoBehaviour
 {
-	public VideoPlayer videoPlayer;
+	private VideoPlayer videoPlayer;
 
 	void Start()
 	{
+		videoPlayer = GetComponent<VideoPlayer>();
 		videoPlayer.loopPointReached += EndReached;
 		StartCoroutine(PlayVideo());
 	}
@@ -25,12 +20,9 @@ public class VideoSceneHandler : MonoBehaviour
 	}
 
 	private void EndReached(VideoPlayer vp) {
-		GoToNextScene();
-	}
-
-	public void GoToNextScene()
-	{
+		// Go to next scene
 		Scene scene = SceneManager.GetActiveScene();
 		SceneManager.LoadScene(scene.buildIndex + 1);
 	}
+
 }

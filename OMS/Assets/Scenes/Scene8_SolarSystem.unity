@@ -1162,7 +1162,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -1388,7 +1388,7 @@ GameObject:
   - component: {fileID: 487828500}
   - component: {fileID: 487828499}
   - component: {fileID: 487828498}
-  - component: {fileID: 487828497}
+  - component: {fileID: 487828501}
   m_Layer: 5
   m_Name: Chapters Button
   m_TagString: Untagged
@@ -1416,18 +1416,6 @@ RectTransform:
   m_AnchoredPosition: {x: -18, y: -18}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 1, y: 1}
---- !u!114 &487828497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487828495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89455c8f00556af47a820e45dc215bf0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &487828498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1472,8 +1460,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 487828497}
-        m_TargetAssemblyTypeName: ChapterSelectButtonHandler, Assembly-CSharp
+      - m_Target: {fileID: 487828501}
+        m_TargetAssemblyTypeName: SceneButtonHandler, Assembly-CSharp
         m_MethodName: GoToChapterSelectScene
         m_Mode: 1
         m_Arguments:
@@ -1522,6 +1510,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 487828495}
   m_CullTransparentMesh: 1
+--- !u!114 &487828501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487828495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d565ddc1a6a9548439768e63ecd7ac43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &571156919
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3461,50 +3461,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1119290381539993732, guid: 26fd75953b9f80f4797db8002cac7e6b, type: 3}
   m_PrefabInstance: {fileID: 1581367749}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1596044105
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1596044107}
-  - component: {fileID: 1596044106}
-  m_Layer: 0
-  m_Name: Solar System UI Handler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1596044106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1596044105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b70783baa4feeef4ebd2449f0130eb65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1596044107
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1596044105}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 530.00226, y: 810.2279, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1596747218
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4294,6 +4250,7 @@ GameObject:
   - component: {fileID: 2043497520}
   - component: {fileID: 2043497519}
   - component: {fileID: 2043497518}
+  - component: {fileID: 2043497521}
   m_Layer: 5
   m_Name: Credits Button
   m_TagString: Untagged
@@ -4365,9 +4322,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1596044106}
-        m_TargetAssemblyTypeName: SolarSystemUIHandler, Assembly-CSharp
-        m_MethodName: HandleNextButton
+      - m_Target: {fileID: 2043497521}
+        m_TargetAssemblyTypeName: SceneButtonHandler, Assembly-CSharp
+        m_MethodName: GoToNextScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4415,6 +4372,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2043497516}
   m_CullTransparentMesh: 1
+--- !u!114 &2043497521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043497516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d565ddc1a6a9548439768e63ecd7ac43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2088990033
 GameObject:
   m_ObjectHideFlags: 0
@@ -4756,4 +4725,3 @@ SceneRoots:
   - {fileID: 1638473174}
   - {fileID: 1984801556}
   - {fileID: 994800788}
-  - {fileID: 1596044107}

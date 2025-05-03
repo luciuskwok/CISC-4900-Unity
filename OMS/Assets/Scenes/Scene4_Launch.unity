@@ -12534,7 +12534,7 @@ GameObject:
   - component: {fileID: 706280079}
   - component: {fileID: 706280078}
   - component: {fileID: 706280077}
-  - component: {fileID: 706280076}
+  - component: {fileID: 706280080}
   m_Layer: 5
   m_Name: Menu Button
   m_TagString: Untagged
@@ -12562,18 +12562,6 @@ RectTransform:
   m_AnchoredPosition: {x: -18, y: -18}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 1, y: 1}
---- !u!114 &706280076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 706280074}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89455c8f00556af47a820e45dc215bf0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &706280077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12618,8 +12606,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 706280076}
-        m_TargetAssemblyTypeName: ChapterSelectButtonHandler, Assembly-CSharp
+      - m_Target: {fileID: 706280080}
+        m_TargetAssemblyTypeName: SceneButtonHandler, Assembly-CSharp
         m_MethodName: GoToChapterSelectScene
         m_Mode: 1
         m_Arguments:
@@ -12668,6 +12656,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 706280074}
   m_CullTransparentMesh: 1
+--- !u!114 &706280080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706280074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d565ddc1a6a9548439768e63ecd7ac43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &737014704
 Mesh:
   m_ObjectHideFlags: 0

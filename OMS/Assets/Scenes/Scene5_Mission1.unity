@@ -2648,6 +2648,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0, b: 0, a: 1}
+  maxAlpha: 1
+  minAlpha: 0.05
   animate: 1
   animationTime: 0
 --- !u!120 &1150283338
@@ -3452,6 +3454,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0, g: 1, b: 0.25464916, a: 1}
+  maxAlpha: 1
+  minAlpha: 0.05
   animate: 1
   animationTime: 0
 --- !u!1 &1396500638
@@ -3609,6 +3613,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.7490196, g: 0.1872549, b: 0.1872549, a: 1}
+  maxAlpha: 1
+  minAlpha: 0.05
   animate: 1
   animationTime: 0
 --- !u!1 &1519427311
@@ -4086,8 +4092,8 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0

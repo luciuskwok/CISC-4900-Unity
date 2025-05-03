@@ -154,7 +154,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 20, y: -90}
-  m_SizeDelta: {x: 340, y: 260}
+  m_SizeDelta: {x: 340, y: 320}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &32370024
 MonoBehaviour:
@@ -532,7 +532,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1733945558841920, guid: 300f80108a63f48618cb4a1c8b8c1e86, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1092072754}
   m_SourcePrefab: {fileID: 100100000, guid: 300f80108a63f48618cb4a1c8b8c1e86, type: 3}
 --- !u!1 &355211950
 GameObject:
@@ -891,7 +894,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 592754730}
-        m_TargetAssemblyTypeName: ChapterSelectButtonHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: SceneButtonHandler, Assembly-CSharp
         m_MethodName: GoToChapterSelectScene
         m_Mode: 1
         m_Arguments:
@@ -949,7 +952,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 592754725}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89455c8f00556af47a820e45dc215bf0, type: 3}
+  m_Script: {fileID: 11500000, guid: d565ddc1a6a9548439768e63ecd7ac43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &740063642
@@ -1237,6 +1240,7 @@ GameObject:
   - component: {fileID: 915939996}
   - component: {fileID: 915939995}
   - component: {fileID: 915939994}
+  - component: {fileID: 915939997}
   m_Layer: 5
   m_Name: Next Button
   m_TagString: Untagged
@@ -1308,8 +1312,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1740105118}
-        m_TargetAssemblyTypeName: IntroUIHandler, Assembly-CSharp
+      - m_Target: {fileID: 915939997}
+        m_TargetAssemblyTypeName: SceneButtonHandler, Assembly-CSharp
         m_MethodName: GoToNextScene
         m_Mode: 1
         m_Arguments:
@@ -1358,6 +1362,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 915939992}
   m_CullTransparentMesh: 1
+--- !u!114 &915939997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915939992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d565ddc1a6a9548439768e63ecd7ac43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &929160489
 GameObject:
   m_ObjectHideFlags: 0
@@ -1438,6 +1454,19 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1733945558841920, guid: 300f80108a63f48618cb4a1c8b8c1e86, type: 3}
   m_PrefabInstance: {fileID: 316403656}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1092072754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1092072753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4f38d08ec58b42db8ed39f83bc0c2c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 0.5
 --- !u!1 &1608522137
 GameObject:
   m_ObjectHideFlags: 0
@@ -1473,7 +1502,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 420, y: -90}
-  m_SizeDelta: {x: 340, y: 260}
+  m_SizeDelta: {x: 340, y: 320}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1608522139
 MonoBehaviour:
@@ -1495,13 +1524,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'This program gives you the controls to figure out what is needed to go
-    to the Moon. Specifically, it focuses on the rocket engine burns needed to accelerate
-    a spacecraft parked in an Earth orbit to reach the Moon. Your training will consist
-    of three tasks: first, to see how the thrust of a rocket changes your velocity
-    and how that changes your orbit. Second, how to do orbital rendezvous, by the
-    timing of firing the rocket to synchronize two orbits. And finally, combining
-    the previous two techniques to reach the Moon.'
+  m_text: 'This program focuses on how orbital maneuver planning helps us go to the
+    Moon. Your training will consist of three tasks: first, to see how firing a rocket
+    changes your velocity and  your orbit. Second, to see how orbital rendezvous
+    works, by the timing of firing the rocket to synchronize two orbits. And finally,
+    combining the previous two techniques to reach the Moon.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -1825,51 +1852,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1730172801}
   m_CullTransparentMesh: 1
---- !u!1 &1740105115
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1740105117}
-  - component: {fileID: 1740105118}
-  m_Layer: 0
-  m_Name: IntroUIHandler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1740105117
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1740105115}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 794.5171, y: 566.6049, z: 5.878402}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1740105118
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1740105115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4f38d08ec58b42db8ed39f83bc0c2c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  earth: {fileID: 1092072753}
 --- !u!1 &1947980702
 GameObject:
   m_ObjectHideFlags: 0
@@ -1999,5 +1981,4 @@ SceneRoots:
   - {fileID: 1947980704}
   - {fileID: 1616234823}
   - {fileID: 91801619}
-  - {fileID: 1740105117}
   - {fileID: 316403656}
