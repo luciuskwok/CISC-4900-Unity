@@ -4671,7 +4671,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1.5
+      value: 1
       mode: 0
       spread: 0
       speed:
@@ -4907,7 +4907,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0.1
+          value: 0.21492156
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -5238,7 +5238,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 0.42940626, b: 0.1603772, a: 1}
-        key1: {r: 1, g: 1, b: 1, a: 1}
+        key1: {r: 0.7735849, g: 0.63700855, b: 0.63700855, a: 1}
         key2: {r: 1, g: 1, b: 1, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -5246,7 +5246,7 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
-        ctime1: 3277
+        ctime1: 10298
         ctime2: 65535
         ctime3: 0
         ctime4: 0
@@ -5969,8 +5969,8 @@ ParticleSystem:
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.98485905
-          value: 0.24660727
+          time: 0.9276441
+          value: 0.49560958
           inSlope: 0
           outSlope: 0
           tangentMode: 0
