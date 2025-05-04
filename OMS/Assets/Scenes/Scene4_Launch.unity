@@ -20798,7 +20798,10 @@ MonoBehaviour:
   wetMass: 2214000
   consumptionRate: 13000
   thrust: 34000
-  countdown: 1
+  countdown: -5
+  speedReadout: {fileID: 61668528}
+  altitudeReadout: {fileID: 238987831}
+  timeReadout: {fileID: 536498453}
 --- !u!1 &1520202208
 GameObject:
   m_ObjectHideFlags: 0
