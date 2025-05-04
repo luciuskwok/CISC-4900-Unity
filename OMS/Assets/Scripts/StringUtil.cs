@@ -43,14 +43,14 @@ public class StringUtil {
 		String s = "";
 		double t = timeAsSeconds;
 		// Hours
-		s += Math.Floor(t/3600.0).ToString("F0") + ":";
+		s += Math.Floor(t/3600.0).ToString("00") + ":";
 		t -= Math.Floor(t/3600.0) * 3600.0;
 
 		// Minutes
-		s += Math.Floor(t/60.0).ToString("F0") + ":";
+		s += Math.Floor(t/60.0).ToString("00") + ":";
 		t -= Math.Floor(t/60.0) * 60.0;
 
-		s += Math.Floor(t).ToString("F0");
+		s += Math.Floor(t).ToString("00");
 	
 		return s;
 	}
