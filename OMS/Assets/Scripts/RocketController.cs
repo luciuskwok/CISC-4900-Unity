@@ -1,5 +1,7 @@
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RocketController : MonoBehaviour
 {
@@ -19,6 +21,10 @@ public class RocketController : MonoBehaviour
 	public GameObject cameraTarget;
 
 	private bool isHeldDown = true; // when true, gravity and thrust are not applied
+	private float pitchRate = -1.0f; // degrees per second
+	private float pitchProgramStart = 13.0f; 
+	private float pitchProgramEnd = 38.0f;
+	private double endMissionTime = 60.0; // seconds; when to go to next scene
 	private Vector3 velocity = new();
 	private double gravity = 9.81; // m/s^2 
 
@@ -33,9 +39,20 @@ public class RocketController : MonoBehaviour
 		double oldTIme = missionTime;
 		missionTime += Time.deltaTime;
 		if (missionTime >= 0.0) isHeldDown = false;
+		if (missionTime >= endMissionTime) {
+			GoToNextScene();
+			return;
+		}
 
 		// Apply forces if hold downs are released
 		if (!isHeldDown) {
+			// Gravity turn
+			if (missionTime >= pitchProgramStart && missionTime <= pitchProgramEnd) {
+				float a = pitchRate * Time.deltaTime;
+				transform.localEulerAngles += new Vector3(0, 0, a);
+			}
+
+			// Rocket thrust
 			// force = mass * acceleration
 			// acceleration = force / mass
 			double totalMass = dryMass + wetMass;
@@ -100,4 +117,11 @@ public class RocketController : MonoBehaviour
 		Camera mainCamera = Camera.main;
 		mainCamera.transform.LookAt(cameraTarget.transform);
 	}
+
+	public void GoToNextScene()
+	{
+		Scene scene = SceneManager.GetActiveScene();
+		SceneManager.LoadScene(scene.buildIndex + 1);
+	}
+
 }
