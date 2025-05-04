@@ -5,14 +5,18 @@ public class RocketController : MonoBehaviour
 {
 	public double dryMass; // kg
 	public double wetMass; // kg
+	public double wetMassCapacity; // kg
 	public double consumptionRate; // kg/second
 	public double thrust; // kN
 
-	public double missionTime; // seconds to wait before release
+	public double missionTime; // seconds
 
 	public TMP_Text speedReadout; 
 	public TMP_Text altitudeReadout;
 	public TMP_Text timeReadout;
+	public GameObject LOXGauge;
+	public GameObject FuelGauge;
+	public GameObject cameraTarget;
 
 	private bool isHeldDown = true; // when true, gravity and thrust are not applied
 	private Vector3 velocity = new();
@@ -20,7 +24,7 @@ public class RocketController : MonoBehaviour
 
 	void Start()
 	{
-		UpdateText();
+		UpdateUI();
 	}
 
 	void Update()
@@ -54,11 +58,11 @@ public class RocketController : MonoBehaviour
 			// Translate according to velocity;
 			transform.Translate(velocity * Time.deltaTime);
 		}
-		
-		UpdateText();
+
+		UpdateUI();
 	}
 
-	void UpdateText() {
+	void UpdateUI() {
 		// Speed
 		double speed = velocity.magnitude;
 		speedReadout.text = speed.ToString("#,##0") + " m/s";
@@ -81,5 +85,19 @@ public class RocketController : MonoBehaviour
 		} else {
 			timeReadout.text = "T+" + StringUtil.FormatTimeWithColons(missionTime);
 		}
+
+		// Fuel and LOX Gauges
+		double x = wetMass / wetMassCapacity;
+		FillGauge lox = LOXGauge.GetComponent<FillGauge>();
+		lox.FillValue = (float)x;
+		FillGauge fuel = FuelGauge.GetComponent<FillGauge>();
+		fuel.FillValue = (float)x;
+	}
+
+	void LateUpdate()
+	{
+		// Point camera at this object
+		Camera mainCamera = Camera.main;
+		mainCamera.transform.LookAt(cameraTarget.transform);
 	}
 }
