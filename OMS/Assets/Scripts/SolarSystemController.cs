@@ -17,12 +17,14 @@ public class SolarSystemController : MonoBehaviour
 		// Sun
 		m_Sun = new(1.9885e30, 1.3914e6, 1.0e12);
 
-		// Earth
-		SpawnOrbit("Earth", 0.017, 1.49598e8, 0, 114.21, 0.0);
-
+		// Planets
+		SpawnOrbit("Mercury", 0.206, 5.7909e7, 7.006,  29.124, 48.34, 252.25);
+		SpawnOrbit("Venus",   0.007, 1.0821e8, 3.398,  54.884, 76.67, 252.25);
+		SpawnOrbit("Earth",   0.017, 1.49598e8, 0.00, 114.21,   0.00, 100.47);
+		SpawnOrbit("Mars",    0.094, 2.2794e8, 1.852, 286.5,   49.71, 355.43);
 	}
 
-	GameObject SpawnOrbit(string name, double eccentricity, double semiMajorAxis, double inclination, double argOfPerifocusDeg, double ascendingNode) 
+	GameObject SpawnOrbit(string name, double eccentricity, double semiMajorAxis, double inclinationDeg, double argOfPerifocusDeg, double ascendingNodeDeg, double meanLongAtEpoch) 
 	{
 		// Create the game object from a prefab
 		GameObject orbit = Instantiate(orbitPlotPrefab, Vector3.zero, Quaternion.identity);
@@ -34,16 +36,23 @@ public class SolarSystemController : MonoBehaviour
 
 		// Set up the orbital elements
 		OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
-		plot.attractor = m_Sun;
-		plot.SetOrbitalElements(eccentricity, semiMajorAxis, inclination, argOfPerifocusDeg * Kepler.Deg2Rad, ascendingNode);
-		plot.PeriapsisTime = 0.0;
 		plot.animationTimeScale = m_AnimationTimeScale;
+		plot.attractor = m_Sun;
+		plot.SetOrbitalElements(eccentricity, 
+			semiMajorAxis, 
+			inclinationDeg * Kepler.Deg2Rad, 
+			argOfPerifocusDeg * Kepler.Deg2Rad, 
+			ascendingNodeDeg * Kepler.Deg2Rad);
+		plot.PeriapsisTime = 0.0;
+		// TODO: calculate the time of periapsis passage from the meanLongAtEpoch where epoch is Epoch J2000.
 
 		// Set up the Line Renderer
 		LineRenderer lineRenderer = orbit.GetComponent<LineRenderer>();
 		const float lineWidth = 20.0f;
 		lineRenderer.startWidth = lineWidth;
 		lineRenderer.endWidth = lineWidth;
+
+		// TODO: save name somewhere
 
 		return orbit;
 	}
