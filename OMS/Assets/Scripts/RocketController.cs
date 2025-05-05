@@ -21,10 +21,10 @@ public class RocketController : MonoBehaviour
 	public GameObject cameraTarget;
 
 	private bool isHeldDown = true; // when true, gravity and thrust are not applied
-	private float pitchRate = -1.0f; // degrees per second
+	private float pitchRate = -0.5f; // degrees per second
 	private float pitchProgramStart = 13.0f; 
 	private float pitchProgramEnd = 38.0f;
-	private double endMissionTime = 60.0; // seconds; when to go to next scene
+	private double endMissionTime = 40.0; // seconds; when to go to next scene
 	private Vector3 velocity = new();
 	private double gravity = 9.81; // m/s^2 
 
