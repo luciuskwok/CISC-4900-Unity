@@ -46,7 +46,9 @@ public class RocketController : MonoBehaviour
 
 		// Apply forces if hold downs are released
 		if (!isHeldDown) {
-			// Gravity turn
+			// Turn rocket to point at velocity vector
+			
+			// Pitch program
 			if (missionTime >= pitchProgramStart && missionTime <= pitchProgramEnd) {
 				float a = pitchRate * Time.deltaTime;
 				transform.localEulerAngles += new Vector3(0, 0, a);
