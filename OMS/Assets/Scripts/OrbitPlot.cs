@@ -19,10 +19,14 @@ public class OrbitPlot : MonoBehaviour
 	public Attractor attractor; 
 
 	public bool animate = true;
-	public double animationTime = 0.0;
-	private readonly double animationTimeScale = 1200.0; // factor to speed up time for the animation
+	public double animationTimeScale = 1200.0; // factor to speed up time for the animation
+	private double animationTime = 0.0;
 	private readonly int pointCount = 180;
 
+	public double PeriapsisTime {
+		get { return m_Orbit.periapsisTime; }
+		set { m_Orbit.periapsisTime = value; }
+	}
 
 	/// <summary>
 	/// Sets the orbital parameters given the orbital elements. Resets the anomaly to zero.
