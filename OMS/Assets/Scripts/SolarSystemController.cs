@@ -11,8 +11,8 @@ public class SolarSystemController : MonoBehaviour
 
 	void Start()
 	{
-		// Animation time scale: 1 year = 1 minute
-		m_AnimationTimeScale = 60.0 * 24.0 * 365.0;
+		// Animation time scale: 1 year = 15 seconds
+		m_AnimationTimeScale = 15.0 * 60.0 * 24.0 * 365.0;
 
 		// Sun      mass, kg   radius    influence, km
 		m_Sun = new(1.9885e30, 1.3914e6, 1.0e12);

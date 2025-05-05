@@ -21,7 +21,7 @@ public class OrbitPlot : MonoBehaviour
 	public bool animate = true;
 	public double animationTimeScale = 1200.0; // factor to speed up time for the animation
 	private double animationTime = 0.0;
-	private readonly int pointCount = 180;
+	private readonly int pointCount = 360;
 
 	public double PeriapsisTime {
 		get { return m_Orbit.periapsisTime; }
