@@ -1,3 +1,4 @@
+using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class RocketController : MonoBehaviour
 	public GameObject LOXGauge;
 	public GameObject FuelGauge;
 	public GameObject cameraTarget;
+	public GameObject pitchIndicator;
 
 	private bool isHeldDown = true; // when true, gravity and thrust are not applied
 	private float pitchRate = -0.5f; // degrees per second
@@ -48,10 +50,13 @@ public class RocketController : MonoBehaviour
 		if (!isHeldDown) {
 			// Turn rocket to point at velocity vector
 			
+			
 			// Pitch program
-			if (missionTime >= pitchProgramStart && missionTime <= pitchProgramEnd) {
-				float a = pitchRate * Time.deltaTime;
-				transform.localEulerAngles += new Vector3(0, 0, a);
+			if (missionTime >= pitchProgramStart && missionTime <= pitchProgramEnd) 
+			{
+				var rot = transform.localEulerAngles;
+				rot.z += pitchRate * Time.deltaTime;
+				transform.localEulerAngles = rot;
 			}
 
 			// Rocket thrust
@@ -111,6 +116,13 @@ public class RocketController : MonoBehaviour
 		lox.FillValue = (float)x;
 		FillGauge fuel = FuelGauge.GetComponent<FillGauge>();
 		fuel.FillValue = (float)x;
+
+		// Pitch indicator
+		var rot = transform.localEulerAngles;
+		var pitch = rot.z;
+		var pitchIndicatorRT = pitchIndicator.GetComponent<RectTransform>();
+		pitchIndicatorRT.localEulerAngles = new Vector3(0, 0, pitch);
+
 	}
 
 	void LateUpdate()
