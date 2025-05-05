@@ -1,7 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.iOS;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
