@@ -22,7 +22,7 @@ public class SolarSystemController : MonoBehaviour
 
 	private int m_PlanetCount = 8;
 	private GameObject[] m_OrbitPlots;
-	private int m_TargetIndex = 0;
+	private int m_TargetIndex;
 	private Vector3 m_LastMousePosition;
 	
 
@@ -50,9 +50,9 @@ public class SolarSystemController : MonoBehaviour
 		
 		// Move planets into position
 		UpdatePlanetPositions(0);
-		
+
 		// Target
-		SetCameraTargetAtIndex(0);
+		SetCameraTargetAtIndex(2); // Start with Earth
 	}
 
 	GameObject SpawnOrbit(float hue, double eccentricity, double semiMajorAxis, double inclinationDeg, double argOfPerifocusDeg, double ascendingNodeDeg, double meanLongAtEpoch, Attractor attractor) 
