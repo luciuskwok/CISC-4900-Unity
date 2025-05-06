@@ -1,5 +1,6 @@
 using TMPro;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,17 +11,21 @@ public class RocketController : MonoBehaviour
 	public double wetMassCapacity; // kg
 	public double consumptionRate; // kg/second
 	public double thrust; // kN
-
 	public double missionTime; // seconds
 
+	// UI Widgets
 	public TMP_Text speedReadout; 
 	public TMP_Text altitudeReadout;
 	public TMP_Text timeReadout;
 	public GameObject LOXGauge;
 	public GameObject FuelGauge;
-	public GameObject cameraTarget;
 	public GameObject pitchIndicator;
 
+	// Engine particle effects
+	public GameObject[] engineParticles;
+
+	private bool areEnginesRunning = false;
+	private float engineStartTime = -8.6f; // engines start at T-8.9 to T-8.3 seconds
 	private bool isHeldDown = true; // when true, gravity and thrust are not applied
 	private float pitchRate = -0.5f; // degrees per second
 	private float pitchProgramStart = 13.0f; 
@@ -43,6 +48,15 @@ public class RocketController : MonoBehaviour
 		if (missionTime >= endMissionTime) {
 			GoToNextScene();
 			return;
+		}
+
+		// Start engines
+		if (!areEnginesRunning && missionTime >= engineStartTime) {
+			areEnginesRunning = true;
+			// Start all engine effects at same time in this sim, even though real-life engines had a staggered start
+			for (int i = 0; i < engineParticles.Length; i++) {
+				engineParticles[i].GetComponent<ParticleSystem>().Play();
+			}
 		}
 
 		// Apply forces if hold downs are released
@@ -122,13 +136,6 @@ public class RocketController : MonoBehaviour
 		var pitchIndicatorRT = pitchIndicator.GetComponent<RectTransform>();
 		pitchIndicatorRT.localEulerAngles = new Vector3(0, 0, pitch);
 
-	}
-
-	void LateUpdate()
-	{
-		// Point camera at this object
-		Camera mainCamera = Camera.main;
-		mainCamera.transform.LookAt(cameraTarget.transform);
 	}
 
 	public void GoToNextScene()
