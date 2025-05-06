@@ -41,7 +41,7 @@ public class CameraController : MonoBehaviour
 		} else
 		{
 			// Point camera at target
-			SetTargetAtIndex(0);
+			//SetTargetAtIndex(0);
 		}
 	}
 
@@ -160,6 +160,8 @@ public class CameraController : MonoBehaviour
 
 	void Update()
 	{
+		return;
+
 		// Shift key
 		bool isShifted = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 		float speed = isShifted ? 0.1f : 1.0f;

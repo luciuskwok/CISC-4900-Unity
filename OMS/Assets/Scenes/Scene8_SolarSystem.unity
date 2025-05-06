@@ -4197,6 +4197,8 @@ MonoBehaviour:
   orbitsParent: {fileID: 1984801555}
   nodesParent: {fileID: 843137366}
   targetsParent: {fileID: 1638473173}
+  cameraTarget: {fileID: 748109740}
+  targetReadout: {fileID: 75757290}
 --- !u!4 &1996064510
 Transform:
   m_ObjectHideFlags: 0

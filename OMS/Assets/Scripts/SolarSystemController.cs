@@ -8,11 +8,21 @@ public class SolarSystemController : MonoBehaviour
 	public GameObject nodesParent;
 	public GameObject targetsParent;
 
+	// Camera
+	public GameObject cameraTarget;
+	private float distanceMax = 8.8e10f; // km
+	private float distanceMin = 1.0f; // varies based on target
+	private float panTiltSpeed = 0.1f;
+
 	// UI elements
 	public TMP_Text targetReadout;
+	public TMP_Text distanceReadout;
+	
 
 	private int m_PlanetCount = 8;
 	private GameObject[] m_OrbitPlots;
+	private int m_TargetIndex = 0;
+	private Vector3 m_LastMousePosition;
 	
 
 	void Start()
@@ -101,4 +111,77 @@ public class SolarSystemController : MonoBehaviour
 			}
 		}
 	}
+
+	void LateUpdate()
+	{
+		// Shift key
+		bool isShifted = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+		float shiftSpeed = isShifted ? 0.1f : 1.0f;
+
+		// Scroll wheel
+		float scroll = Input.GetAxis("Mouse ScrollWheel");
+		if (scroll != 0.0f) {
+			DollyCamera(scroll * shiftSpeed);
+		}
+
+		// Mouse movement
+		if (Input.GetMouseButtonDown(0)) {
+			// Initial mouse down
+			m_LastMousePosition = Input.mousePosition;
+			// TODO: ignore mouse clicks in buttons or other UI elements
+		} else if (Input.GetMouseButton(0)) {
+			Vector3 delta = Input.mousePosition - m_LastMousePosition;
+			if (delta.x != 0.0f || delta.y != 0.0f) {
+				// Invert y-axis look
+				PanTiltCamera(delta.x * shiftSpeed * panTiltSpeed, -delta.y * shiftSpeed * panTiltSpeed);
+			}
+			m_LastMousePosition = Input.mousePosition;
+		}
+
+		UpdateReadouts();
+	}
+
+
+	void DollyCamera(float delta) {
+		Camera camera = Camera.main;
+		float distance = -camera.transform.localPosition.z;
+
+		// Change the distance based on scroll wheel movement
+		distance = Mathf.Pow(10.0f, Mathf.Log10(distance) - delta * 0.2f);
+
+		// Clamp the values to min and max
+		distance = (distance < distanceMin) ? distanceMin : distance;
+		distance = (distance > distanceMax) ? distanceMax : distance;
+
+		// Set new camera position
+		camera.transform.localPosition = new Vector3(0, 0, -distance);
+	}
+
+	void PanTiltCamera(float deltaX, float deltaY)
+	{
+		const float tiltLimit = 89.9f;
+		float pan = cameraTarget.transform.eulerAngles.y;
+		float tilt = cameraTarget.transform.eulerAngles.x;
+
+		pan += deltaX;
+		tilt += deltaY;
+
+		// Limit tilt
+		tilt = (tilt + 360.0f) % 360.0f;
+		if (tilt > 180.0f) tilt -= 360.0f;
+
+		if (tilt < -tiltLimit) tilt = -tiltLimit;
+		if (tilt > tiltLimit) tilt = tiltLimit;
+
+		cameraTarget.transform.localEulerAngles = new Vector3(tilt, pan, 0);
+	}
+
+	void UpdateReadouts() {
+		Camera camera = Camera.main;
+		float distance = -camera.transform.localPosition.z;
+
+		distanceReadout.text = distance.ToString("#,###,###") + " km";
+	}
+
+
 }
