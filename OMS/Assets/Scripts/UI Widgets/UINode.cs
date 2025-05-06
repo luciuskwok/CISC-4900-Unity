@@ -38,13 +38,15 @@ public class UINode : MonoBehaviour
 			RectTransform nodeRT = gameObject.GetComponent<RectTransform>();
 			nodeRT.anchoredPosition = point;
 
-			// Swap out textures depending ond istance
-			if (point.z <= altVisibleDistance) {
-				mainImage.SetActive(false);
-				altImage.SetActive(true);
-			} else {
-				mainImage.SetActive(true);
-				altImage.SetActive(false);
+			// Swap out textures depending ond distance
+			if (mainImage != null && altImage != null) {
+				if (point.z <= altVisibleDistance) {
+					mainImage.SetActive(false);
+					altImage.SetActive(true);
+				} else {
+					mainImage.SetActive(true);
+					altImage.SetActive(false);
+				}
 			}
 		} else {
 			gameObject.SetActive (false);

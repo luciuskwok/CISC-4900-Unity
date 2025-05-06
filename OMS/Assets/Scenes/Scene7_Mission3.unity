@@ -1153,6 +1153,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798648d50e923214182928c9a6857219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimumVisibleDistance: 0
+  maximumVisibleDistance: 1000000
+  altVisibleDistance: 0
+  mainImage: {fileID: 0}
+  altImage: {fileID: 0}
 --- !u!1 &388395083
 GameObject:
   m_ObjectHideFlags: 0
@@ -2704,6 +2709,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798648d50e923214182928c9a6857219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimumVisibleDistance: 0
+  maximumVisibleDistance: 1000000
+  altVisibleDistance: 0
+  mainImage: {fileID: 0}
+  altImage: {fileID: 0}
 --- !u!1 &554956570
 GameObject:
   m_ObjectHideFlags: 0
@@ -2904,6 +2914,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798648d50e923214182928c9a6857219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimumVisibleDistance: 0
+  maximumVisibleDistance: 1000000
+  altVisibleDistance: 0
+  mainImage: {fileID: 0}
+  altImage: {fileID: 0}
 --- !u!1 &622294097
 GameObject:
   m_ObjectHideFlags: 0
@@ -4356,6 +4371,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798648d50e923214182928c9a6857219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimumVisibleDistance: 0
+  maximumVisibleDistance: 1000000
+  altVisibleDistance: 0
+  mainImage: {fileID: 0}
+  altImage: {fileID: 0}
 --- !u!1 &1150283336
 GameObject:
   m_ObjectHideFlags: 0
@@ -6041,6 +6061,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798648d50e923214182928c9a6857219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimumVisibleDistance: 0
+  maximumVisibleDistance: 1000000
+  altVisibleDistance: 0
+  mainImage: {fileID: 0}
+  altImage: {fileID: 0}
 --- !u!1 &1605080068
 GameObject:
   m_ObjectHideFlags: 0
@@ -7078,6 +7103,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798648d50e923214182928c9a6857219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimumVisibleDistance: 0
+  maximumVisibleDistance: 1000000
+  altVisibleDistance: 0
+  mainImage: {fileID: 0}
+  altImage: {fileID: 0}
 --- !u!1 &1924535868
 GameObject:
   m_ObjectHideFlags: 0
@@ -7612,6 +7642,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550071776}
     m_Modifications:
+    - target: {fileID: 579538930997591294, guid: 29e0508a0bea10149891b7f745709133, type: 3}
+      propertyPath: altVisibleDistance
+      value: 10000
+      objectReference: {fileID: 0}
     - target: {fileID: 3238669386672439372, guid: 29e0508a0bea10149891b7f745709133, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
