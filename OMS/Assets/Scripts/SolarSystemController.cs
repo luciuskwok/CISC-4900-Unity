@@ -210,11 +210,11 @@ public class SolarSystemController : MonoBehaviour
 		cameraTarget.transform.localEulerAngles = new Vector3(tilt, pan, 0);
 	}
 
-	void GoToNextTarget() {
+	public void GoToNextTarget() {
 		SetCameraTargetAtIndex(m_TargetIndex + 1);
 	}
 
-	void GoToPreviousTarget() {
+	public void GoToPreviousTarget() {
 		SetCameraTargetAtIndex(m_TargetIndex - 1);
 	}
 
