@@ -24,6 +24,12 @@ public class SolarSystemController : MonoBehaviour
 	private Attractor m_Earth;
 	private int m_TargetIndex;
 	private Vector3 m_LastMousePosition;
+
+	private float LocalToWorldScale {
+		get {
+			return orbitsParent.transform.localScale.x;
+		}
+	}
 	
 
 	void Start()
@@ -84,10 +90,9 @@ public class SolarSystemController : MonoBehaviour
 			UINode node = nodesParent.transform.GetChild(i).gameObject.GetComponent<UINode>();
 			Transform target = targetsParent.transform.GetChild(i);
 			Transform body = target.GetChild(0);
-			node.minimumVisibleDistance = body.localScale.x * 75.0f / 1.0e5f;
-			node.altVisibleDistance = body.localScale.x * 175.0f / 1.0e5f;
+			node.minimumVisibleDistance = body.localScale.x * 75.0f * LocalToWorldScale;
+			node.altVisibleDistance = body.localScale.x * 250.0f * LocalToWorldScale;
 		}
-
 	}
 
 	void Update()
@@ -264,14 +269,22 @@ public class SolarSystemController : MonoBehaviour
 	}
 
 	void UpdateLineWidths() {
+		Camera camera = Camera.main;
+
 		int count = orbitsParent.transform.childCount;
 		for (int i = 0; i < count; i++) {
+			Transform target = targetsParent.transform.GetChild(i);
+			float distance = (target.position - camera.transform.position).magnitude / LocalToWorldScale;
+
 			GameObject orbit = orbitsParent.transform.GetChild(i).gameObject;
 			OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
 			double sma = plot.Orbit.SemiMajorAxisLength;
 
-			LineRenderer lineRenderer = orbit.GetComponent<LineRenderer>();
 			float lineWidth = sma > 1.0e6? 20.0f : 0.2f;
+			float x = distance / 3.0e7f;
+			if (lineWidth > x) lineWidth = x;
+
+			LineRenderer lineRenderer = orbit.GetComponent<LineRenderer>();
 			lineRenderer.startWidth = lineWidth;
 			lineRenderer.endWidth = lineWidth;
 		}
