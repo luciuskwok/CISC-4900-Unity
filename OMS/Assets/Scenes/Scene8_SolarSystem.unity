@@ -2367,7 +2367,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!120 &483672803
 LineRenderer:
   serializedVersion: 2
@@ -2652,7 +2652,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!120 &493700850
 LineRenderer:
   serializedVersion: 2
@@ -5972,6 +5972,7 @@ MonoBehaviour:
   nodesParent: {fileID: 843137366}
   targetsParent: {fileID: 1638473173}
   cameraTarget: {fileID: 748109740}
+  directionalLight: {fileID: 410087039}
   targetReadout: {fileID: 75757290}
   distanceReadout: {fileID: 1476709260}
 --- !u!4 &1996064510
