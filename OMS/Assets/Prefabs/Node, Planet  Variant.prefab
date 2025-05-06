@@ -38,7 +38,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3083778261892032178, guid: 29e0508a0bea10149891b7f745709133, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -21
+      value: -12
       objectReference: {fileID: 0}
     - target: {fileID: 3238669386672439372, guid: 29e0508a0bea10149891b7f745709133, type: 3}
       propertyPath: m_Pivot.x
@@ -135,6 +135,10 @@ PrefabInstance:
     - target: {fileID: 3238669386672439372, guid: 29e0508a0bea10149891b7f745709133, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804075799455743450, guid: 29e0508a0bea10149891b7f745709133, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8192922316177571252, guid: 29e0508a0bea10149891b7f745709133, type: 3}
       propertyPath: m_Name

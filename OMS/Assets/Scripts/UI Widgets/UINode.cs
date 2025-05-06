@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UINode : MonoBehaviour
 {
@@ -7,18 +6,15 @@ public class UINode : MonoBehaviour
 	public float maximumVisibleDistance = 1.0e6f;
 	public float altVisibleDistance = 0.0f;
 	
-	// Texture swapping
-	public GameObject nodeImage;
-	public Texture altTexture;
-	private Texture m_MainTexture;
+	// Image swapping
+	public GameObject mainImage;
+	public GameObject altImage;
 
 	private Vector3 m_WorldPosition;
 
 
 	void Start()
 	{
-		Image image = nodeImage.GetComponent<Image>();
-		//m_MainTexture = image.texture;
 	}
 
 	public void SetWorldPosition(Vector3 worldPosition) {
@@ -44,9 +40,11 @@ public class UINode : MonoBehaviour
 
 			// Swap out textures depending ond istance
 			if (point.z <= altVisibleDistance) {
-				//nodeImage.GetComponent<Image>().image = altTexture;
+				mainImage.SetActive(false);
+				altImage.SetActive(true);
 			} else {
-				//nodeImage.GetComponent<Image>().image = m_MainTexture;
+				mainImage.SetActive(true);
+				altImage.SetActive(false);
 			}
 		} else {
 			gameObject.SetActive (false);

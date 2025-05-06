@@ -85,6 +85,7 @@ public class SolarSystemController : MonoBehaviour
 			Transform target = targetsParent.transform.GetChild(i);
 			Transform body = target.GetChild(0);
 			node.minimumVisibleDistance = body.localScale.x * 75.0f / 1.0e5f;
+			node.altVisibleDistance = body.localScale.x * 175.0f / 1.0e5f;
 		}
 
 	}
