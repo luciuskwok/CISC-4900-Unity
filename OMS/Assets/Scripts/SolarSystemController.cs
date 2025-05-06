@@ -12,7 +12,8 @@ public class SolarSystemController : MonoBehaviour
 	public GameObject cameraTarget;
 	private float distanceMax = 8.8e10f; // km
 	private float distanceMin = 1.0f; // varies based on target
-	private float panTiltSpeed = 0.1f;
+	private float m_MousePanTiltSpeed = 0.1f;
+	private float m_KeyboardPanTiltSpeed = 30.0f;
 
 	// UI elements
 	public TMP_Text targetReadout;
@@ -133,10 +134,30 @@ public class SolarSystemController : MonoBehaviour
 			Vector3 delta = Input.mousePosition - m_LastMousePosition;
 			if (delta.x != 0.0f || delta.y != 0.0f) {
 				// Invert y-axis look
-				PanTiltCamera(delta.x * shiftSpeed * panTiltSpeed, -delta.y * shiftSpeed * panTiltSpeed);
+				PanTiltCamera(delta.x * shiftSpeed * m_MousePanTiltSpeed, -delta.y * shiftSpeed * m_MousePanTiltSpeed);
 			}
 			m_LastMousePosition = Input.mousePosition;
 		}
+
+		// Keyboard
+		// -- Arrow Keys: pan & tilt camera
+		float movement = Time.deltaTime * m_KeyboardPanTiltSpeed * shiftSpeed; 
+		if (Input.GetKey(KeyCode.UpArrow)) {
+			PanTiltCamera(0.0f, movement);
+		} else if (Input.GetKey(KeyCode.DownArrow)) {
+			PanTiltCamera(0.0f, -movement);
+		} else if (Input.GetKey(KeyCode.LeftArrow)) {
+			PanTiltCamera(movement, 0.0f);
+		} else if (Input.GetKey(KeyCode.RightArrow)) {
+			PanTiltCamera(-movement, 0.0f);
+		}
+		// -- Plus ('=' or '+') / Minus ('-' or '_'): dolly in/out
+		else if (Input.GetKey(KeyCode.Minus)) {
+			DollyCamera(-movement * 0.2f);
+		} else if (Input.GetKey(KeyCode.Equals)) {
+			DollyCamera(movement * 0.2f);
+		}
+
 
 		UpdateReadouts();
 	}
