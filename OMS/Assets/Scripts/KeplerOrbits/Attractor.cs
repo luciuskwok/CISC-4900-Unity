@@ -4,12 +4,13 @@
 
 using System;
 using Unity;
+using UnityEngine;
 
 public class Attractor {
 	public double mass; // kg
 	public double radius; // km
 	public double influence; // km, for sphere of influence
-	public Vector3d position; // km
+	//public Vector3 worldPosition; // position for setting the orbit focus
 
 	public static Attractor Sun {
 		get { 
@@ -27,7 +28,7 @@ public class Attractor {
 		this.mass = mass;
 		this.radius = radius;
 		this.influence = influence;
-		position = Vector3d.zero;
+		//worldPosition = Vector3.zero;
 	}
 
 }
