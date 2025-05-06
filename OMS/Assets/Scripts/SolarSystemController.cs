@@ -10,7 +10,7 @@ public class SolarSystemController : MonoBehaviour
 
 	// Camera
 	public GameObject cameraTarget;
-	private float m_DistanceMax = 8.8e10f; // km
+	private float m_DistanceMax = 8.0e9f; // km
 	private float m_DistanceMin = 1.0f; // varies based on target
 	private float m_MousePanTiltSpeed = 0.1f;
 	private float m_KeyboardPanTiltSpeed = 30.0f;
@@ -49,6 +49,9 @@ public class SolarSystemController : MonoBehaviour
 		// Move planets into position
 		UpdatePlanetPositions(0);
 
+		// Set up nodes
+		SetUpNodes();
+
 		// Target
 		SetCameraTargetAtIndex(2); // Start with Earth
 	}
@@ -71,19 +74,24 @@ public class SolarSystemController : MonoBehaviour
 		// Epoch J2000, 00:00 UTC on 1/1/2000, is the zero value
 		plot.PeriapsisTime = 0.0;
 		// TODO: calculate the time of periapsis passage from the meanLongAtEpoch where epoch is Epoch J2000.
-
-		// Set up the Line Renderer
-		LineRenderer lineRenderer = orbit.GetComponent<LineRenderer>();
-		float lineWidth = semiMajorAxis > 1.0e6? 20.0f : 0.2f;
-		lineRenderer.startWidth = lineWidth;
-		lineRenderer.endWidth = lineWidth;
 		
 		return orbit;
 	}
 
+	void SetUpNodes() {
+		int count = nodesParent.transform.childCount;
+		for (int i = 0; i < count; i++) {
+			UINode node = nodesParent.transform.GetChild(i).gameObject.GetComponent<UINode>();
+			Transform target = targetsParent.transform.GetChild(i);
+			Transform body = target.GetChild(0);
+			node.minimumVisibleDistance = body.localScale.x * 75.0f / 1.0e5f;
+		}
+
+	}
+
 	void Update()
 	{
-		UpdatePlanetPositions(0);
+		//UpdatePlanetPositions(0);
 	}
 
 	void UpdatePlanetPositions(double atTime) {
@@ -171,7 +179,9 @@ public class SolarSystemController : MonoBehaviour
 			GoToNextTarget();
 		}
 
-
+		// Updates for after camera moves
+		UpdateLineWidths();
+		UpdateNodePositions();
 		UpdateReadouts();
 	}
 
@@ -228,7 +238,7 @@ public class SolarSystemController : MonoBehaviour
 
 		// Update minimum distance
 		Transform planetBody = newTarget.transform.GetChild(0);
-		m_DistanceMin = planetBody.localScale.x * 1.5f;
+		m_DistanceMin = planetBody.localScale.x * 2.0f;
 
 		// Move camera if needed
 		Camera camera = Camera.main;
@@ -241,6 +251,29 @@ public class SolarSystemController : MonoBehaviour
 
 		// Set target readout
 		targetReadout.text = newTarget.name;
+
+	}
+
+	void UpdateNodePositions() {
+		int count = nodesParent.transform.childCount;
+		for (int i = 0; i < count; i++) {
+			UINode node = nodesParent.transform.GetChild(i).gameObject.GetComponent<UINode>();
+			node.UpdateCanvasPosition();
+		}
+	}
+
+	void UpdateLineWidths() {
+		int count = orbitsParent.transform.childCount;
+		for (int i = 0; i < count; i++) {
+			GameObject orbit = orbitsParent.transform.GetChild(i).gameObject;
+			OrbitPlot plot = orbit.GetComponent<OrbitPlot>();
+			double sma = plot.Orbit.SemiMajorAxisLength;
+
+			LineRenderer lineRenderer = orbit.GetComponent<LineRenderer>();
+			float lineWidth = sma > 1.0e6? 20.0f : 0.2f;
+			lineRenderer.startWidth = lineWidth;
+			lineRenderer.endWidth = lineWidth;
+		}
 	}
 
 	void UpdateReadouts() {

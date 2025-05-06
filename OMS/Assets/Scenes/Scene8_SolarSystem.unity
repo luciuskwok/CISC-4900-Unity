@@ -375,6 +375,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: " Mars\t"
@@ -646,6 +650,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Neptune
@@ -1195,6 +1203,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Venus
@@ -1434,6 +1446,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Jupiter
@@ -1749,7 +1765,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 88000
+  far clip plane: 90000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -3175,6 +3191,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Saturn
@@ -4078,6 +4098,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Moon
@@ -4492,6 +4516,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Uranus
@@ -6123,6 +6151,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Mercury
@@ -6293,6 +6325,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -8
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: altTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Earth
