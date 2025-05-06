@@ -391,6 +391,10 @@ PrefabInstance:
       propertyPath: altTexture
       value: 
       objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: maximumVisibleDistance
+      value: 80000
+      objectReference: {fileID: 0}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: " Mars\t"
@@ -1247,6 +1251,10 @@ PrefabInstance:
       propertyPath: altTexture
       value: 
       objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: maximumVisibleDistance
+      value: 16000
+      objectReference: {fileID: 0}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Venus
@@ -4182,6 +4190,10 @@ PrefabInstance:
       propertyPath: altTexture
       value: 
       objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: maximumVisibleDistance
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Moon
@@ -6255,6 +6267,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.7529412
       objectReference: {fileID: 0}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: maximumVisibleDistance
+      value: 10000
+      objectReference: {fileID: 0}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Mercury
@@ -6441,6 +6457,10 @@ PrefabInstance:
       propertyPath: altTexture
       value: 
       objectReference: {fileID: 2800000, guid: 235646b186ad37148b0e85ffa42d8ad8, type: 3}
+    - target: {fileID: 8492748669422632649, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
+      propertyPath: maximumVisibleDistance
+      value: 40000
+      objectReference: {fileID: 0}
     - target: {fileID: 9044678309576175876, guid: 393895ae0548151448ece5ae44f7239a, type: 3}
       propertyPath: m_text
       value: Earth
