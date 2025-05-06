@@ -34,6 +34,11 @@ public class Mission3_UIHandler : MonoBehaviour
 	public GameObject successPanel;
 	public GameObject moon;
 
+	// Sound Effects
+	public GameObject successSfx;
+	public GameObject rocketSfx;
+	private bool m_Success = false;
+
 	// Maneuver node parameters
 	private double progradeDeltaV = 2.0; // km/s
 	private double maneuverSliderValue = 0.0; // degrees
@@ -149,6 +154,8 @@ public class Mission3_UIHandler : MonoBehaviour
 		timingSlider.enabled = false;
 		// Hide the GO button
 		goButton.SetActive(false);
+		// Play SFX
+		rocketSfx.GetComponent<AudioSource>().Play();
 	}
 
 	public void HandleNextMissionButton()
@@ -224,6 +231,11 @@ public class Mission3_UIHandler : MonoBehaviour
 	{
 		goButton.SetActive(success);
 		SetInfoText(success);
+
+		if (success && !m_Success) {
+			successSfx.GetComponent<AudioSource>().Play();
+		}
+		m_Success = success;
 	}
 
 	void SetInfoText(bool success)

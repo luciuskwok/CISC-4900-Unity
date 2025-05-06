@@ -23,6 +23,11 @@ public class Mission1_UIHandler : MonoBehaviour
 	public GameObject goButton;
 	public GameObject successPanel;
 
+	// Sound Effects
+	public GameObject successSfx;
+	public GameObject rocketSfx;
+	private bool m_Success = false;
+
 	// Maneuver node parameters
 	private double progradeDeltaV = 0.0; // m/s
 	private double nodeMeanAnomaly = 0.0 * Kepler.Deg2Rad; // radians
@@ -107,6 +112,8 @@ public class Mission1_UIHandler : MonoBehaviour
 		progradeSlider.enabled = false;
 		// Hide the GO button
 		goButton.SetActive(false);
+		// Play SFX
+		rocketSfx.GetComponent<AudioSource>().Play();
 	}
 
 	public void HandleNextMissionButton() {
@@ -137,9 +144,14 @@ public class Mission1_UIHandler : MonoBehaviour
 		if (Math.Abs(targetApoapsis - planApoapsis) < targetApoapsis * 0.02) {
 			goButton.SetActive(true);
 			SetInfoText(true);
+			if (!m_Success) {
+				m_Success = true;
+				successSfx.GetComponent<AudioSource>().Play();
+			}
 		} else {
 			goButton.SetActive(false);
 			SetInfoText(false);
+			m_Success = false;
 		}
 	}
 

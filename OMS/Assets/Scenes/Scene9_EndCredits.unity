@@ -781,7 +781,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -10, y: -10}
+  m_AnchoredPosition: {x: -20, y: -20}
   m_SizeDelta: {x: 72, y: 20}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &592754727
@@ -1177,7 +1177,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 528185a22b1fcf84cbaa02f4c4a96627, type: 3}
   m_Resource: {fileID: 8300000, guid: 528185a22b1fcf84cbaa02f4c4a96627, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.25
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1298,7 +1298,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -10, y: 10}
+  m_AnchoredPosition: {x: -20, y: 20}
   m_SizeDelta: {x: 160, y: 24}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &915939994
@@ -1502,7 +1502,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 460, y: -152.62062}
-  m_SizeDelta: {x: 360, y: 320}
+  m_SizeDelta: {x: 400, y: 320}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1608522139
 MonoBehaviour:
@@ -1554,8 +1554,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 17
+  m_fontSizeBase: 17
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1748,11 +1748,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1616234823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 880, y: -152.62062}
-  m_SizeDelta: {x: 360, y: 320}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -40, y: -152.62062}
+  m_SizeDelta: {x: 320, y: 320}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1657282373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1773,9 +1773,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Kevin MacLeod (incompetech.com):\n    \"Brittle Rille\" \n    \"Wizardtorium\"\n   
-    \"Silver Blue Light\"\n    \"Frost Waltz\"\n    \"Frozen Star\"\nLicensed under
-    Creative Commons: \n    By Attribution 4.0 License\r\n    http://creativecommons.org/licenses/by/4.0/"
+  m_text: "Kevin MacLeod (incompetech.com):\n    \"Brittle Rille\" \n    \"Frost
+    Waltz\"\n    \"Frozen Star\"\n    \"Sneaky Adventure\"\n    \"Wizardtorium\"\nLicensed
+    under Creative Commons: \n    By Attribution 4.0 License\r\n    http://creativecommons.org/licenses/by/4.0/"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1889,7 +1889,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 460, y: -120.62062}
-  m_SizeDelta: {x: 360, y: 24}
+  m_SizeDelta: {x: 400, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1730172803
 MonoBehaviour:
@@ -2022,11 +2022,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1616234823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 880, y: -120.62062}
-  m_SizeDelta: {x: 360, y: 24}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -40, y: -120.62062}
+  m_SizeDelta: {x: 320, y: 24}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1924476207
 MonoBehaviour:
   m_ObjectHideFlags: 0
