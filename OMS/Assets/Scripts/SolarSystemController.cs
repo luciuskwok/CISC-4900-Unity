@@ -15,6 +15,9 @@ public class SolarSystemController : MonoBehaviour
 	private float m_MousePanTiltSpeed = 0.1f;
 	private float m_KeyboardPanTiltSpeed = 30.0f;
 
+	// Light
+	public GameObject directionalLight;
+
 	// UI elements
 	public TMP_Text targetReadout;
 	public TMP_Text distanceReadout;
@@ -191,7 +194,6 @@ public class SolarSystemController : MonoBehaviour
 		UpdateReadouts();
 	}
 
-
 	void DollyCamera(float delta) {
 		Camera camera = Camera.main;
 		float distance = -camera.transform.localPosition.z;
@@ -258,6 +260,8 @@ public class SolarSystemController : MonoBehaviour
 		// Set target readout
 		targetReadout.text = newTarget.name;
 
+		// Update lighting
+		UpdateLighting();
 	}
 
 	void UpdateNodePositions() {
@@ -297,5 +301,9 @@ public class SolarSystemController : MonoBehaviour
 		distanceReadout.text = distance.ToString("#,###,###") + " km";
 	}
 
+	void UpdateLighting() {
+		Transform target = targetsParent.transform.GetChild(m_TargetIndex);
+		directionalLight.transform.LookAt(target);
+	}
 
 }
