@@ -1,6 +1,6 @@
+using System;
+using System.Collections;
 using TMPro;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -24,6 +24,10 @@ public class RocketController : MonoBehaviour
 	// Engine particle effects
 	public GameObject[] engineParticles;
 
+	// Sounds
+	public GameObject engineSound;
+	public GameObject[] birdSounds;
+
 	private bool areEnginesRunning = false;
 	private float engineStartTime = -8.6f; // engines start at T-8.9 to T-8.3 seconds
 	private bool isHeldDown = true; // when true, gravity and thrust are not applied
@@ -37,6 +41,18 @@ public class RocketController : MonoBehaviour
 	void Start()
 	{
 		UpdateUI();
+		StartCoroutine(PlayBirdSounds());
+	}
+
+	IEnumerator PlayBirdSounds() {
+		while (!areEnginesRunning) {
+			yield return new WaitForSeconds(UnityEngine.Random.Range(0.0f, 5.0f));
+			if (!areEnginesRunning) {
+				int count = birdSounds.Length;
+				int i = UnityEngine.Random.Range(0, count);
+				birdSounds[i].GetComponent<AudioSource>().Play();
+			}
+		}
 	}
 
 	void Update()
@@ -57,6 +73,8 @@ public class RocketController : MonoBehaviour
 			for (int i = 0; i < engineParticles.Length; i++) {
 				engineParticles[i].GetComponent<ParticleSystem>().Play();
 			}
+			// Start engine sound loop
+			engineSound.GetComponent<AudioSource>().Play();
 		}
 
 		// Apply forces if hold downs are released
