@@ -153,7 +153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -200.62062}
+  m_AnchoredPosition: {x: 80, y: -200.62062}
   m_SizeDelta: {x: 320, y: 160}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &32370024
@@ -506,7 +506,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -120.62062}
+  m_AnchoredPosition: {x: 80, y: -120.62062}
   m_SizeDelta: {x: 320, y: 72}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &355211952
@@ -1682,8 +1682,8 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1752,7 +1752,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40, y: -144}
+  m_AnchoredPosition: {x: -80, y: -144}
   m_SizeDelta: {x: 320, y: 168}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1657282373
@@ -2026,7 +2026,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40, y: -320}
+  m_AnchoredPosition: {x: -80, y: -320}
   m_SizeDelta: {x: 320, y: 24}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1745515543
@@ -2162,7 +2162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40, y: -120}
+  m_AnchoredPosition: {x: -80, y: -120}
   m_SizeDelta: {x: 320, y: 24}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1924476207
@@ -2437,7 +2437,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40, y: -344}
+  m_AnchoredPosition: {x: -80, y: -344}
   m_SizeDelta: {x: 320, y: 180}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &2034882052
@@ -2461,8 +2461,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "\"Universe Sounds Free Pack\" - Marcin Klosowski\n\"Sparrow Sounds\" -
-    no9 Game Sounds\n\"FX - Looking straight into a burning rocket engine\" \n  
-    - Frobondi_Skegs\n\"Wind ambience\" - freesound_community"
+    no9 Game Sounds\n\"FX - Looking straight into a burning rocket engine\" \n   
+    - Frobondi_Skegs\n\"Launch\" & \"Wind ambience\" \n    - freesound_community"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
