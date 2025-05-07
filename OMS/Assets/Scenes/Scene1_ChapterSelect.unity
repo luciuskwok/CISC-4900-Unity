@@ -139,6 +139,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9baa44291af99154f878d3961442c3eb, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 3 Button
@@ -348,6 +352,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 934e051ef677fa143b37242d8dcf519a, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 2 Button
@@ -770,6 +778,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3ba4f0d335c4d644b8c41ca3c1b6ce0d, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 5 Button
@@ -1289,6 +1301,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d509702b23593854a8953f513153170d, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 8 Button
@@ -1435,6 +1451,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 73dfee0d87c57ec4f8c3cfb888870c96, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 4 Button
@@ -1677,6 +1697,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d64c9346c98bc7842a664c4a22489eab, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 7 Button
@@ -1807,6 +1831,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0e2be3548b7f252469fe4dd4a2358c1e, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 6 Button
@@ -2102,6 +2130,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a9e1fad0242b1714dbebe9f19331fc53, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 9 Button
@@ -2220,6 +2252,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1616234823}
     m_Modifications:
+    - target: {fileID: 1416828936821531586, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1c5178a5a1bce98468536e59ed9d4335, type: 3}
     - target: {fileID: 2804015389602330630, guid: 6075312874fdaa8479e136742f6fa907, type: 3}
       propertyPath: m_Name
       value: Chapter 1 Button

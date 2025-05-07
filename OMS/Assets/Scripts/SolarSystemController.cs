@@ -324,7 +324,7 @@ public class SolarSystemController : MonoBehaviour
 		eclipticGrid.transform.localPosition = worldPos;
 		directionalLight.transform.localPosition = worldPos;
 
-		Debug.Log("Sun position (world coordinates): " + worldPos.ToString());
+		//Debug.Log("Sun position (world coordinates): " + worldPos.ToString());
 	}
 
 	void UpdateNodePositions() {

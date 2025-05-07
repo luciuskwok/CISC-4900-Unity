@@ -41,7 +41,7 @@ public class Mission3_UIHandler : MonoBehaviour
 
 	// Maneuver node parameters
 	private double progradeDeltaV = 2.0; // km/s
-	private double maneuverSliderValue = 0.0; // degrees
+	private double maneuverSliderValue = 30.0; // time
 
 	// Animation parameters
 	private double animationTime = 0.0;
