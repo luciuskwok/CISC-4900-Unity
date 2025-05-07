@@ -58,7 +58,7 @@ public class Mission3_UIHandler : MonoBehaviour
 		const double playerAltitude = 420.0; // km above Earth's surface
 		const double playerEcc = 0.0; // circular orbit
 		const double playerArgOfPerifocus = 180.0 * Kepler.Deg2Rad;
-		const double playerMeanAnomaly = -22.5 * Kepler.Deg2Rad;
+		const double playerMeanAnomaly = -30.0 * Kepler.Deg2Rad;
 		double playerSMA = Attractor.Earth.radius + playerAltitude;
 		const double targetSMA = 384400; // km from Earth's center to Moon's center
 		const double targetEcc = 0.0; // Circular orbit for simplicity
