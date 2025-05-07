@@ -7,9 +7,14 @@ public class OrbitPlot : MonoBehaviour
 	public float maxAlpha = 1.0f;
 	public float minAlpha = 0.05f;
 
-	// Note: the coordinate system that is conventionally used for orbital mechanics has the ecliptic on the x-y plane, and positive z is towards the North Pole Star. The positive x axis is the direction of the Sun as seen from the Earth at the (spring) vernal equinox. This means that the Earth is at longitude 0 at the autumnal equinox, and at 180 at the spring equinox.
-	// Unity uses the convention that the x-z plane is horizontal, and positive y points up. So the y and z axes are swapped. 
-	// As for the x axis, that can be arbitrarily chosen as long as it is consistent throughout the solar system for this project. 
+	// # Coordinate systems
+	// This class uses the Unity convention that positive Y-axis is north. This is different from the scientific convention of using positive Z-axis for north, which is what the Orbit class uses. So this class will convert the values from the Orbit class into the Unity convention when returning values in single-precision Vector3.
+	// Positive X-axis for both is the same, and is the direction of the Sun as seen from the Earth at the spring equinox.
+	// Positive Y-axis is the north pole in Unity, but 90 degrees counter-clockwise from the X-axis on the ecliptic plane in science.
+	// Positive Z-axis is into the screen in Unity.
+
+
+	public Vector3d floatingOrigin; // the position in the double floating point world of the single floating point origin
 
 	private Orbit m_Orbit;
 	public Orbit Orbit {
@@ -113,8 +118,12 @@ public class OrbitPlot : MonoBehaviour
 		Vector3d[] pointsd = m_Orbit.GetOrbitPoints(pointCount, maxDistance);
 		int count = pointsd.Length;
 		Vector3[] points = new Vector3[count];
+		Vector3d offset = attractor.focusPosition - floatingOrigin;
 		for (int i = 0; i < count; i++) {
-			points[i] = pointsd[i].Vector3;
+			// Apply offset for floating origin
+			Vector3 pt = (pointsd[i] + offset).Vector3;
+			// Convert from scientific to Unity coordinate systems
+			points[i] = new Vector3(pt.x, pt.z, pt.y);
 		}
 
 		var lineRenderer = GetComponent<LineRenderer>();
@@ -174,9 +183,14 @@ public class OrbitPlot : MonoBehaviour
 	/// <param name="eccentricAnomaly">The eccentric anomaly as radians from periapsis.</param>
 	/// <returns>World position vector.</returns>
 	public Vector3 GetWorldPositionAtEccentricAnomaly(double eccentricAnomaly) {
-		// Get the local coordinates of the node and convert to world coordinates
-		Vector3d localPos = Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly);
-		return gameObject.transform.TransformPoint(localPos.Vector3);
+		// Calculate the combined offsets of attractor position and floating origin
+		Vector3d offset = attractor.focusPosition - floatingOrigin;
+		// Get focal position and apply floating origin offset
+		Vector3 pt = (Orbit.GetFocalPositionAtEccentricAnomaly(eccentricAnomaly) + offset).Vector3;
+		// Convert from scientific to Unity coordinate systems
+		Vector3 localPos = new Vector3(pt.x, pt.z, pt.y);
+		// Tranaform point from local to world position
+		return gameObject.transform.TransformPoint(localPos);
 	}
 
 	/// <summary>
@@ -187,6 +201,16 @@ public class OrbitPlot : MonoBehaviour
 	public Vector3 GetWorldPositionAtTime(double atTime) {
 		double eccAnomaly = Orbit.GetEccentricAnomalyAtTime(atTime);
 		return GetWorldPositionAtEccentricAnomaly(eccAnomaly);
+	}
+
+	/// <summary>
+	/// Gets the position on the orbit in relative to its focus, given a point in time.
+	/// </summary>
+	/// <param name="atTime">The point in time.</param>
+	/// <returns>Universe position vector.</returns>
+	public Vector3d GetFocalPositionAtTime(double atTime) {
+		double eccAnomaly = Orbit.GetEccentricAnomalyAtTime(atTime);
+		return Orbit.GetFocalPositionAtEccentricAnomaly(eccAnomaly);
 	}
 
 	/// <summary>

@@ -1,5 +1,14 @@
 using TMPro;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
+
+// Hierarchy setup:
+// This class assumes that the hierarchy is set up a certain way. The root objects in the hierarchy are positioned at the world origin, the rotation is zero, and the scale is 1e-5.
+// The positions and scale of the objects can then be specified in km. 
+// Positions given in double-precision float use the scientific coordinate system, with positive Z being the north pole.
+// Positions given in single-precision float use the Unity coordinate system, with positive Y being the north pole.
+// All OrbitPlot instances are positioned at zero in world space, and their focus is positioned using their floatingOrigin field.
+
 
 public class SolarSystemController : MonoBehaviour
 {
@@ -7,6 +16,8 @@ public class SolarSystemController : MonoBehaviour
 	public GameObject orbitsParent;
 	public GameObject nodesParent;
 	public GameObject targetsParent;
+	public GameObject sun;
+	public GameObject eclipticGrid;
 
 	// Camera
 	public GameObject cameraTarget;
@@ -21,11 +32,15 @@ public class SolarSystemController : MonoBehaviour
 	// UI elements
 	public TMP_Text targetReadout;
 	public TMP_Text distanceReadout;
+
+	// Floating origin
+	private Vector3d m_FloatingOrigin;
 	
 
 	private Attractor m_Sun;
 	private Attractor m_Earth;
 	private int m_TargetIndex;
+	private double m_CurrentTime = 0.0;
 	private Vector3 m_LastMousePosition;
 
 	private float LocalToWorldScale {
@@ -39,6 +54,9 @@ public class SolarSystemController : MonoBehaviour
 	{
 		// Animation time scale: 1 year = 15 seconds
 		//m_AnimationTimeScale = 60.0/15.0 * 60.0 * 24.0 * 365.0;
+
+		// Default origin at zero
+		m_FloatingOrigin = Vector3d.zero;
 
 		// Attractors
 		m_Sun = Attractor.Sun;
@@ -56,7 +74,7 @@ public class SolarSystemController : MonoBehaviour
 		SetUpOrbit(8, 0.0087, 4.49841e9, 1.770, 273.19, 131.79, 304.22, m_Sun); // Neptune
 		
 		// Move planets into position
-		UpdatePlanetPositions(0);
+		UpdatePlanetPositions(m_CurrentTime);
 
 		// Set up nodes
 		SetUpNodes();
@@ -100,20 +118,21 @@ public class SolarSystemController : MonoBehaviour
 
 	void Update()
 	{
-		//UpdatePlanetPositions(0);
+		
 	}
 
 	void UpdatePlanetPositions(double atTime) {
 		int count = orbitsParent.transform.childCount;
 
-		// Update gradient, node, and bodiesd of all planets and moons
+		// Update gradient, node, and bodies of all planets and moons
 		for (int i = 0; i < count; i++) {
 			OrbitPlot plot = orbitsParent.transform.GetChild(i).gameObject.GetComponent<OrbitPlot>();
-			Vector3 position = plot.GetWorldPositionAtTime(atTime);
+			Vector3 worldPos = plot.GetWorldPositionAtTime(atTime);
 
-			if (i == 2) { // Special case for Moon-Earth system
-				GameObject moon = orbitsParent.transform.GetChild(3).gameObject;
-				moon.transform.localPosition = moon.transform.worldToLocalMatrix * position;
+			// Earth
+			if (i == 2) {
+				// Update the Attractor position of Earth
+				m_Earth.focusPosition = plot.GetFocalPositionAtTime(atTime);
 			}
 
 			// Set orbit plot color gradient
@@ -122,13 +141,13 @@ public class SolarSystemController : MonoBehaviour
 			// Position node on 2D canvas
 			if (i < nodesParent.transform.childCount) {
 				UINode node = nodesParent.transform.GetChild(i).gameObject.GetComponent<UINode>();
-				node.SetWorldPosition(position);
+				node.SetWorldPosition(worldPos);
 			}
 
 			// Position planets in 3d world space
 			if (i < targetsParent.transform.childCount) {
 				Transform target = targetsParent.transform.GetChild(i);
-				target.localPosition = target.worldToLocalMatrix * position;
+				target.localPosition = target.worldToLocalMatrix * worldPos;
 			}
 		}
 	}
@@ -192,6 +211,7 @@ public class SolarSystemController : MonoBehaviour
 		UpdateLineWidths();
 		UpdateNodePositions();
 		UpdateReadouts();
+		UpdateLighting();
 	}
 
 	void DollyCamera(float delta) {
@@ -242,6 +262,17 @@ public class SolarSystemController : MonoBehaviour
 		index %= count;
 		if (index < 0) index += count;
 		m_TargetIndex = index;
+
+		// Move origin and recalculate orbit plots
+		if (index < orbitsParent.transform.childCount) {
+			OrbitPlot newPlot = orbitsParent.transform.GetChild(index).gameObject.GetComponent<OrbitPlot>();
+			SetFloatingOrigin(newPlot.GetFocalPositionAtTime(m_CurrentTime));
+		} else {
+			// Sun: set floating origin at zero
+			SetFloatingOrigin(Vector3d.zero);
+		}
+
+		// Targets
 		GameObject newTarget = targetsParent.transform.GetChild(index).gameObject;
 
 		// Update minimum distance
@@ -257,11 +288,43 @@ public class SolarSystemController : MonoBehaviour
 		// Set new target position
 		cameraTarget.transform.position = newTarget.transform.position;
 
+		//Debug.Log("newTarget position: " + newTarget.transform.position.ToString());
+
 		// Set target readout
 		targetReadout.text = newTarget.name;
+	}
 
-		// Update lighting
-		UpdateLighting();
+	void SetFloatingOrigin(Vector3d newOrigin) {
+		// Origin is in scientific coordinate system
+		m_FloatingOrigin = newOrigin;
+
+		// Update orbit plots
+		int count = orbitsParent.transform.childCount;
+		for (int i = 0; i < count; i++) {
+			OrbitPlot plot = orbitsParent.transform.GetChild(i).gameObject.GetComponent<OrbitPlot>();
+			plot.floatingOrigin = newOrigin;
+			plot.UpdateLineRenderer();
+		}
+
+		// Move planets to new floating origin
+		UpdatePlanetPositions(m_CurrentTime);
+
+		// Move Sun
+		// Calculate position of Sun
+		Vector3 sunPos = (m_Sun.focusPosition - newOrigin).Vector3;
+		// Convert from scientific to Unity coordinate system
+		sunPos = new Vector3(sunPos.x, sunPos.z, sunPos.y);
+		// Move Sun to shifted origin
+		sun.transform.localPosition = sunPos;
+		
+		// Convert from local to world position
+		Vector3 worldPos = targetsParent.transform.TransformPoint(sunPos);
+
+		// Move grid and directional light to sun's position
+		eclipticGrid.transform.localPosition = worldPos;
+		directionalLight.transform.localPosition = worldPos;
+
+		Debug.Log("Sun position (world coordinates): " + worldPos.ToString());
 	}
 
 	void UpdateNodePositions() {
@@ -302,8 +365,9 @@ public class SolarSystemController : MonoBehaviour
 	}
 
 	void UpdateLighting() {
+		// Always point the sun at the camera
 		Transform target = targetsParent.transform.GetChild(m_TargetIndex);
-		directionalLight.transform.LookAt(target);
+		directionalLight.transform.LookAt(Camera.main.transform);
 	}
 
 }

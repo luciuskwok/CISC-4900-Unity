@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 
 /// <summary>
-/// Orbit of a body around an attractor.
+/// Orbit of a body around an attractor. This class uses the convention that positive Z-axis is north, which is different from Unity.
 /// </summary>
 public class Orbit {
 
