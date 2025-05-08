@@ -2,6 +2,9 @@
 
 This file documents the changes to the Diagrams slide deck, which is kept on Google Slides. Versions will be tracked by the date that a PDF of the slides was created.
 
+## 2025-05-07
+- Added slides for Final milestone of project.
+
 ## 2025-04-17
 
 - Added slides related to MMC learning outcomes.
