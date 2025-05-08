@@ -14,7 +14,7 @@ public class StringUtil {
 
 		if (timeAsSeconds >= day) {
 			s += Math.Floor(t/day).ToString("F0") + "d ";
-			t -= Math.Floor(t/day) * 3600.0;
+			t -= Math.Floor(t/day) * day;
 		}
 
 		if (timeAsSeconds >= 3600.0) {

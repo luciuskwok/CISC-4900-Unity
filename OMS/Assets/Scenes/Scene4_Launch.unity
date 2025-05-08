@@ -18736,7 +18736,7 @@ MonoBehaviour:
         z: 58.439537
       Rotation:
         value:
-          x: -0.14331058
+          x: -0.1433106
           y: 0.054591898
           z: 0.6181909
           w: 0.7709228
@@ -18774,8 +18774,8 @@ MonoBehaviour:
         value:
           x: 0.79815537
           y: -0.56589365
-          z: -0.08738651
-          w: 0.18728575
+          z: -0.087386526
+          w: 0.1872858
     - Position:
         x: -216.5
         y: 20
@@ -29785,7 +29785,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 400
+  MinDistance: 300
   MaxDistance: 1000
   Pan2D: 0
   rolloffMode: 0

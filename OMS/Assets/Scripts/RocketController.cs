@@ -34,7 +34,7 @@ public class RocketController : MonoBehaviour
 	private float pitchRate = -0.5f; // degrees per second
 	private float pitchProgramStart = 13.0f; 
 	private float pitchProgramEnd = 38.0f;
-	private double endMissionTime = 40.0; // seconds; when to go to next scene
+	private double endMissionTime = 30.0; // seconds; when to go to next scene
 	private Vector3 velocity = new();
 	private double gravity = 9.81; // m/s^2 
 

@@ -3,7 +3,6 @@
 // Adapted from https://github.com/Karth42/SimpleKeplerOrbits
 
 using System;
-using System.Security.Cryptography;
 using UnityEngine;
 
 /// <summary>
