@@ -11,29 +11,29 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Scene1_ChapterSelect.unity
     guid: 79250febcaf1ed142a8702544b4e5e79
-  - enabled: 1
-    path: Assets/Scenes/Scene2_OpeningVideo.unity
+  - enabled: 0
+    path: Assets/Scenes/DeletedScene2_OpeningVideo.unity
     guid: e51eee54123d03943afa9ce57961dd47
   - enabled: 1
-    path: Assets/Scenes/Scene3_Intro.unity
+    path: Assets/Scenes/Scene2_Intro.unity
     guid: 25111a48d258f44ef8860f46bf78425a
   - enabled: 1
-    path: Assets/Scenes/Scene4_Launch.unity
+    path: Assets/Scenes/Scene3_Launch.unity
     guid: 46f8cfd1beec6cb478294ecd86de57fa
   - enabled: 1
-    path: Assets/Scenes/Scene5_Mission1.unity
+    path: Assets/Scenes/Scene4_Mission1.unity
     guid: ae12709699c516a4e95d030dcdd5a866
   - enabled: 1
-    path: Assets/Scenes/Scene6_Mission2.unity
+    path: Assets/Scenes/Scene5_Mission2.unity
     guid: 4bb45fd46eb24954b879e67d996e39ac
   - enabled: 1
-    path: Assets/Scenes/Scene7_Mission3.unity
+    path: Assets/Scenes/Scene6_Mission3.unity
     guid: eee5a046a0b1f25419810ba638ce5098
   - enabled: 1
-    path: Assets/Scenes/Scene8_SolarSystem.unity
+    path: Assets/Scenes/Scene90_SolarSystem.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/Scene9_EndCredits.unity
+    path: Assets/Scenes/Scene99_EndCredits.unity
     guid: fab8dc0463d864aa988270af6fb34a45
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

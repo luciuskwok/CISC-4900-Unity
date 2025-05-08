@@ -24,6 +24,7 @@ public class SolarSystemController : MonoBehaviour
 	private float m_DistanceMax = 8.0e9f; // km
 	private float m_DistanceMin = 1.0f; // varies based on target
 	private float m_MousePanTiltSpeed = 0.1f;
+	private float m_MouseDollySpeed = 2.0f;
 	private float m_KeyboardPanTiltSpeed = 30.0f;
 
 	// Light
@@ -161,7 +162,7 @@ public class SolarSystemController : MonoBehaviour
 		// Scroll wheel
 		float scroll = Input.GetAxis("Mouse ScrollWheel");
 		if (scroll != 0.0f) {
-			DollyCamera(scroll * shiftSpeed);
+			DollyCamera(scroll * shiftSpeed * m_MouseDollySpeed);
 		}
 
 		// Mouse movement
