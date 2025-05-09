@@ -98,10 +98,11 @@ public class SolarSystemController : MonoBehaviour
 			argOfPerifocusDeg * Kepler.Deg2Rad, 
 			ascendingNodeDeg * Kepler.Deg2Rad);
 
-		// Calculate the time of periapsis passage
+		// Calculate the time of periapsis passage by setting it to the negative value of the fraction of the orbit that the mean longitude represents times the orbital period
 		// Epoch J2000, 00:00 UTC on 1/1/2000, is the zero value
-		plot.PeriapsisTime = 0.0;
-		// TODO: calculate the time of periapsis passage from the meanLongAtEpoch where epoch is Epoch J2000.
+		double orbitalPeriod = plot.OrbitalPeriod;
+		double angle = (meanLongAtEpoch - ascendingNodeDeg - argOfPerifocusDeg) % 360.0;
+		plot.PeriapsisTime = -angle / 360.0 * orbitalPeriod;
 		
 		return orbit;
 	}

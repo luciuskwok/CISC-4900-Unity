@@ -33,6 +33,12 @@ public class OrbitPlot : MonoBehaviour
 		set { m_Orbit.periapsisTime = value; }
 	}
 
+	public double OrbitalPeriod {
+		get {
+			return m_Orbit.OrbitalPeriod;
+		}
+	}
+
 	/// <summary>
 	/// Sets the orbital parameters given the orbital elements. Resets the anomaly to zero.
 	/// </summary>
