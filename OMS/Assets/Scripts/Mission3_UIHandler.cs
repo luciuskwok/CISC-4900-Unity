@@ -242,7 +242,7 @@ public class Mission3_UIHandler : MonoBehaviour
 	{
 		if (!success)
 		{
-			infoText.text = "This mission requires that you plan a fly-by of the Moon. Adjust the sliders below to bring the apoapsis of your planned orbit close to the Moon.";
+			infoText.text = "This mission requires that you plan a fly-by of the Moon. Adjust the sliders below to bring the apoapsis of your planned orbit close to the Moon at the right time in its orbit.";
 		}
 		else
 		{

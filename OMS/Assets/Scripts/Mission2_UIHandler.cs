@@ -224,7 +224,7 @@ public class Mission2_UIHandler : MonoBehaviour
 
 	void SetInfoText(bool success) {
 		if (!success) {
-			infoText.text = "This task involves both changing your orbit and timing the maneuver to rendezvous with the target object. Use the sliders below to adjust the delta-V and the timing so that closest approach is small emough for a meeting.";
+			infoText.text = "This task involves both changing your orbit and timing the maneuver to rendezvous with the target object. Use the sliders below to adjust the delta-V and the timing so that closest approach is small enough for a meeting.";
 		} else {
 			infoText.text = "Great job! Now click on the Go button to execute the maneuver by firing your engines.";
 		}
