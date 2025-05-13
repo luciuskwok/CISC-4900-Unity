@@ -10,8 +10,7 @@ Orbital mechanics are an often misunderstood aspect of spaceflight, but one whic
 
 - Software
 	- Unity 6 engine
-	- Microsoft Visual Studio Community 2022
-	- Autodesk Maya 2025
+	- Microsoft VS Code
 	- Adobe Photoshop 26
 	- Panic Nova (text editor)
 	- GitHub suite
@@ -24,13 +23,19 @@ Orbital mechanics are an often misunderstood aspect of spaceflight, but one whic
 	- macOS
 	- WebGL
 	
-## Diagrams
+## Unity Project Folder "OMS"
 
-The `Diagrams` folder contains the main slide deck for this project and source images used for it. This slide deck is like the pitch deck for the project, and includes items required for the Diagrams deliverables assignment.
+The root folder for the Unity project is named `OMS`.
 
-## Unity files
+## Other Folders
 
-There will be a folder containing the files used by the Unity project, after I have figured out the best practices for using git with Unity.
+Most of the other folders are for files required by the Independent Project course.
+
+The `Slides` folder contains the presentation slide deck for this project and source images used for it. This slide deck is like the pitch deck for the project.
+
+The `Sketches` folder contains pencil-and-paper sketches I made, mostly for UI.
+
+The `Timelogs` folder contains PDF snapshots of my time logs for documenting the hours I put into the project during the Spring 2025 semester.
 
 ## License
 
